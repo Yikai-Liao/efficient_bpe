@@ -1,0 +1,5 @@
+tqdm
+pandas
+rjieba
+tokenizers
+subword-nmt
