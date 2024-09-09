@@ -346,8 +346,6 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
                 freq_i += 1
             else:
                 freq_i = bisect.bisect_right(freq_pivot[freq_i + 1:], pos) + freq_i
-            # assert freq_i == bisect.bisect_right(freq_pivot, pos) - 1, \
-            f"freq_i: {freq_i}, pos: {pos}, freq_pivot: {freq_pivot} freq_info: {freq_info}, next_pivot: {next_pivot}, bisec: {bisect.bisect_right(freq_pivot, pos) - 1}"
             freq = freq_info[freq_i]
             next_pivot = freq_pivot[freq_i + 1]
 
