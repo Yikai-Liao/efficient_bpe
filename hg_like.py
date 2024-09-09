@@ -103,7 +103,7 @@ class BpeTrainer:
                 break
             # 4.2 Assign a new token (u32) to the pair
             new_token = assign_token(pair, char2id, id2char, seen_vocab, token_len)
-            print(f'freq: {freq}')
+            # print(f'freq: {freq}')
             merges.append((pair, new_token))
             # 4.3 Merge the pair in the corpus
             pos_list = pair_pos.pop(pair, None)
@@ -113,12 +113,12 @@ class BpeTrainer:
             # 4.4 Update the pair_freq and pair_pos
             apply_patch(queue, pair_freq, pair_pos, pair_freq_patch, pair_pos_patch, self.min_frequency)
 
-            show_corpus(corpus, id2char, self.continuing_subword_prefix, self.end_of_word_suffix, token_len)
+            # show_corpus(corpus, id2char, self.continuing_subword_prefix, self.end_of_word_suffix, token_len)
             # update the progress bar
             pbar.update(1)
 
         pbar.close()
-        print(char2id)
+        # print(char2id)
 
 
 def compute_alphabet(
@@ -244,7 +244,7 @@ def most_frequent_combination(queue, pair_freq, pair_pos, min_freq):
 
 
 def build_char(x: int, id2word: List[str], prefix: str, suffix: str):
-    raw_char = id2word[x & 0x7FFFFFFF]
+    raw_char = id2word[x & 0x3FFFFFFF]
     if not x & 0x80000000:
         # prefix is for continuing subword
         raw_char = prefix + raw_char
@@ -258,9 +258,9 @@ def assign_token(pair, word2id, id2word, seen_vocab, token_len):
     """
     Assign a new token (u32) to the pair
     """
-    x_str, y_str = id2word[pair[0] & 0x7FFFFFFF], id2word[pair[1] & 0x7FFFFFFF]
+    x_str, y_str = id2word[pair[0] & 0x3FFFFFFF], id2word[pair[1] & 0x3FFFFFFF]
     pair_str = x_str + y_str
-    print(x_str + '|' + y_str, end=' ')
+    # print(x_str + '|' + y_str, end=' ')
     if pair_str in word2id:
         raw_id = word2id[pair_str]
     else:
@@ -268,10 +268,10 @@ def assign_token(pair, word2id, id2word, seen_vocab, token_len):
         id2word.append(pair_str)
         word2id[pair_str] = raw_id
         token_len.append(
-            token_len[pair[0] & 0x7FFFFFFF] + token_len[pair[1] & 0x7FFFFFFF])  # update raw_id with highest two bits
+            token_len[pair[0] & 0x3FFFFFFF] + token_len[pair[1] & 0x3FFFFFFF])  # update raw_id with highest two bits
     true_id = raw_id | (pair[0] & 0xC0000000) | (pair[1] & 0xC0000000)
-    assert raw_id not in seen_vocab
-    seen_vocab.add(raw_id)
+    assert true_id not in seen_vocab
+    seen_vocab.add(true_id)
     return true_id
 
 
@@ -285,7 +285,7 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
     pair_pos_patch = defaultdict(list)
 
     x, y = pair
-    len_x, len_y = token_len[x & 0x7FFFFFFF], token_len[y & 0x7FFFFFFF]
+    len_x, len_y = token_len[x & 0x3FFFFFFF], token_len[y & 0x3FFFFFFF]
     len_pair = len_x + len_y
 
     # init frequency information
@@ -302,11 +302,13 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
             continue
         # check freq info
         if pos >= next_pivot:
-            freq_i = bisect.bisect_right(freq_pivot[freq_i + 1:], pos) + freq_i + 1
+            freq_i = bisect.bisect_right(freq_pivot[freq_i + 1:], pos) + freq_i
             # TODO: remove the assert after debug
-            assert freq_i == bisect.bisect_right(freq_pivot, pos) - 1
+            assert freq_i == bisect.bisect_right(freq_pivot, pos) - 1, \
+            f"freq_i: {freq_i}, pos: {pos}, freq_pivot: {freq_pivot} freq_info: {freq_info}, next_pivot: {next_pivot}, bisec: {bisect.bisect_right(freq_pivot, pos) - 1}"
             freq = freq_info[freq_i]
             next_pivot = freq_pivot[freq_i + 1]
+
 
         # merge x and y
         corpus[pos_x] = corpus[pos_end - 1] = new_token
@@ -318,7 +320,7 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
         if l > 1:  # not <PAD> or <UNK>
             pair_freq_patch[(l, x)] -= freq
             pair_freq_patch[(l, new_token)] += freq
-            len_l = token_len[l & 0x7FFFFFFF]
+            len_l = token_len[l & 0x3FFFFFFF]
             pair_pos_patch[(l, new_token)].append(pos_x - len_l)
 
         # modify right
@@ -326,6 +328,7 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
             pair_freq_patch[(y, r)] -= freq
             pair_freq_patch[(new_token, r)] += freq
             pair_pos_patch[(new_token, r)].append(pos_x)
+
     return pair_freq_patch, pair_pos_patch
 
 
@@ -343,16 +346,16 @@ def show_corpus(corpus, id2char, continuing_subword_prefix, end_of_word_suffix, 
     final_corpus = []
     while i < len(corpus):
         final_corpus.append(build_char(corpus[i], id2char, continuing_subword_prefix, end_of_word_suffix))
-        i += token_len[corpus[i] & 0x7FFFFFFF]
+        i += token_len[corpus[i] & 0x3FFFFFFF]
     print(" ".join(final_corpus))
 
 
 if __name__ == "__main__":
     trainer = BpeTrainer(
-        vocab_size=1000,
-        min_frequency=1,
+        vocab_size=10000,
+        min_frequency=22,
         special_tokens=['<PAD>', '<UNK>'],
-        limit_alphabet=100,
+        limit_alphabet=-1,
         initial_alphabet=[],
         continuing_subword_prefix='',
         end_of_word_suffix='',
@@ -360,7 +363,11 @@ if __name__ == "__main__":
         max_piece_length=16
     )
     tokenizer = BpeTokenizer()
-    word_counts = Counter(
-        'the quick brown fox jumps over the lazy dog oh dog 00000001111111000001010101000111'.split(' '))
-
+    # word_counts = Counter(
+    #     'the quick brown fox jumps over the lazy dog oh dog 00000001111111000'.split(' '))
+    word_counts = defaultdict(int)
+    with open("./data/train_BPE.txt", 'r') as f:
+        for line in f.readlines():
+            for word in line.strip().split():
+                word_counts[word] += 1
     trainer.do_train(word_counts)
