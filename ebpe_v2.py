@@ -87,6 +87,7 @@ class BpeTrainer:
         self.show_progress = show_progress
         assert show_progress is True, "Only show_progress=True is supported"
         self.max_piece_length = max_piece_length
+        assert max_piece_length > 1, "max_piece_length must be greater than 1"
 
     def do_train(
             self, word_counts: Dict[str, int], model: BpeTokenizer
@@ -131,7 +132,7 @@ class BpeTrainer:
             pos_list = pair_pos.pop(pair, None)
             # assert pos_list is not None, f"pair {pair} not found in pair_pos, something is wrong"
             pair_freq_patch, pair_pos_patch = \
-                merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, token_len)
+                merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, token_len, self.max_piece_length)
             # 4.4 Update the pair_freq and pair_pos
             apply_patch(queue, pair_freq, pair_pos, pair_freq_patch, pair_pos_patch, self.min_frequency)
 
@@ -282,6 +283,8 @@ def most_frequent_combination(queue, pair_freq, pair_pos, min_freq, corpus, toke
 
 
 def build_char(x: int, id2word: List[str], prefix: str, suffix: str):
+    if x < 2:
+        return ['<PAD>', '<UNK>'][x]
     raw_char = id2word[x & 0x3FFFFFFF]
     if not x & 0x80000000:
         # prefix is for continuing subword
@@ -312,7 +315,7 @@ def assign_token(pair, word2id, id2word, seen_vocab, token_len):
     return true_id
 
 
-def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, token_len):
+def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, token_len, max_piece_length):
     """
     Merge the pair in the corpus
     """
@@ -354,15 +357,19 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
             corpus[i] = 0
 
         l, r = corpus[pos_x - 1], corpus[pos_y + len_y]
+        len_l = token_len[l & 0x3FFFFFFF]
+        len_r = token_len[r & 0x3FFFFFFF]
         # modify left
-        if l > 1:  # not <PAD> or <UNK>
+        if l > 1 and len_pair + len_l <= max_piece_length:
+            # not <PAD> or <UNK>
             pair_freq_patch[(l, x)] -= freq
             pair_freq_patch[(l, new_token)] += freq
             len_l = token_len[l & 0x3FFFFFFF]
             pair_pos_patch[(l, new_token)].append(pos_x - len_l)
 
         # modify right
-        if r > 1:
+        if r > 1 and len_pair + len_r <= max_piece_length:
+            # not <PAD> or <UNK>
             pair_freq_patch[(y, r)] -= freq
             pair_freq_patch[(new_token, r)] += freq
             pair_pos_patch[(new_token, r)].append(pos_x)
@@ -425,10 +432,10 @@ if __name__ == "__main__":
         special_tokens=['<PAD>', '<UNK>'],
         limit_alphabet=2000,
         initial_alphabet=[],
-        continuing_subword_prefix='',
+        continuing_subword_prefix='#',
         end_of_word_suffix='@',
         show_progress=True,
-        max_piece_length=16
+        max_piece_length=3
     )
     bpe = BpeTokenizer()
     bpe.train_from_iterator(data, trainer)
