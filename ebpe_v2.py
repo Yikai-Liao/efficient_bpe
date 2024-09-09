@@ -30,7 +30,7 @@ class BpeTrainer:
             max_piece_length: int,
     ):
         self.vocab_size = vocab_size
-        self.min_frequency = min_frequency
+        self.min_frequency = max(1, min_frequency)
         self.special_tokens = special_tokens
         self.limit_alphabet = limit_alphabet
         self.initial_alphabet = initial_alphabet
@@ -69,7 +69,7 @@ class BpeTrainer:
         pbar = tqdm(total=self.vocab_size + 2 - len(seen_vocab), desc='Merging tokens')
         while len(seen_vocab) < self.vocab_size + 2:
             # 4.1 Find the most frequent combination of two tokens in the corpus
-            pair, freq = most_frequent_combination(queue, pair_freq, pair_pos, self.min_frequency)
+            pair, freq = most_frequent_combination(queue, pair_freq, pair_pos, self.min_frequency, corpus, token_len)
             # early stop if no pair is found
             if freq < self.min_frequency or pair is None:
                 break
@@ -193,8 +193,18 @@ def count_token_pairs(corpus: array, freq_pivot: array, freq_info: array, min_fr
 
     return pair_pos, pair_freq, queue
 
+def compress_pair_pos(corpus, pair_pos, pair, token_len):
+    """
+    Compress the pair_pos by removing the positions that are not valid anymore
+    """
+    len_x = token_len[pair[0] & 0x3FFFFFFF]
+    x, y = pair
+    pair_pos[pair] = array('Q', filter(
+        lambda pos: corpus[pos] == x and corpus[pos + len_x] == y,
+        pair_pos[pair]
+    ))
 
-def most_frequent_combination(queue, pair_freq, pair_pos, min_freq):
+def most_frequent_combination(queue, pair_freq, pair_pos, min_freq, corpus, token_len):
     """
     Find the most frequent combination of two tokens in the corpus
     """
@@ -207,7 +217,8 @@ def most_frequent_combination(queue, pair_freq, pair_pos, min_freq):
         elif ground_freq >= min_freq:
             # push the pair back to the queue if the frequency is larger than min_freq
             heapq.heappush(queue, (-ground_freq, pair))
-            # TODO: add compression for pair_pos in the future
+            if cached_freq >= 4 * ground_freq:
+                compress_pair_pos(corpus, pair_pos, pair, token_len)
         else:
             # remove the pair from the pair_pos and pair_freq
             pair_pos.pop(pair, None)
@@ -331,10 +342,11 @@ if __name__ == "__main__":
         for line in f.readlines():
             for word in line.strip().split(','):
                 word_counts[word] += 1
+    # word_counts = Counter('For example, consider the following sentence: "This is an example sentence."'.split())
     print('Words:', len(word_counts))
     trainer = BpeTrainer(
         vocab_size=10000,
-        min_frequency=20,
+        min_frequency=0,
         special_tokens=['<PAD>', '<UNK>'],
         limit_alphabet=2000,
         initial_alphabet=[],
