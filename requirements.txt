@@ -3,4 +3,3 @@ pandas
 rjieba
 tokenizers
 subword-nmt
-numpy
