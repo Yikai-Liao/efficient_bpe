@@ -4,6 +4,8 @@ The interface is simplified and only include the key methods needed for the trai
 
 This is implementation will be used as a prototype for the final rust implementation.
 """
+from turtledemo.forest import start
+
 from tqdm import tqdm
 from array import array
 from itertools import pairwise
@@ -12,6 +14,52 @@ from typing import List, Dict, Iterable, Optional, Tuple
 
 import heapq
 import bisect
+
+
+class BpeTokenizer:
+    """
+    Basic dummy class for HuggingFace BPE Tokenizer
+    """
+
+    def __init__(self):
+        self.vocab = None
+        self.vocab_r = None
+        self.merges = None
+        self.continuing_subword_prefix = None
+        self.end_of_word_suffix = None
+        self.special_tokens = None
+
+    def save(self, path: str):
+        pass
+
+    @classmethod
+    def from_file(cls, path: str) -> "BpeTokenizer":
+        pass
+
+    def encode(self, sequence: str, add_special_tokens: bool = True):
+        pass
+
+    def decode(self, ids, skip_special_tokens: bool = True) -> str:
+        pass
+
+    def train(self, files: List[str], trainer: Optional["BpeTrainer"] = None):
+        pass
+
+    def train_from_iterator(
+            self, iterator: Iterable[str],
+            trainer: Optional["BpeTrainer"] = None,
+            length: Optional[int] = None
+    ):
+        counter = Counter()
+        for text in iterator:
+            counter.update(text.split())
+        trainer.do_train(counter, self)
+
+    def show(self):
+        print(f'Vocab size: {len(self.vocab)}')
+        print(f'Vocab: {self.vocab}')
+        print(f'Merges: {self.merges}')
+
 
 class BpeTrainer:
     """
@@ -41,7 +89,7 @@ class BpeTrainer:
         self.max_piece_length = max_piece_length
 
     def do_train(
-            self, word_counts: Dict[str, int]
+            self, word_counts: Dict[str, int], model: BpeTokenizer
     ):
         """
         :return: The final merges and the final vocabulary
@@ -56,9 +104,12 @@ class BpeTrainer:
         # 2. Build the corpus
         corpus, freq_pivot, freq_info = build_corpus(word_counts, char2id, tag_begin, tag_end)
         # If using prefix and suffix, the true vocab is not from id2char
-        seen_vocab = set(corpus) if tag_begin or tag_end else set(id2char)
-        print(f"Initial vocab size: {len(char2id) - 2}")
-        print(f'Vocab size considering prefix and suffix: {len(seen_vocab) - 2}')
+        seen_vocab = set(corpus) if tag_begin or tag_end else set(char2id.values())
+        trainer_init_tokens = list(range(2, len(id2char))) + sorted(seen_vocab - set(range(len(id2char))))
+        trainer_init_chars = [
+            build_char(c, id2char, self.continuing_subword_prefix, self.end_of_word_suffix)
+            for c in trainer_init_tokens
+        ]
 
         # 3. Count token pairs and get the priority queue
         pair_pos, pair_freq, queue = count_token_pairs(corpus, freq_pivot, freq_info, self.min_frequency)
@@ -75,7 +126,6 @@ class BpeTrainer:
                 break
             # 4.2 Assign a new token (u32) to the pair
             new_token = assign_token(pair, char2id, id2char, seen_vocab, token_len)
-            # print(f'freq: {freq}')
             merges.append((pair, new_token))
             # 4.3 Merge the pair in the corpus
             pos_list = pair_pos.pop(pair, None)
@@ -85,12 +135,15 @@ class BpeTrainer:
             # 4.4 Update the pair_freq and pair_pos
             apply_patch(queue, pair_freq, pair_pos, pair_freq_patch, pair_pos_patch, self.min_frequency)
 
-            # show_corpus(corpus, id2char, self.continuing_subword_prefix, self.end_of_word_suffix, token_len)
             # update the progress bar
             pbar.update(1)
 
         pbar.close()
-        # print(char2id)
+        show_corpus(corpus, id2char, self.continuing_subword_prefix, self.end_of_word_suffix, token_len)
+        build_tokenizer(
+            model, id2char, merges, trainer_init_tokens, trainer_init_chars,
+            self.continuing_subword_prefix, self.end_of_word_suffix, self.special_tokens
+        )
 
 
 def compute_alphabet(
@@ -193,6 +246,7 @@ def count_token_pairs(corpus: array, freq_pivot: array, freq_info: array, min_fr
 
     return pair_pos, pair_freq, queue
 
+
 def compress_pair_pos(corpus, pair_pos, pair, token_len):
     """
     Compress the pair_pos by removing the positions that are not valid anymore
@@ -203,6 +257,7 @@ def compress_pair_pos(corpus, pair_pos, pair, token_len):
         lambda pos: corpus[pos] == x and corpus[pos + len_x] == y,
         pair_pos[pair]
     ))
+
 
 def most_frequent_combination(queue, pair_freq, pair_pos, min_freq, corpus, token_len):
     """
@@ -243,7 +298,6 @@ def assign_token(pair, word2id, id2word, seen_vocab, token_len):
     """
     x_str, y_str = id2word[pair[0] & 0x3FFFFFFF], id2word[pair[1] & 0x3FFFFFFF]
     pair_str = x_str + y_str
-    # print(x_str + '|' + y_str, end=' ')
     if pair_str in word2id:
         raw_id = word2id[pair_str]
     else:
@@ -294,7 +348,6 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
             freq = freq_info[freq_i]
             next_pivot = freq_pivot[freq_i + 1]
 
-
         # merge x and y
         corpus[pos_x] = corpus[pos_end - 1] = new_token
         for i in range(pos_x + 1, pos_end - 1):
@@ -335,24 +388,48 @@ def show_corpus(corpus, id2char, continuing_subword_prefix, end_of_word_suffix, 
     print(" ".join(final_corpus))
 
 
-if __name__ == "__main__":
+def build_tokenizer(
+        model, id2word, merges, trainer_init_tokens, trainer_init_chars, continuing_subword_prefix, end_of_word_suffix,
+        special_tokens
+):
+    trainer_token_to_model_token = {
+        t: i for i, t in enumerate(trainer_init_tokens)
+    }
+    vocab_r = trainer_init_chars
+    model_merges = []
+    for (x, y), new_token in merges:
+        x_model, y_model = trainer_token_to_model_token[x], trainer_token_to_model_token[y]
+        new_model_token = len(vocab_r)
+        model_merges.append(((x_model, y_model), new_model_token))
+        trainer_token_to_model_token[new_token] = new_model_token
+        vocab_r.append(build_char(new_token, id2word, continuing_subword_prefix, end_of_word_suffix))
 
-    word_counts = defaultdict(int)
-    with open("./data/train_BPE.txt", 'r') as f:
-        for line in f.readlines():
-            for word in line.strip().split(','):
-                word_counts[word] += 1
-    # word_counts = Counter('For example, consider the following sentence: "This is an example sentence."'.split())
-    print('Words:', len(word_counts))
+    vocab = {c: idx for idx, c in enumerate(vocab_r, start=0)}
+
+    model.vocab = vocab
+    model.vocab_r = vocab_r
+    model.merges = model_merges
+    model.continuing_subword_prefix = continuing_subword_prefix
+    model.end_of_word_suffix = end_of_word_suffix
+    model.special_tokens = special_tokens
+
+
+if __name__ == "__main__":
+    data = [
+        'For example, consider the following sentence: "This is an example sentence."',
+        '1100001110000'
+    ]
     trainer = BpeTrainer(
         vocab_size=10000,
         min_frequency=0,
         special_tokens=['<PAD>', '<UNK>'],
         limit_alphabet=2000,
         initial_alphabet=[],
-        continuing_subword_prefix='##',
-        end_of_word_suffix='@@',
+        continuing_subword_prefix='',
+        end_of_word_suffix='@',
         show_progress=True,
         max_piece_length=16
     )
-    trainer.do_train(word_counts)
+    bpe = BpeTokenizer()
+    bpe.train_from_iterator(data, trainer)
+    bpe.show()
