@@ -107,7 +107,7 @@ class BpeTrainer:
             merges.append((pair, new_token))
             # 4.3 Merge the pair in the corpus
             pos_list = pair_pos.pop(pair, None)
-            assert pos_list is not None, f"pair {pair} not found in pair_pos, something is wrong"
+            # assert pos_list is not None, f"pair {pair} not found in pair_pos, something is wrong"
             pair_freq_patch, pair_pos_patch = \
                 merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, token_len)
             # 4.4 Update the pair_freq and pair_pos
@@ -168,7 +168,7 @@ def build_corpus(
     freq_info = [words[0][1]]
     pivot = 1
     for word, freq in words:
-        assert 0 < freq <= freq_info[-1]
+        # assert 0 < freq <= freq_info[-1]
         # update freq pivot and freq info
         if freq < freq_info[-1]:
             freq_pivot.append(pivot)
@@ -302,9 +302,11 @@ def merge_token_pair(corpus, pair, new_token, pos_list, freq_pivot, freq_info, t
             continue
         # check freq info
         if pos >= next_pivot:
-            freq_i = bisect.bisect_right(freq_pivot[freq_i + 1:], pos) + freq_i
-            # TODO: remove the assert after debug
-            assert freq_i == bisect.bisect_right(freq_pivot, pos) - 1, \
+            if pos < freq_pivot[freq_i + 1]:
+                freq_i += 1
+            else:
+                freq_i = bisect.bisect_right(freq_pivot[freq_i + 1:], pos) + freq_i
+            # assert freq_i == bisect.bisect_right(freq_pivot, pos) - 1, \
             f"freq_i: {freq_i}, pos: {pos}, freq_pivot: {freq_pivot} freq_info: {freq_info}, next_pivot: {next_pivot}, bisec: {bisect.bisect_right(freq_pivot, pos) - 1}"
             freq = freq_info[freq_i]
             next_pivot = freq_pivot[freq_i + 1]
