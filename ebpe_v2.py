@@ -13,36 +13,6 @@ from typing import List, Dict, Iterable, Optional, Tuple
 import heapq
 import bisect
 
-
-class BpeTokenizer:
-    """
-    Basic dummy class for HuggingFace BPE Tokenizer
-    """
-
-    def save(self, path: str):
-        pass
-
-    @classmethod
-    def from_file(cls, path: str) -> "BpeTokenizer":
-        pass
-
-    def encode(self, sequence: str, add_special_tokens: bool = True):
-        pass
-
-    def decode(self, ids, skip_special_tokens: bool = True) -> str:
-        pass
-
-    def train(self, files: List[str], trainer: Optional["BpeTrainer"] = None):
-        pass
-
-    def train_from_iterator(
-            self, iterator: Iterable[str],
-            trainer: Optional["BpeTrainer"] = None,
-            length: Optional[int] = None
-    ):
-        pass
-
-
 class BpeTrainer:
     """
     Basic dummy class for HuggingFace BPE Trainer
@@ -72,7 +42,7 @@ class BpeTrainer:
 
     def do_train(
             self, word_counts: Dict[str, int]
-    ) -> Tuple[List[Tuple[str, str]], List[str]]:
+    ):
         """
         :return: The final merges and the final vocabulary
         """
@@ -87,6 +57,8 @@ class BpeTrainer:
         corpus, freq_pivot, freq_info = build_corpus(word_counts, char2id, tag_begin, tag_end)
         # If using prefix and suffix, the true vocab is not from id2char
         seen_vocab = set(corpus) if tag_begin or tag_end else set(id2char)
+        print(f"Initial vocab size: {len(char2id) - 2}")
+        print(f'Vocab size considering prefix and suffix: {len(seen_vocab) - 2}')
 
         # 3. Count token pairs and get the priority queue
         pair_pos, pair_freq, queue = count_token_pairs(corpus, freq_pivot, freq_info, self.min_frequency)
@@ -200,7 +172,7 @@ def count_token_pairs(corpus: array, freq_pivot: array, freq_info: array, min_fr
     next_pivot = freq_pivot[1]
     freq, freq_i = freq_info[0], 0
 
-    for i, (x, y) in enumerate(pairwise(tqdm(corpus, desc='Counting token pairs'))):
+    for i, (x, y) in enumerate(pairwise(corpus)):
         if i >= next_pivot:
             freq_i += 1
             freq = freq_info[freq_i]
@@ -353,23 +325,22 @@ def show_corpus(corpus, id2char, continuing_subword_prefix, end_of_word_suffix, 
 
 
 if __name__ == "__main__":
-    trainer = BpeTrainer(
-        vocab_size=10000,
-        min_frequency=22,
-        special_tokens=['<PAD>', '<UNK>'],
-        limit_alphabet=-1,
-        initial_alphabet=[],
-        continuing_subword_prefix='',
-        end_of_word_suffix='',
-        show_progress=True,
-        max_piece_length=16
-    )
-    tokenizer = BpeTokenizer()
-    # word_counts = Counter(
-    #     'the quick brown fox jumps over the lazy dog oh dog 00000001111111000'.split(' '))
+
     word_counts = defaultdict(int)
     with open("./data/train_BPE.txt", 'r') as f:
         for line in f.readlines():
-            for word in line.strip().split():
+            for word in line.strip().split(','):
                 word_counts[word] += 1
+    print('Words:', len(word_counts))
+    trainer = BpeTrainer(
+        vocab_size=10000,
+        min_frequency=20,
+        special_tokens=['<PAD>', '<UNK>'],
+        limit_alphabet=2000,
+        initial_alphabet=[],
+        continuing_subword_prefix='##',
+        end_of_word_suffix='@@',
+        show_progress=True,
+        max_piece_length=16
+    )
     trainer.do_train(word_counts)
