@@ -1,0 +1,178 @@
+{
+  "purpose": "Persist provenance for quick token-count quality proxy runs; this is not a downstream model quality evaluation.",
+  "training_runs": {
+    "binary_sha256": "f2af9196829d5493aab21816c5556ad9c994fe2f3df4849e18325e028ada0df2",
+    "commands": [
+      {
+        "command": [
+          "/root/code/efficient_bpe/rust/target/release/ablation",
+          "--input",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quick/quick-en-continuous-262144.json",
+          "--variant",
+          "parallel_certified",
+          "--workers",
+          "1",
+          "--bounds",
+          "checked",
+          "--rules",
+          "512",
+          "--min-frequency",
+          "2",
+          "--trace",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quality-quick-v1/en-exact.json"
+        ],
+        "trace_sha256": "f9e879995998b119519d5b230335a03e173d6f4f9c69e83eee257dc49798dc75",
+        "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+        "rules": 512
+      },
+      {
+        "command": [
+          "/root/code/efficient_bpe/rust/target/release/ablation",
+          "--input",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quick/quick-en-continuous-262144.json",
+          "--variant",
+          "parallel_batch_relaxed",
+          "--workers",
+          "1",
+          "--bounds",
+          "checked",
+          "--rules",
+          "512",
+          "--min-frequency",
+          "2",
+          "--trace",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quality-quick-v1/en-relaxed.json"
+        ],
+        "trace_sha256": "54dec357749db1154f3b9ed61cf8ecfb001ece7222ea74d517fa76ebf4045de5",
+        "fingerprint": "dc6adddbcede12ca2394e319ecb8099e287a5305f14193ed88b84243e93e268b",
+        "rules": 512
+      },
+      {
+        "command": [
+          "/root/code/efficient_bpe/rust/target/release/ablation",
+          "--input",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quick/quick-zh-continuous-262144.json",
+          "--variant",
+          "parallel_certified",
+          "--workers",
+          "1",
+          "--bounds",
+          "checked",
+          "--rules",
+          "512",
+          "--min-frequency",
+          "2",
+          "--trace",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quality-quick-v1/zh-exact.json"
+        ],
+        "trace_sha256": "f16f47922b7dcbc7d926a8df93cb87883a115858c94294d54681e4b637352afd",
+        "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+        "rules": 512
+      },
+      {
+        "command": [
+          "/root/code/efficient_bpe/rust/target/release/ablation",
+          "--input",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quick/quick-zh-continuous-262144.json",
+          "--variant",
+          "parallel_batch_relaxed",
+          "--workers",
+          "1",
+          "--bounds",
+          "checked",
+          "--rules",
+          "512",
+          "--min-frequency",
+          "2",
+          "--trace",
+          "/root/code/efficient_bpe/rust/fixtures/batch-quality-quick-v1/zh-relaxed.json"
+        ],
+        "trace_sha256": "bbfdd4fa4358b381be1222b4eea371a4031fc2d8479963e7122700db1e9505a1",
+        "fingerprint": "cf97b9180831ab9f43b7213eaef0ef8a2406a347f794bddb5d706fb66becdada",
+        "rules": 512
+      }
+    ]
+  },
+  "scoring": {
+    "tool": "rust/tools/batch_quality.py",
+    "tool_sha256": "8f21b424d323397d383377fdf8bd1ac9ca76dee14c365557aaee9605a18a3049",
+    "command_working_directory": "/root/code/efficient_bpe",
+    "scoring_commands": [
+      {
+        "language": "en",
+        "command": [
+          "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+          "rust/tools/batch_quality.py",
+          "--quick",
+          "--quick-bytes",
+          "262144",
+          "--train-case",
+          "en-4m-continuous",
+          "--quick-fixture",
+          "rust/fixtures/batch-quick/quick-en-continuous-262144.json",
+          "--trace",
+          "exact=rust/fixtures/batch-quality-quick-v1/en-exact.json",
+          "--trace",
+          "relaxed=rust/fixtures/batch-quality-quick-v1/en-relaxed.json",
+          "--reference",
+          "exact"
+        ],
+        "output": "rust/batch_results/quality-quick-v1/en.json",
+        "output_sha256": "d6d43771f64a81b503353c4dce9872198352741f0058a2eb5d3e68defa0580b3",
+        "elapsed_seconds_observed": 7.691,
+        "elapsed_note": "Single observed wall time; concurrent cargo activity was running, so this is not performance data.",
+        "train_bytes": 262144,
+        "heldout_bytes": 262144,
+        "heldout_byte_range": [
+          262144,
+          524288
+        ],
+        "heldout_utf8_tail_trim_bytes": 0,
+        "exact_training_tokens": 116672,
+        "exact_heldout_tokens": 118746,
+        "relaxed_training_tokens": 136773,
+        "relaxed_heldout_tokens": 137241,
+        "relaxed_heldout_delta_percent_vs_exact": 15.575261482492042
+      },
+      {
+        "language": "zh",
+        "command": [
+          "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+          "rust/tools/batch_quality.py",
+          "--quick",
+          "--quick-bytes",
+          "262144",
+          "--train-case",
+          "zh-4m-continuous",
+          "--quick-fixture",
+          "rust/fixtures/batch-quick/quick-zh-continuous-262144.json",
+          "--trace",
+          "exact=rust/fixtures/batch-quality-quick-v1/zh-exact.json",
+          "--trace",
+          "relaxed=rust/fixtures/batch-quality-quick-v1/zh-relaxed.json",
+          "--reference",
+          "exact"
+        ],
+        "output": "rust/batch_results/quality-quick-v1/zh.json",
+        "output_sha256": "9b678e88e440b12e4726d3f78a1872e90d45e01e09789ee8d8ec635136e3c24c",
+        "elapsed_seconds_observed": 1.442,
+        "elapsed_note": "Single observed wall time; concurrent cargo activity was running, so this is not performance data.",
+        "train_bytes": 262144,
+        "heldout_bytes": 262142,
+        "heldout_byte_range": [
+          262144,
+          524286
+        ],
+        "heldout_utf8_tail_trim_bytes": 2,
+        "exact_training_tokens": 82368,
+        "exact_heldout_tokens": 84038,
+        "relaxed_training_tokens": 85416,
+        "relaxed_heldout_tokens": 86089,
+        "relaxed_heldout_delta_percent_vs_exact": 2.4405626026321428
+      }
+    ],
+    "timing_caveat": "Observed elapsed times include unknown concurrent cargo contention and must not be interpreted as performance results or compared with trainer benchmarks.",
+    "quality_scope": "Token counts / compression proxy only; not downstream model quality. Same 512-round merge traces were used for exact and relaxed methods.",
+    "semantics": "Training uses the first 262144 bytes; heldout is the immediately following byte window, trimmed only at the end to a complete UTF-8 scalar boundary. Heldout unseen Unicode scalars remain unmergeable atomic IDs."
+  }
+}

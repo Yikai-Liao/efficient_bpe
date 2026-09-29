@@ -1,0 +1,34 @@
+{
+  "binary_sha256": "0d497edd29969a04b5a86a5b37e19daccbcf6f0ab3d699b12dec16db5642d9c4",
+  "repeats": 1,
+  "mode": "quick",
+  "purpose": "Screen changes cheaply; do not infer server-scale speedup from small one-shot samples.",
+  "protocol": "Entire child process uses p CPUs including the coordinator; p=1 and scalar both use CPU 5.",
+  "stages": [
+    {
+      "name": "quick-exact",
+      "command": [
+        "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+        "/root/code/efficient_bpe/rust/tools/ablation_benchmark.py",
+        "--profile",
+        "all",
+        "--manifest",
+        "/root/code/efficient_bpe/rust/batch_results/quick-fixtures-262144-512.json",
+        "--cases",
+        "quick-en-continuous-262144,quick-zh-continuous-262144",
+        "--variants",
+        "combined_filtered,parallel_certified,parallel_pair_owned",
+        "--workers",
+        "1,4",
+        "--bounds",
+        "both",
+        "--parallel-core-budget",
+        "workers",
+        "--repeats",
+        "1",
+        "--output",
+        "/root/code/efficient_bpe/rust/batch_results/pair-owned-quick-v1/quick-exact.jsonl"
+      ]
+    }
+  ]
+}

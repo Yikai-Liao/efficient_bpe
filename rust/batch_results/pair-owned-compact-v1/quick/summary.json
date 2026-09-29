@@ -1,0 +1,146 @@
+[
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.141683594,
+    "median_vm_hwm_mib": 9.8359375
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 1,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.148072095,
+    "median_vm_hwm_mib": 9.77734375
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.08056448,
+    "median_vm_hwm_mib": 11.70703125
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 4,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.098393525,
+    "median_vm_hwm_mib": 11.59765625
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.12791582,
+    "median_vm_hwm_mib": 9.5703125
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 1,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.143762899,
+    "median_vm_hwm_mib": 9.67578125
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.077854304,
+    "median_vm_hwm_mib": 11.55078125
+  },
+  {
+    "case_id": "quick-en-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 4,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.103512021,
+    "median_vm_hwm_mib": 11.66015625
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.059456107,
+    "median_vm_hwm_mib": 7.18359375
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 1,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.082055605,
+    "median_vm_hwm_mib": 7.14453125
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.047656579,
+    "median_vm_hwm_mib": 9.6875
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned",
+    "workers": 4,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.070266799,
+    "median_vm_hwm_mib": 10.1015625
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.063988879,
+    "median_vm_hwm_mib": 7.01953125
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 1,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.057743919,
+    "median_vm_hwm_mib": 7.10546875
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.047220739,
+    "median_vm_hwm_mib": 10.3828125
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "variant": "parallel_pair_owned_compact",
+    "workers": 4,
+    "bounds": "unchecked",
+    "samples": 1,
+    "median_call_seconds": 0.046924549,
+    "median_vm_hwm_mib": 9.84765625
+  }
+]

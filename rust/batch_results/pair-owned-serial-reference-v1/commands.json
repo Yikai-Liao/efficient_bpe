@@ -1,0 +1,34 @@
+{
+  "binary_sha256": "0d497edd29969a04b5a86a5b37e19daccbcf6f0ab3d699b12dec16db5642d9c4",
+  "repeats": 1,
+  "mode": "smoke",
+  "purpose": "Scaling diagnostic",
+  "protocol": "Entire child process uses p CPUs including the coordinator; p=1 and scalar both use CPU 5.",
+  "stages": [
+    {
+      "name": "smoke-exact",
+      "command": [
+        "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+        "/root/code/efficient_bpe/rust/tools/ablation_benchmark.py",
+        "--profile",
+        "all",
+        "--manifest",
+        "/root/code/efficient_bpe/rust/ablation_results/fixtures.json",
+        "--cases",
+        "en-4m-continuous,zh-4m-continuous",
+        "--variants",
+        "combined_filtered_halfword",
+        "--workers",
+        "1,4",
+        "--bounds",
+        "checked",
+        "--parallel-core-budget",
+        "workers",
+        "--repeats",
+        "1",
+        "--output",
+        "/root/code/efficient_bpe/rust/batch_results/pair-owned-serial-reference-v1/smoke-exact.jsonl"
+      ]
+    }
+  ]
+}

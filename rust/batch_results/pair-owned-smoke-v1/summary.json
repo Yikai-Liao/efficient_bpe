@@ -1,0 +1,92 @@
+[
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "combined_filtered",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.717658212,
+    "median_vm_hwm_mib": 95.2890625
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_certified",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 2.643437557,
+    "median_vm_hwm_mib": 117.5703125
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_certified",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.289413547,
+    "median_vm_hwm_mib": 146.68359375
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_pair_owned",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 2.824418652,
+    "median_vm_hwm_mib": 110.75
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_pair_owned",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.028153048,
+    "median_vm_hwm_mib": 137.5703125
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "combined_filtered",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.175316048,
+    "median_vm_hwm_mib": 101.65625
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_certified",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.5929619179999999,
+    "median_vm_hwm_mib": 120.02734375
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_certified",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.845439852,
+    "median_vm_hwm_mib": 122.96875
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_pair_owned",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.441348844,
+    "median_vm_hwm_mib": 122.66796875
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_pair_owned",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.604357048,
+    "median_vm_hwm_mib": 118.1796875
+  }
+]

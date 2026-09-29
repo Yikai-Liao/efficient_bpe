@@ -1,0 +1,20 @@
+[
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "combined_filtered_halfword",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.8021616150000002,
+    "median_vm_hwm_mib": 86.53125
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "combined_filtered_halfword",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.0194379,
+    "median_vm_hwm_mib": 96.4921875
+  }
+]

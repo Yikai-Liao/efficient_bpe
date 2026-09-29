@@ -15,6 +15,8 @@ mod occurrence_snapshot;
 mod piece;
 #[path = "parallel_sharded.rs"]
 mod sharded;
+#[path = "parallel_sparse_owner.rs"]
+mod sparse_owner;
 
 use super::{Options, Result, validate};
 use crate::{Prepared, Rule, TrainError, TrainOptions, TrainResult};
@@ -164,6 +166,10 @@ pub fn train(
             | "certified_single"
             | "batch_relaxed"
             | "pair_owned"
+            | "pair_owned_single"
+            | "pair_owned_compact"
+            | "sparse_owner"
+            | "sparse_owner_all"
     ) {
         return Err(TrainError::InvalidInput("unknown parallel mode"));
     }
@@ -183,6 +189,34 @@ pub fn train(
         return Ok(Result { core, metrics });
     }
     match mode {
+        "sparse_owner_all" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                sparse_owner::train_all::<true>(input, options)
+            } else {
+                sparse_owner::train_all::<false>(input, options)
+            }
+        }
+        "pair_owned_single" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                sharded::train::<true>(input, options, 1)
+            } else {
+                sharded::train::<false>(input, options, 1)
+            }
+        }
+        "sparse_owner" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                sparse_owner::train::<true>(input, options)
+            } else {
+                sparse_owner::train::<false>(input, options)
+            }
+        }
+        "pair_owned_compact" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                sharded::train_compact::<true>(input, options, 256)
+            } else {
+                sharded::train_compact::<false>(input, options, 256)
+            }
+        }
         "pair_owned" => {
             if options.bounds == crate::Bounds::Unchecked {
                 sharded::train::<true>(input, options, 256)

@@ -462,6 +462,13 @@ def self_test():
                "weight_groups": 1}
         if read_single_piece_weight(row, fixture_root) != 2:
             raise AssertionError("prepared single-piece weight was not read")
+    fixture_body, quick_ids = one_piece_fixture("aba🙂")
+    quick_wire = json.loads(fixture_body)
+    expected_ids = {"a": 1, "b": 2, "🙂": 3}
+    if quick_ids != expected_ids or quick_wire != {
+            "corpus": [0, 1, 2, 1, 3, 0],
+            "initial_lengths": [1, 1, 1, 1], "pivots": [1], "weights": [1]}:
+        raise AssertionError("quick fixture did not reproduce dense sorted scalar IDs")
     weighted = describe_count(7, 14, 14, 0, piece_weight=2)
     if weighted["tokens"] != 7 or weighted["weighted_token_mass"] != 14:
         raise AssertionError("piece weight must scale token mass, not re-encode the text")
@@ -489,6 +496,91 @@ def chars_to_ids(text):
     return {scalar: index + 1 for index, scalar in enumerate(alphabet)}
 
 
+def one_piece_fixture(text):
+    """Return canonical native input bytes and the matching dense char IDs."""
+    alphabet_ids = chars_to_ids(text)
+    corpus = [0]
+    corpus.extend(alphabet_ids[scalar] for scalar in text)
+    corpus.append(0)
+    prepared = {
+        "corpus": corpus,
+        "initial_lengths": [1] * (len(alphabet_ids) + 1),
+        "pivots": [1],
+        "weights": [1],
+    }
+    body = (json.dumps(prepared, separators=(",", ":"), ensure_ascii=False) + "\n").encode("utf-8")
+    return body, alphabet_ids
+
+
+def quick_slices(train_row, data_dir, source_manifest, byte_cap):
+    if byte_cap <= 0:
+        raise ValueError("quick byte cap must be positive")
+    if not re.fullmatch(r"(?:en|zh)-4m-continuous", train_row.get("case_id", "")):
+        raise ValueError("quick mode requires an existing en/zh 4 MiB continuous source")
+    train_path, source = continuous_case_path(train_row, data_dir)
+    revision = verify_upstream_revision(source_manifest, train_row, train_row)
+    if byte_cap * 2 > len(source):
+        raise ValueError("quick training+heldout windows exceed the fixed 4 MiB source")
+    train_raw = source[:byte_cap]
+    heldout_window = source[byte_cap:2 * byte_cap]
+    try:
+        train_text = train_raw.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError(
+            "quick training byte cap splits a UTF-8 scalar; choose a nearby "
+            "cap whose training boundary is valid"
+        ) from error
+    try:
+        heldout_text = heldout_window.decode("utf-8")
+        heldout_raw = heldout_window
+    except UnicodeDecodeError as error:
+        # Keep the heldout window adjacent to training but trim at most one
+        # incomplete trailing scalar. This allows exact byte windows for ASCII
+        # and character-aligned sources while remaining explicit for UTF-8.
+        if error.reason != "unexpected end of data" or len(heldout_window) - error.start > 4:
+            raise ValueError("quick heldout window contains invalid UTF-8") from error
+        heldout_raw = heldout_window[:error.start]
+        heldout_text = heldout_raw.decode("utf-8")
+    return {
+        "path": train_path,
+        "full_source": source,
+        "full_source_sha256": sha256(source),
+        "training_raw": train_raw,
+        "heldout_raw": heldout_raw,
+        "training_text": train_text,
+        "heldout_text": heldout_text,
+        "source_revision": revision,
+        "byte_cap": byte_cap,
+    }
+
+
+def write_quick_fixture(path, train_row, data_dir, source_manifest, byte_cap):
+    slices = quick_slices(train_row, data_dir, source_manifest, byte_cap)
+    body, alphabet_ids = one_piece_fixture(slices["training_text"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("xb") as stream:
+        stream.write(body)
+    return {
+        "fixture": str(path),
+        "fixture_sha256": sha256(body),
+        "source": str(slices["path"]),
+        "source_revision": slices["source_revision"],
+        "source_sha256": slices["full_source_sha256"],
+        "training_byte_range": [0, byte_cap],
+        "training_sha256": sha256(slices["training_raw"]),
+        "heldout_byte_range": [byte_cap, byte_cap + len(slices["heldout_raw"])],
+        "heldout_requested_bytes": byte_cap,
+        "heldout_sha256": sha256(slices["heldout_raw"]),
+        "training_bytes": len(slices["training_raw"]),
+        "heldout_bytes": len(slices["heldout_raw"]),
+        "training_unicode_scalars": len(slices["training_text"]),
+        "heldout_unicode_scalars": len(slices["heldout_text"]),
+        "initial_alphabet_size": len(alphabet_ids),
+        "corpus_positions": len(slices["training_text"]) + 2,
+        "piece_weight": 1,
+    }
+
+
 def describe_count(count, raw_bytes, chars, unseen, *, piece_weight=1):
     weighted_mass = count * piece_weight
     return {
@@ -508,29 +600,50 @@ def describe_count(count, raw_bytes, chars, unseen, *, piece_weight=1):
 
 def run(args):
     train_row = find_case(args.train_manifest, args.train_case)
-    heldout_row = find_case(args.heldout_manifest, args.heldout_case)
-    train_path, train_raw = continuous_case_path(train_row, args.data_dir)
-    heldout_path, heldout_raw = continuous_case_path(heldout_row, args.data_dir)
-    revision = verify_upstream_revision(args.source_manifest, train_row, heldout_row)
-    train_lang = train_row["case_id"].split("-", 1)[0]
-    heldout_lang = heldout_row["case_id"].split("-", 1)[0]
-    if train_lang != heldout_lang:
-        raise ValueError("training and heldout cases must use the same language")
-    if len(heldout_raw) <= len(train_raw):
-        raise ValueError("heldout source must be longer than the training prefix")
-    prefix = heldout_raw[:len(train_raw)]
-    if prefix != train_raw or sha256(prefix) != train_row["input_sha256"]:
-        raise ValueError("training text is not the exact byte prefix of heldout source")
-    heldout_raw_bytes = heldout_raw[len(train_raw):]
-    train_text = train_raw.decode("utf-8")
-    heldout_text = heldout_raw_bytes.decode("utf-8")
+    quick_fixture_sha = None
+    if args.quick:
+        slices = quick_slices(train_row, args.data_dir, args.source_manifest, args.quick_bytes)
+        train_path = heldout_path = slices["path"]
+        train_raw = slices["training_raw"]
+        heldout_raw_bytes = slices["heldout_raw"]
+        train_text = slices["training_text"]
+        heldout_text = slices["heldout_text"]
+        revision = slices["source_revision"]
+        heldout_case_name = f"{train_row['case_id']}+tail-{args.quick_bytes}"
+        fixture_body, expected_alphabet_ids = one_piece_fixture(train_text)
+        quick_fixture_sha = sha256(fixture_body)
+        if args.quick_fixture:
+            fixture_bytes = args.quick_fixture.read_bytes()
+            if fixture_bytes != fixture_body:
+                raise ValueError("provided quick fixture differs from fixed source prefix")
+    else:
+        heldout_row = find_case(args.heldout_manifest, args.heldout_case)
+        train_path, train_raw = continuous_case_path(train_row, args.data_dir)
+        heldout_path, heldout_raw = continuous_case_path(heldout_row, args.data_dir)
+        revision = verify_upstream_revision(args.source_manifest, train_row, heldout_row)
+        train_lang = train_row["case_id"].split("-", 1)[0]
+        heldout_lang = heldout_row["case_id"].split("-", 1)[0]
+        if train_lang != heldout_lang:
+            raise ValueError("training and heldout cases must use the same language")
+        if len(heldout_raw) <= len(train_raw):
+            raise ValueError("heldout source must be longer than the training prefix")
+        prefix = heldout_raw[:len(train_raw)]
+        if prefix != train_raw or sha256(prefix) != train_row["input_sha256"]:
+            raise ValueError("training text is not the exact byte prefix of heldout source")
+        heldout_raw_bytes = heldout_raw[len(train_raw):]
+        train_text = train_raw.decode("utf-8")
+        heldout_text = heldout_raw_bytes.decode("utf-8")
+        heldout_case_name = heldout_row["case_id"]
     alphabet_ids = chars_to_ids(train_text)
-    train_piece_weight = read_single_piece_weight(train_row)
-    if len(alphabet_ids) != train_row.get("initial_alphabet"):
+    train_piece_weight = 1 if args.quick else read_single_piece_weight(train_row)
+    if args.quick:
+        if alphabet_ids != expected_alphabet_ids:
+            raise AssertionError("quick fixture and replay alphabet mapping differ")
+    elif len(alphabet_ids) != train_row.get("initial_alphabet"):
         raise ValueError("recreated Unicode alphabet size differs from fixture manifest")
-    if train_row.get("corpus_positions") != len(train_text) + 2:
+    if not args.quick and train_row.get("corpus_positions") != len(train_text) + 2:
         raise ValueError("training fixture is not the declared one-piece Unicode sequence")
-    if train_row.get("weight_groups") != 1:
+    if not args.quick and train_row.get("weight_groups") != 1:
         raise ValueError("quality scoring currently requires one weight group")
     if train_text.endswith("\x00") or "\x00" in train_text:
         raise ValueError("NUL is reserved as the prepared-corpus piece separator")
@@ -596,14 +709,29 @@ def run(args):
         "source_revision": revision,
         "training_case": train_row["case_id"],
         "training_source": str(train_path),
-        "training_sha256": train_row["input_sha256"],
+        "training_sha256": sha256(train_raw),
+        "full_source_sha256": train_row["input_sha256"],
         "training_bytes": len(train_raw),
-        "heldout_case": heldout_row["case_id"],
+        "heldout_case": heldout_case_name,
         "heldout_source": str(heldout_path),
         "heldout_prefix_verified": True,
+        "training_heldout_nonoverlap": True,
         "heldout_sha256": sha256(heldout_raw_bytes),
         "heldout_bytes": len(heldout_raw_bytes),
         "initial_alphabet_size": len(alphabet_ids),
+        "initial_alphabet_sha256": sha256(json.dumps(
+            [ord(scalar) for scalar, _ in sorted(alphabet_ids.items(), key=lambda row: row[1])],
+            separators=(",", ":")).encode("ascii")),
+        "unseen_heldout_codepoints": [
+            f"U+{ord(scalar):04X}" for scalar in sorted(set(heldout_text) - set(alphabet_ids))
+        ],
+        "quick": args.quick,
+        "quick_byte_cap": args.quick_bytes if args.quick else None,
+        "quick_training_byte_range": [0, len(train_raw)] if args.quick else None,
+        "quick_heldout_byte_range": [args.quick_bytes,
+                                     args.quick_bytes + len(heldout_raw_bytes)] if args.quick else None,
+        "quick_heldout_requested_bytes": args.quick_bytes if args.quick else None,
+        "quick_fixture_sha256": quick_fixture_sha,
         "reference": reference,
         "results": scored,
     }
@@ -620,11 +748,30 @@ def main():
     parser.add_argument("--source-manifest", type=Path, default=DEFAULT_SOURCE_MANIFEST)
     parser.add_argument("--data-dir", type=Path, default=DATA)
     parser.add_argument("--reference", help="baseline trace label; defaults to first --trace")
+    parser.add_argument("--quick", action="store_true",
+                        help="score adjacent train/heldout windows from the fixed 4 MiB source")
+    parser.add_argument("--quick-bytes", type=int, default=256 * 1024,
+                        help="bytes per quick train and heldout window (default: 262144)")
+    parser.add_argument("--quick-fixture", type=Path,
+                        help="prepared one-piece fixture used to produce quick traces")
+    parser.add_argument("--prepare-quick-fixture", type=Path,
+                        help="write a deterministic one-piece prefix fixture, then exit")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     if args.self_test:
         self_test()
         return
+    if args.prepare_quick_fixture:
+        train_row = find_case(args.train_manifest, args.train_case)
+        metadata = write_quick_fixture(args.prepare_quick_fixture, train_row,
+                                       args.data_dir, args.source_manifest,
+                                       args.quick_bytes)
+        print(json.dumps(metadata, indent=2, ensure_ascii=False))
+        return
+    if args.quick and not args.quick_fixture:
+        parser.error("--quick scoring requires --quick-fixture to bind traces to the prepared input")
+    if args.quick and args.quick_fixture and not args.quick_fixture.is_file():
+        parser.error(f"quick fixture does not exist: {args.quick_fixture}")
     if len(args.trace) < 2:
         parser.error("provide at least two --trace LABEL=PATH options")
     result = run(args)

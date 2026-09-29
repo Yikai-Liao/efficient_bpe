@@ -1,17 +1,23 @@
-//! Certified batch training with worker-owned occurrence fragments and pair scalars.
+//! Exact single-rule BPE with sparse position and scalar owner activation.
 //!
-//! The same persistent workers alternate between position and pair-owner
-//! phases. The coordinator merges only small, sorted candidate frontiers.
+//! A pair's historical position holders are fixed at birth. The coordinator
+//! caches only one exact head per owner and wakes the holders of the winner.
 
-use super::{
-    CoreStats, HeapEntry, add_delta, apply_delta, core_result, metric, pair_key, pop_best,
-};
+#[path = "sparse_frontier.rs"]
+mod sparse_frontier;
+#[path = "worker_groups.rs"]
+mod worker_groups;
+
+use sparse_frontier::{Frontier, Head};
+use worker_groups::WorkerGroups;
+
+use super::{CoreStats, HeapEntry, add_delta, core_result, metric, pair_key};
 use crate::ablation::{Options, Result};
 use crate::{Prepared, Rule, TrainError};
-use std::collections::{BTreeMap, BinaryHeap, HashMap, HashSet, VecDeque};
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::collections::{BTreeMap, BinaryHeap, HashMap, HashSet};
+use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
 use std::sync::mpsc::{self, Receiver, Sender};
-use std::sync::{Arc, Mutex, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock, RwLock};
 use std::thread::{self, JoinHandle};
 use std::time::Instant;
 
@@ -101,9 +107,6 @@ impl<const COMPACT: bool> PlanBuffer<COMPACT> {
             self.wide.capacity() * std::mem::size_of::<Plan>()
         }
     }
-    fn group_capacity_bytes(&self) -> usize {
-        self.groups.capacity() * std::mem::size_of::<PlanGroup>()
-    }
 }
 
 #[derive(Clone, Copy)]
@@ -148,14 +151,12 @@ struct PreparedReply {
     stale: usize,
     valid: usize,
     plan_capacity_bytes: usize,
-    group_capacity_bytes: usize,
     edge_capacity: usize,
     work_seconds: f64,
 }
 
 struct GatheredReply {
     valid_positions: Vec<u32>,
-    valid_capacity: usize,
     visited: usize,
     stale: usize,
     work_seconds: f64,
@@ -164,43 +165,63 @@ struct GatheredReply {
 struct AppliedReply {
     merges: usize,
     work_seconds: f64,
+    pruned: usize,
 }
 
 struct FinalReply {
     memory: IndexMemory,
     peak_memory: IndexMemory,
     plan_peak_bytes: usize,
-    group_peak_bytes: usize,
     edge_peak_bytes: usize,
     scalar_keys: usize,
     scalar_capacity: usize,
     heap_capacity: usize,
-    worker_plan_seconds: f64,
-    worker_apply_seconds: f64,
+    router_capacity: usize,
+    heap_pops: usize,
 }
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+struct Delta {
+    amount: i128,
+    key: u64,
+    holders: u64,
+}
+const _: [(); 32] = [(); std::mem::size_of::<Delta>()];
+
+#[derive(Clone, Copy)]
+struct PairScalar {
+    frequency: u64,
+    holders: u64,
+}
+const _: [(); 16] = [(); std::mem::size_of::<PairScalar>()];
 
 enum Command {
     BuildScalars,
     BuildIndex,
-    Prefetch(usize),
-    ReturnCandidates(Arc<HashSet<u64>>),
-    PrepareBatch {
-        rules: Arc<Vec<RuleSpec>>,
-        selected: Arc<HashMap<u64, u32>>,
+    Prepare {
+        epoch: u64,
+        rule: RuleSpec,
     },
-    GatherSelf(RuleSpec),
+    GatherSelf {
+        epoch: u64,
+        rule: RuleSpec,
+    },
     PrepareSelf {
+        epoch: u64,
         rule: RuleSpec,
         positions: Arc<Vec<u32>>,
         start: usize,
         end: usize,
     },
     Reduce {
+        epoch: u64,
         first_new_id: u32,
-        rules: Arc<Vec<RuleSpec>>,
-        drops: Arc<Vec<OnceLock<Arc<HashSet<u64>>>>>,
+        selected: Option<RuleSpec>,
     },
-    Apply(Arc<Vec<OnceLock<Arc<HashSet<u64>>>>>),
+    Apply {
+        epoch: u64,
+    },
     Finish,
 }
 
@@ -211,27 +232,25 @@ enum Reply {
         count_capacity: usize,
     },
     Scalars {
+        top: Option<Head>,
         keys: usize,
         capacity: usize,
         heap_capacity: usize,
         eligible_capacity: usize,
     },
     Built(IndexMemory),
-    Candidates {
-        entries: Vec<HeapEntry>,
-        pops: usize,
-    },
-    Returned,
-    Reduced {
-        delta_keys: usize,
-        scalar_keys: usize,
-        scalar_capacity: usize,
-        heap_capacity: usize,
-        dropped: usize,
-        seconds: f64,
-    },
     Prepared(PreparedReply),
     Gathered(GatheredReply),
+    Reduced {
+        top: Option<Head>,
+        recipients: u64,
+        delta_keys: usize,
+        dropped: usize,
+        prune_entries: usize,
+        seconds: f64,
+        scalar_capacity: usize,
+        heap_capacity: usize,
+    },
     Applied(AppliedReply),
     Final(FinalReply),
     Error(TrainError),
@@ -242,7 +261,6 @@ struct Worker {
     replies: Receiver<Reply>,
     handle: Option<JoinHandle<()>>,
 }
-
 impl Drop for Worker {
     fn drop(&mut self) {
         let _ = self.commands.send(Command::Finish);
@@ -428,7 +446,7 @@ fn add_plan<const UNCHECKED: bool, const COMPACT: bool>(
 #[allow(clippy::too_many_arguments)] // The same phase-local buffers serve both planning paths.
 fn prepare_batch<const UNCHECKED: bool, const COMPACT: bool>(
     corpus: &[AtomicU32],
-    lengths: &mut Vec<u32>,
+    lengths: &[u32],
     pivots: &[u32],
     weights: &[u64],
     index: &mut HashMap<u64, Vec<u32>>,
@@ -446,12 +464,11 @@ fn prepare_batch<const UNCHECKED: bool, const COMPACT: bool>(
     let mut stale = 0;
     for &rule in rules {
         let rule_start = plans.len();
-        if rule.new_id as usize != lengths.len() {
+        if lengths.get(rule.new_id as usize) != Some(&rule.new_length) {
             return Err(TrainError::InternalInvariant(
-                "worker token lengths out of order",
+                "shared token lengths out of order",
             ));
         }
-        lengths.push(rule.new_length);
         for raw in take_positions(index, memory, rule.key) {
             visited += 1;
             let pos = raw as usize;
@@ -514,7 +531,6 @@ fn prepare_batch<const UNCHECKED: bool, const COMPACT: bool>(
         stale,
         valid: plans.len(),
         plan_capacity_bytes: plans.capacity_bytes(),
-        group_capacity_bytes: plans.group_capacity_bytes(),
         edge_capacity: new_edges.capacity(),
         work_seconds: started.elapsed().as_secs_f64(),
     })
@@ -523,7 +539,7 @@ fn prepare_batch<const UNCHECKED: bool, const COMPACT: bool>(
 #[allow(clippy::too_many_arguments)] // AA supplies globally selected starts to the shared planner.
 fn prepare_self<const UNCHECKED: bool, const COMPACT: bool>(
     corpus: &[AtomicU32],
-    lengths: &mut Vec<u32>,
+    lengths: &[u32],
     pivots: &[u32],
     weights: &[u64],
     rule: RuleSpec,
@@ -536,12 +552,11 @@ fn prepare_self<const UNCHECKED: bool, const COMPACT: bool>(
     let started = Instant::now();
     plans.clear();
     new_edges.clear();
-    if rule.new_id as usize != lengths.len() {
+    if lengths.get(rule.new_id as usize) != Some(&rule.new_length) {
         return Err(TrainError::InternalInvariant(
-            "worker token lengths out of order",
+            "shared token lengths out of order",
         ));
     }
-    lengths.push(rule.new_length);
     let mut delta = HashMap::new();
     let span = rule.a_length * 2;
     for &raw in &selected_positions[start..end] {
@@ -583,7 +598,6 @@ fn prepare_self<const UNCHECKED: bool, const COMPACT: bool>(
         stale: 0,
         valid: plans.len(),
         plan_capacity_bytes: plans.capacity_bytes(),
-        group_capacity_bytes: plans.group_capacity_bytes(),
         edge_capacity: new_edges.capacity(),
         work_seconds: started.elapsed().as_secs_f64(),
     })
@@ -612,7 +626,7 @@ fn apply_plans<const UNCHECKED: bool, const COMPACT: bool>(
     memory: &mut IndexMemory,
     plans: &mut PlanBuffer<COMPACT>,
     new_edges: &mut Vec<NewEdge>,
-    drop_sets: &[OnceLock<Arc<HashSet<u64>>>],
+    drop_keys: &HashSet<u64>,
 ) -> AppliedReply {
     let started = Instant::now();
     let merged = plans.len();
@@ -643,28 +657,23 @@ fn apply_plans<const UNCHECKED: bool, const COMPACT: bool>(
             );
         }
     }
-    for set in drop_sets {
-        for key in set.get().expect("owner reduction barrier").iter() {
-            let _ = take_positions(index, memory, *key);
-        }
+    for key in drop_keys {
+        let _ = take_positions(index, memory, *key);
     }
     for edge in new_edges.drain(..) {
         let key = edge.key();
-        if !drop_sets[owner_pair(key, drop_sets.len())]
-            .get()
-            .expect("owner reduction barrier")
-            .contains(&key)
-        {
+        if !drop_keys.contains(&key) {
             append_position(index, memory, key, edge.pos);
         }
     }
     AppliedReply {
         merges: merged,
         work_seconds: started.elapsed().as_secs_f64(),
+        pruned: drop_keys.len(),
     }
 }
 
-// A stable two-half mix avoids sending all fresh-ID pairs to one owner.
+// Mix both token IDs; owner and holder grouping are independent.
 #[inline]
 fn owner_pair(key: u64, workers: usize) -> usize {
     let mut x = key ^ (key >> 30);
@@ -674,102 +683,160 @@ fn owner_pair(key: u64, workers: usize) -> usize {
     ((x ^ (x >> 31)) % workers as u64) as usize
 }
 
-type Mailboxes = Arc<Vec<Mutex<Vec<(u64, i128)>>>>;
-type Sets = Arc<Vec<OnceLock<Arc<HashSet<u64>>>>>;
+#[derive(Default)]
+struct EpochInbox {
+    epoch: u64,
+    records: Vec<Delta>,
+}
+type Mailboxes = Arc<Vec<Mutex<EpochInbox>>>;
+type PruneMailboxes = Arc<Vec<Mutex<Vec<(u64, u64)>>>>;
+type EligibleSets = Arc<Vec<OnceLock<Arc<HashSet<u64>>>>>;
 
-fn route(mailboxes: &Mailboxes, values: impl IntoIterator<Item = (u64, i128)>) {
-    let mut buckets: Vec<Vec<(u64, i128)>> = (0..mailboxes.len()).map(|_| Vec::new()).collect();
-    for (key, value) in values {
-        buckets[owner_pair(key, mailboxes.len())].push((key, value));
-    }
-    for (owner, mut bucket) in buckets.into_iter().enumerate() {
-        if !bucket.is_empty() {
-            mailboxes[owner]
-                .lock()
-                .expect("owner mailbox poisoned")
-                .append(&mut bucket);
+struct Router {
+    buckets: Vec<Vec<Delta>>,
+    touched: Vec<usize>,
+}
+impl Router {
+    fn new(workers: usize) -> Self {
+        Self {
+            buckets: (0..workers).map(|_| Vec::new()).collect(),
+            touched: Vec::new(),
         }
     }
-}
-
-fn mailbox_capacity(mailboxes: &Mailboxes) -> usize {
-    mailboxes
-        .iter()
-        .map(|m| m.lock().expect("owner mailbox poisoned").capacity())
-        .sum()
+    fn capacity(&self) -> usize {
+        self.buckets.iter().map(Vec::capacity).sum()
+    }
+    fn route(
+        &mut self,
+        epoch: u64,
+        source: usize,
+        values: impl IntoIterator<Item = (u64, i128)>,
+        mailboxes: &Mailboxes,
+        groups: &WorkerGroups,
+        touched_owners: Option<&AtomicU64>,
+    ) {
+        let holder = groups.bit(source);
+        for (key, amount) in values {
+            let owner = owner_pair(key, self.buckets.len());
+            if self.buckets[owner].is_empty() {
+                self.touched.push(owner);
+            }
+            self.buckets[owner].push(Delta {
+                amount,
+                key,
+                holders: holder,
+            });
+        }
+        for owner in self.touched.drain(..) {
+            let mut inbox = mailboxes[owner].lock().expect("delta mailbox poisoned");
+            assert!(
+                inbox.records.is_empty() || inbox.epoch == epoch,
+                "mixed delta epochs"
+            );
+            inbox.epoch = epoch;
+            inbox.records.append(&mut self.buckets[owner]);
+            if let Some(bits) = touched_owners {
+                bits.fetch_or(groups.bit(owner), Ordering::Relaxed);
+            }
+        }
+    }
 }
 
 #[derive(Default)]
 struct PairState {
-    frequencies: HashMap<u64, u64>,
+    frequencies: HashMap<u64, PairScalar>,
     heap: BinaryHeap<HeapEntry>,
-    held: Vec<HeapEntry>,
+    heap_pops: usize,
 }
-
 impl PairState {
-    fn initialize(&mut self, inbox: &Mutex<Vec<(u64, i128)>>, minimum: u64) -> TrainResult<()> {
-        let mut inbox = inbox.lock().expect("owner mailbox poisoned");
-        for (key, value) in inbox.drain(..) {
-            let value = u64::try_from(value)
+    fn initialize(&mut self, inbox: &Mutex<EpochInbox>, minimum: u64) -> TrainResult<()> {
+        let mut inbox = inbox.lock().expect("initial mailbox poisoned");
+        if inbox.epoch != 0 {
+            return Err(TrainError::InternalInvariant(
+                "initial mailbox epoch mismatch",
+            ));
+        }
+        for delta in inbox.records.drain(..) {
+            let value = u64::try_from(delta.amount)
                 .map_err(|_| TrainError::InternalInvariant("negative initial count"))?;
-            let count = self.frequencies.entry(key).or_default();
-            *count = count
+            let scalar = self.frequencies.entry(delta.key).or_insert(PairScalar {
+                frequency: 0,
+                holders: 0,
+            });
+            scalar.frequency = scalar
+                .frequency
                 .checked_add(value)
                 .ok_or(TrainError::Overflow("initial owner frequency exceeds u64"))?;
+            scalar.holders |= delta.holders;
         }
-        inbox.shrink_to_fit();
-        self.frequencies.retain(|_, count| *count >= minimum);
+        inbox.records.shrink_to_fit();
+        self.frequencies.retain(|_, v| v.frequency >= minimum);
         self.heap = self
             .frequencies
             .iter()
-            .map(|(&key, &frequency)| HeapEntry { key, frequency })
+            .map(|(&key, v)| HeapEntry {
+                key,
+                frequency: v.frequency,
+            })
             .collect();
         Ok(())
     }
-
-    fn prefetch(&mut self, count: usize, minimum: u64) -> (Vec<HeapEntry>, usize) {
-        let mut entries = Vec::with_capacity(count);
-        let mut pops = 0;
-        let mut already: HashSet<u64> = self.held.iter().map(|e| e.key).collect();
-        while entries.len() < count {
-            let Some((key, frequency)) =
-                pop_best(&mut self.heap, &self.frequencies, minimum, &mut pops)
-            else {
-                break;
-            };
-            if already.insert(key) {
-                let entry = HeapEntry { key, frequency };
-                self.held.push(entry);
-                entries.push(entry);
+    fn top(&mut self, minimum: u64) -> Option<Head> {
+        loop {
+            let entry = *self.heap.peek()?;
+            let scalar = self.frequencies.get(&entry.key).copied();
+            match scalar {
+                Some(value) if value.frequency >= minimum && value.frequency == entry.frequency => {
+                    return Some(Head {
+                        key: entry.key,
+                        frequency: value.frequency,
+                        holders: value.holders,
+                    });
+                }
+                Some(value) if value.frequency >= minimum => {
+                    self.heap.pop();
+                    self.heap_pops += 1;
+                    self.heap.push(HeapEntry {
+                        key: entry.key,
+                        frequency: value.frequency,
+                    });
+                }
+                _ => {
+                    self.heap.pop();
+                    self.heap_pops += 1;
+                }
             }
         }
-        (entries, pops)
     }
-
-    fn return_candidates(&mut self, selected: &HashSet<u64>) {
-        for entry in self.held.drain(..) {
-            if !selected.contains(&entry.key) {
-                self.heap.push(entry);
-            }
-        }
-    }
-
+    #[allow(clippy::too_many_arguments)] // Epoch, owner state, and recipient mailboxes are one reduction phase.
     fn reduce(
         &mut self,
-        inbox: &Mutex<Vec<(u64, i128)>>,
+        inbox: &Mutex<EpochInbox>,
+        epoch: u64,
         first_new_id: u32,
-        rules: &[RuleSpec],
+        selected: Option<RuleSpec>,
         minimum: u64,
-    ) -> TrainResult<(HashSet<u64>, usize)> {
-        let mut pending = HashMap::<u64, i128>::new();
-        let mut inbox = inbox.lock().expect("owner mailbox poisoned");
-        for (key, value) in inbox.drain(..) {
-            add_delta(&mut pending, key, value);
+        prune: &PruneMailboxes,
+        groups: &WorkerGroups,
+    ) -> TrainResult<(u64, usize, usize, usize)> {
+        let mut pending = HashMap::<u64, (i128, u64)>::new();
+        let mut inbox = inbox.lock().expect("delta mailbox poisoned");
+        if !inbox.records.is_empty() && inbox.epoch != epoch {
+            return Err(TrainError::InternalInvariant(
+                "delta mailbox epoch mismatch",
+            ));
+        }
+        for delta in inbox.records.drain(..) {
+            let entry = pending.entry(delta.key).or_default();
+            entry.0 += delta.amount;
+            if delta.amount > 0 {
+                entry.1 |= delta.holders;
+            }
         }
         drop(inbox);
         let delta_keys = pending.len();
-        let mut drops = HashSet::new();
-        for (key, change) in pending {
+        let mut retired = HashMap::<u64, u64>::new();
+        for (key, (change, birth_holders)) in pending {
             let fresh = (key >> 32) as u32 >= first_new_id || key as u32 >= first_new_id;
             if !fresh && !self.frequencies.contains_key(&key) {
                 if change > 0 {
@@ -779,40 +846,79 @@ impl PairState {
                 }
                 continue;
             }
-            apply_delta(&mut self.frequencies, key, change)?;
-            let frequency = self.frequencies[&key];
-            if frequency < minimum {
-                drops.insert(key);
+            let scalar = self.frequencies.entry(key).or_insert(PairScalar {
+                frequency: 0,
+                holders: birth_holders,
+            });
+            if fresh {
+                scalar.holders |= birth_holders;
+            }
+            let magnitude = change.unsigned_abs();
+            let magnitude = u64::try_from(magnitude)
+                .map_err(|_| TrainError::Overflow("pair delta exceeds u64"))?;
+            scalar.frequency = if change >= 0 {
+                scalar.frequency.checked_add(magnitude)
+            } else {
+                scalar.frequency.checked_sub(magnitude)
+            }
+            .ok_or(TrainError::InternalInvariant(
+                "owner pair frequency underflow/overflow",
+            ))?;
+            if scalar.frequency < minimum {
+                retired.insert(key, scalar.holders);
             } else if fresh {
-                self.heap.push(HeapEntry { key, frequency });
+                self.heap.push(HeapEntry {
+                    key,
+                    frequency: scalar.frequency,
+                });
             }
         }
-        for rule in rules {
-            // The caller passes only rules owned by this scalar shard.
-            if self.frequencies.get(&rule.key).copied().unwrap_or(0) != 0 {
+        if let Some(rule) = selected {
+            let scalar = self
+                .frequencies
+                .get(&rule.key)
+                .ok_or(TrainError::InternalInvariant(
+                    "selected pair missing at owner",
+                ))?;
+            if scalar.frequency != 0 {
                 return Err(TrainError::InternalInvariant(
-                    "selected pair remained after batch",
+                    "selected pair remained after replacement",
                 ));
             }
-            drops.insert(rule.key);
+            retired.insert(rule.key, scalar.holders);
         }
-        for key in &drops {
+        let mut recipients = 0;
+        let mut prune_entries = 0;
+        for (key, mask) in &retired {
+            for worker in groups.members(*mask) {
+                prune[worker]
+                    .lock()
+                    .expect("prune mailbox poisoned")
+                    .push((epoch, *key));
+                prune_entries += 1;
+                recipients |= groups.bit(worker);
+            }
+        }
+        for key in retired.keys() {
             self.frequencies.remove(key);
         }
-        Ok((drops, delta_keys))
+        Ok((recipients, delta_keys, retired.len(), prune_entries))
     }
 }
 
 #[allow(clippy::too_many_arguments)]
-fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
+fn spawn_worker<const UNCHECKED: bool>(
     worker_id: usize,
     corpus: Arc<Vec<AtomicU32>>,
     pivots: Arc<Vec<u32>>,
     weights: Arc<Vec<u64>>,
-    initial_lengths: Arc<Vec<u32>>,
+    lengths: Arc<RwLock<Vec<u32>>>,
+    groups: Arc<WorkerGroups>,
     initial_mailboxes: Mailboxes,
     delta_mailboxes: Mailboxes,
-    eligibles: Sets,
+    prune_mailboxes: PruneMailboxes,
+    eligibles: EligibleSets,
+    touched_owners: Arc<AtomicU64>,
     start: usize,
     end: usize,
     minimum: u64,
@@ -823,17 +929,19 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
         let mut index = HashMap::<u64, Vec<u32>>::new();
         let mut memory = IndexMemory::default();
         let mut peak_memory = IndexMemory::default();
-        let mut lengths = (*initial_lengths).clone();
         let mut scalars = PairState::default();
-        let first =
-            scan_initial::<UNCHECKED>(&corpus, &pivots, &weights, start, end, None, &mut index);
-        match first {
+        let mut router = Router::new(delta_mailboxes.len());
+        match scan_initial::<UNCHECKED>(&corpus, &pivots, &weights, start, end, None, &mut index) {
             Ok(first) => {
                 let count_keys = first.counts.len();
                 let count_capacity = first.counts.capacity();
-                route(
-                    &initial_mailboxes,
+                router.route(
+                    0,
+                    worker_id,
                     first.counts.into_iter().map(|(k, v)| (k, i128::from(v))),
+                    &initial_mailboxes,
+                    &groups,
+                    None,
                 );
                 if tx
                     .send(Reply::Initial {
@@ -853,13 +961,13 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
         }
         let mut initial_mailboxes = Some(initial_mailboxes);
         let mut eligibles = Some(eligibles);
-        let mut plans = PlanBuffer::<COMPACT>::default();
+        let mut plans = PlanBuffer::<false>::default();
         let mut new_edges = Vec::new();
+        let mut planned_epoch = None;
+        let mut gathered_epoch = None;
+        let mut last_applied_epoch = 0;
         let mut plan_peak_bytes = 0;
-        let mut group_peak_bytes = 0;
         let mut edge_peak_bytes = 0;
-        let mut worker_plan_seconds = 0.0;
-        let mut worker_apply_seconds = 0.0;
         while let Ok(command) = rx.recv() {
             let reply: TrainResult<Reply> = match command {
                 Command::BuildScalars => {
@@ -868,9 +976,10 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
                         let eligible: Arc<HashSet<u64>> =
                             Arc::new(scalars.frequencies.keys().copied().collect());
                         let eligible_capacity = eligible.capacity();
-                        let _ = eligibles.as_ref().expect("eligible set exists")[worker_id]
+                        let _ = eligibles.as_ref().expect("eligible phase exists")[worker_id]
                             .set(eligible);
                         Reply::Scalars {
+                            top: scalars.top(minimum),
                             keys: scalars.frequencies.len(),
                             capacity: scalars.frequencies.capacity(),
                             heap_capacity: scalars.heap.capacity(),
@@ -895,133 +1004,197 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
                         Reply::Built(memory)
                     })
                 }
-                Command::Prefetch(count) => {
-                    let (entries, pops) = scalars.prefetch(count, minimum);
-                    Ok(Reply::Candidates { entries, pops })
-                }
-                Command::ReturnCandidates(selected) => {
-                    scalars.return_candidates(&selected);
-                    Ok(Reply::Returned)
-                }
-                Command::PrepareBatch { rules, selected } => prepare_batch::<UNCHECKED, COMPACT>(
-                    &corpus,
-                    &mut lengths,
-                    &pivots,
-                    &weights,
-                    &mut index,
-                    &mut memory,
-                    &rules,
-                    &selected,
-                    &mut plans,
-                    &mut new_edges,
-                )
-                .map(|mut reply| {
-                    route(&delta_mailboxes, std::mem::take(&mut reply.delta));
-                    plan_peak_bytes = plan_peak_bytes.max(reply.plan_capacity_bytes);
-                    group_peak_bytes = group_peak_bytes.max(reply.group_capacity_bytes);
-                    edge_peak_bytes =
-                        edge_peak_bytes.max(reply.edge_capacity * std::mem::size_of::<NewEdge>());
-                    worker_plan_seconds += reply.work_seconds;
-                    Reply::Prepared(reply)
-                }),
-                Command::GatherSelf(rule) => {
-                    let started = Instant::now();
-                    let mut valid_positions = Vec::new();
-                    let mut visited = 0;
-                    let mut stale = 0;
-                    for raw in take_positions(&mut index, &mut memory, rule.key) {
-                        visited += 1;
-                        if valid_pair::<UNCHECKED>(&corpus, raw as usize, rule).is_some() {
-                            valid_positions.push(raw);
-                        } else {
-                            stale += 1;
+                Command::Prepare { epoch, rule } => {
+                    if epoch <= last_applied_epoch
+                        || planned_epoch.is_some()
+                        || plans.len() != 0
+                        || !new_edges.is_empty()
+                    {
+                        Err(TrainError::InternalInvariant("position plan epoch overlap"))
+                    } else {
+                        let selected = HashMap::from([(rule.key, rule.new_id)]);
+                        let mut result = {
+                            let guard = lengths.read().expect("length table poisoned");
+                            prepare_batch::<UNCHECKED, false>(
+                                &corpus,
+                                &guard,
+                                &pivots,
+                                &weights,
+                                &mut index,
+                                &mut memory,
+                                std::slice::from_ref(&rule),
+                                &selected,
+                                &mut plans,
+                                &mut new_edges,
+                            )
+                        };
+                        if let Ok(reply) = &mut result {
+                            router.route(
+                                epoch,
+                                worker_id,
+                                std::mem::take(&mut reply.delta),
+                                &delta_mailboxes,
+                                &groups,
+                                Some(&touched_owners),
+                            );
+                            planned_epoch = Some(epoch);
+                            plan_peak_bytes = plan_peak_bytes.max(reply.plan_capacity_bytes);
+                            edge_peak_bytes = edge_peak_bytes
+                                .max(reply.edge_capacity * std::mem::size_of::<NewEdge>());
                         }
+                        result.map(Reply::Prepared)
                     }
-                    Ok(Reply::Gathered(GatheredReply {
-                        valid_capacity: valid_positions.capacity(),
-                        valid_positions,
-                        visited,
-                        stale,
-                        work_seconds: started.elapsed().as_secs_f64(),
-                    }))
+                }
+                Command::GatherSelf { epoch, rule } => {
+                    if epoch <= last_applied_epoch
+                        || gathered_epoch.is_some()
+                        || planned_epoch.is_some()
+                    {
+                        Err(TrainError::InternalInvariant("AA gather epoch overlap"))
+                    } else {
+                        let started = Instant::now();
+                        let mut valid_positions = Vec::new();
+                        let mut visited = 0;
+                        let mut stale = 0;
+                        for raw in take_positions(&mut index, &mut memory, rule.key) {
+                            visited += 1;
+                            if valid_pair::<UNCHECKED>(&corpus, raw as usize, rule).is_some() {
+                                valid_positions.push(raw)
+                            } else {
+                                stale += 1
+                            }
+                        }
+                        gathered_epoch = Some(epoch);
+                        Ok(Reply::Gathered(GatheredReply {
+                            valid_positions,
+                            visited,
+                            stale,
+                            work_seconds: started.elapsed().as_secs_f64(),
+                        }))
+                    }
                 }
                 Command::PrepareSelf {
+                    epoch,
                     rule,
                     positions,
                     start,
                     end,
-                } => prepare_self::<UNCHECKED, COMPACT>(
-                    &corpus,
-                    &mut lengths,
-                    &pivots,
-                    &weights,
-                    rule,
-                    &positions,
-                    start,
-                    end,
-                    &mut plans,
-                    &mut new_edges,
-                )
-                .map(|mut reply| {
-                    route(&delta_mailboxes, std::mem::take(&mut reply.delta));
-                    plan_peak_bytes = plan_peak_bytes.max(reply.plan_capacity_bytes);
-                    group_peak_bytes = group_peak_bytes.max(reply.group_capacity_bytes);
-                    edge_peak_bytes =
-                        edge_peak_bytes.max(reply.edge_capacity * std::mem::size_of::<NewEdge>());
-                    worker_plan_seconds += reply.work_seconds;
-                    Reply::Prepared(reply)
-                }),
+                } => {
+                    if gathered_epoch != Some(epoch) || planned_epoch.is_some() {
+                        Err(TrainError::InternalInvariant("AA prepare without gather"))
+                    } else {
+                        let mut result = {
+                            let guard = lengths.read().expect("length table poisoned");
+                            prepare_self::<UNCHECKED, false>(
+                                &corpus,
+                                &guard,
+                                &pivots,
+                                &weights,
+                                rule,
+                                &positions,
+                                start,
+                                end,
+                                &mut plans,
+                                &mut new_edges,
+                            )
+                        };
+                        if let Ok(reply) = &mut result {
+                            router.route(
+                                epoch,
+                                worker_id,
+                                std::mem::take(&mut reply.delta),
+                                &delta_mailboxes,
+                                &groups,
+                                Some(&touched_owners),
+                            );
+                            planned_epoch = Some(epoch);
+                            gathered_epoch = None;
+                            plan_peak_bytes = plan_peak_bytes.max(reply.plan_capacity_bytes);
+                            edge_peak_bytes = edge_peak_bytes
+                                .max(reply.edge_capacity * std::mem::size_of::<NewEdge>());
+                        }
+                        result.map(Reply::Prepared)
+                    }
+                }
                 Command::Reduce {
+                    epoch,
                     first_new_id,
-                    rules,
-                    drops,
+                    selected,
                 } => {
                     let started = Instant::now();
-                    let owned: Vec<RuleSpec> = rules
-                        .iter()
-                        .copied()
-                        .filter(|r| owner_pair(r.key, delta_mailboxes.len()) == worker_id)
-                        .collect();
                     scalars
-                        .reduce(&delta_mailboxes[worker_id], first_new_id, &owned, minimum)
-                        .map(|(drop_keys, delta_keys)| {
-                            let dropped = drop_keys.len();
-                            let _ = drops[worker_id].set(Arc::new(drop_keys));
-                            Reply::Reduced {
+                        .reduce(
+                            &delta_mailboxes[worker_id],
+                            epoch,
+                            first_new_id,
+                            selected,
+                            minimum,
+                            &prune_mailboxes,
+                            &groups,
+                        )
+                        .map(
+                            |(recipients, delta_keys, dropped, prune_entries)| Reply::Reduced {
+                                top: scalars.top(minimum),
+                                recipients,
                                 delta_keys,
-                                scalar_keys: scalars.frequencies.len(),
+                                dropped,
+                                prune_entries,
+                                seconds: started.elapsed().as_secs_f64(),
                                 scalar_capacity: scalars.frequencies.capacity(),
                                 heap_capacity: scalars.heap.capacity(),
-                                dropped,
-                                seconds: started.elapsed().as_secs_f64(),
-                            }
-                        })
+                            },
+                        )
                 }
-                Command::Apply(drops) => {
-                    let reply = apply_plans::<UNCHECKED, COMPACT>(
-                        &corpus,
-                        &mut index,
-                        &mut memory,
-                        &mut plans,
-                        &mut new_edges,
-                        &drops,
-                    );
-                    sample_memory(&index, &mut memory, &mut peak_memory);
-                    worker_apply_seconds += reply.work_seconds;
-                    Ok(Reply::Applied(reply))
+                Command::Apply { epoch } => {
+                    if epoch <= last_applied_epoch
+                        || planned_epoch.is_some_and(|e| e != epoch)
+                        || gathered_epoch.is_some()
+                    {
+                        Err(TrainError::InternalInvariant(
+                            "position apply epoch mismatch",
+                        ))
+                    } else {
+                        let mut keys = HashSet::new();
+                        let mut mailbox = prune_mailboxes[worker_id]
+                            .lock()
+                            .expect("prune mailbox poisoned");
+                        let mut bad_epoch = false;
+                        for (from, key) in mailbox.drain(..) {
+                            if from != epoch {
+                                bad_epoch = true;
+                            }
+                            keys.insert(key);
+                        }
+                        drop(mailbox);
+                        if bad_epoch {
+                            Err(TrainError::InternalInvariant("stale prune epoch"))
+                        } else {
+                            let reply = apply_plans::<UNCHECKED, false>(
+                                &corpus,
+                                &mut index,
+                                &mut memory,
+                                &mut plans,
+                                &mut new_edges,
+                                &keys,
+                            );
+                            sample_memory(&index, &mut memory, &mut peak_memory);
+                            planned_epoch = None;
+                            last_applied_epoch = epoch;
+                            Ok(Reply::Applied(reply))
+                        }
+                    }
                 }
                 Command::Finish => {
                     let _ = tx.send(Reply::Final(FinalReply {
                         memory,
                         peak_memory,
                         plan_peak_bytes,
-                        group_peak_bytes,
                         edge_peak_bytes,
                         scalar_keys: scalars.frequencies.len(),
                         scalar_capacity: scalars.frequencies.capacity(),
                         heap_capacity: scalars.heap.capacity(),
-                        worker_plan_seconds,
-                        worker_apply_seconds,
+                        router_capacity: router.capacity(),
+                        heap_pops: scalars.heap_pops,
                     }));
                     return;
                 }
@@ -1050,156 +1223,30 @@ fn recv(worker: &Worker) -> TrainResult<Reply> {
     match worker
         .replies
         .recv()
-        .map_err(|_| TrainError::InternalInvariant("pair-owner worker disconnected"))?
+        .map_err(|_| TrainError::InternalInvariant("sparse worker disconnected"))?
     {
-        Reply::Error(error) => Err(error),
-        other => Ok(other),
+        Reply::Error(e) => Err(e),
+        reply => Ok(reply),
     }
-}
-
-#[derive(Clone, Copy, Eq, PartialEq)]
-struct Frontier {
-    entry: HeapEntry,
-    owner: usize,
-}
-impl Ord for Frontier {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.entry.cmp(&other.entry)
-    }
-}
-impl PartialOrd for Frontier {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-fn fetch(
-    worker: &Worker,
-    page_size: usize,
-    refill_messages: &mut usize,
-    heap_pops: &mut usize,
-) -> TrainResult<Vec<HeapEntry>> {
-    worker
-        .commands
-        .send(Command::Prefetch(page_size))
-        .map_err(|_| TrainError::InternalInvariant("candidate prefetch send failed"))?;
-    *refill_messages += 2;
-    match recv(worker)? {
-        Reply::Candidates { entries, pops } => {
-            *heap_pops += pops;
-            Ok(entries)
-        }
-        _ => Err(TrainError::InternalInvariant("expected candidate reply")),
-    }
-}
-
-#[allow(clippy::too_many_arguments)]
-fn select_prefix(
-    workers: &[Worker],
-    remaining: usize,
-    cap: usize,
-    heap_pops: &mut usize,
-    refill_messages: &mut usize,
-    stop_self: &mut usize,
-    stop_conflict: &mut usize,
-) -> TrainResult<Vec<(u64, u64)>> {
-    let mut queues: Vec<VecDeque<HeapEntry>> = Vec::with_capacity(workers.len());
-    let mut frontier = BinaryHeap::new();
-    let limit = remaining.min(cap.max(1));
-    let page_size = limit.min(32);
-    for worker in workers {
-        worker
-            .commands
-            .send(Command::Prefetch(page_size))
-            .map_err(|_| TrainError::InternalInvariant("candidate prefetch send failed"))?;
-    }
-    *refill_messages += 2 * workers.len();
-    for (owner, worker) in workers.iter().enumerate() {
-        let queue: VecDeque<_> = match recv(worker)? {
-            Reply::Candidates { entries, pops } => {
-                *heap_pops += pops;
-                entries.into()
-            }
-            _ => return Err(TrainError::InternalInvariant("expected candidate reply")),
-        };
-        if let Some(&entry) = queue.front() {
-            frontier.push(Frontier { entry, owner });
-        }
-        queues.push(queue);
-    }
-    let mut pending = Vec::new();
-    let mut heads = HashSet::new();
-    let mut tails = HashSet::new();
-    while pending.len() < limit {
-        let Some(Frontier { entry, owner }) = frontier.pop() else {
-            break;
-        };
-        let a = (entry.key >> 32) as u32;
-        let b = entry.key as u32;
-        if a == b {
-            *stop_self += 1;
-            if !pending.is_empty() {
-                break;
-            }
-            pending.push((entry.key, entry.frequency));
-            break;
-        }
-        if tails.contains(&a) || heads.contains(&b) {
-            *stop_conflict += 1;
-            break;
-        }
-        heads.insert(a);
-        tails.insert(b);
-        pending.push((entry.key, entry.frequency));
-        queues[owner].pop_front();
-        if pending.len() < limit {
-            if queues[owner].is_empty() {
-                queues[owner] =
-                    fetch(&workers[owner], page_size, refill_messages, heap_pops)?.into();
-            }
-            if let Some(&next) = queues[owner].front() {
-                frontier.push(Frontier { entry: next, owner });
-            }
-        }
-    }
-    let selected = Arc::new(pending.iter().map(|(key, _)| *key).collect::<HashSet<_>>());
-    for worker in workers {
-        worker
-            .commands
-            .send(Command::ReturnCandidates(Arc::clone(&selected)))
-            .map_err(|_| TrainError::InternalInvariant("candidate restore send failed"))?;
-    }
-    *refill_messages += 2 * workers.len();
-    for worker in workers {
-        if !matches!(recv(worker)?, Reply::Returned) {
-            return Err(TrainError::InternalInvariant(
-                "expected candidate restore reply",
-            ));
-        }
-    }
-    Ok(pending)
 }
 
 pub(super) fn train<const UNCHECKED: bool>(
     input: Prepared,
     options: Options,
-    cap: usize,
 ) -> TrainResult<Result> {
-    run::<UNCHECKED, false>(input, options, cap)
+    run::<UNCHECKED, false>(input, options)
 }
 
-pub(super) fn train_compact<const UNCHECKED: bool>(
+pub(super) fn train_all<const UNCHECKED: bool>(
     input: Prepared,
     options: Options,
-    cap: usize,
 ) -> TrainResult<Result> {
-    run::<UNCHECKED, true>(input, options, cap)
+    run::<UNCHECKED, true>(input, options)
 }
 
-fn run<const UNCHECKED: bool, const COMPACT: bool>(
+fn run<const UNCHECKED: bool, const ALL: bool>(
     input: Prepared,
     options: Options,
-    cap: usize,
 ) -> TrainResult<Result> {
     let started = Instant::now();
     let Prepared {
@@ -1211,29 +1258,42 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     let corpus_positions = corpus.len();
     let last = corpus_positions - 1;
     let worker_count = options.workers.min((last - 1).max(1));
-    let mut lengths = initial_lengths;
-    let worker_initial_lengths = Arc::new(lengths.clone());
+    let groups = Arc::new(WorkerGroups::new(worker_count));
+    let all_groups = groups.all();
+    let lengths = Arc::new(RwLock::new(initial_lengths));
     let pivots = Arc::new(pivots);
     let weights = Arc::new(weights);
     let corpus: Arc<Vec<AtomicU32>> = Arc::new(corpus.into_iter().map(AtomicU32::new).collect());
-    let initial_mailboxes: Mailboxes =
+    let initial_mailboxes: Mailboxes = Arc::new(
+        (0..worker_count)
+            .map(|_| Mutex::new(EpochInbox::default()))
+            .collect(),
+    );
+    let delta_mailboxes: Mailboxes = Arc::new(
+        (0..worker_count)
+            .map(|_| Mutex::new(EpochInbox::default()))
+            .collect(),
+    );
+    let prune_mailboxes: PruneMailboxes =
         Arc::new((0..worker_count).map(|_| Mutex::new(Vec::new())).collect());
-    let delta_mailboxes: Mailboxes =
-        Arc::new((0..worker_count).map(|_| Mutex::new(Vec::new())).collect());
-    let eligibles: Sets = Arc::new((0..worker_count).map(|_| OnceLock::new()).collect());
+    let eligibles: EligibleSets = Arc::new((0..worker_count).map(|_| OnceLock::new()).collect());
+    let touched_owners = Arc::new(AtomicU64::new(0));
     let workers: Vec<Worker> = (0..worker_count)
         .map(|id| {
             let start = 1 + id * (last - 1) / worker_count;
             let end = 1 + (id + 1) * (last - 1) / worker_count;
-            spawn_worker::<UNCHECKED, COMPACT>(
+            spawn_worker::<UNCHECKED>(
                 id,
                 Arc::clone(&corpus),
                 Arc::clone(&pivots),
                 Arc::clone(&weights),
-                Arc::clone(&worker_initial_lengths),
+                Arc::clone(&lengths),
+                Arc::clone(&groups),
                 Arc::clone(&initial_mailboxes),
                 Arc::clone(&delta_mailboxes),
+                Arc::clone(&prune_mailboxes),
                 Arc::clone(&eligibles),
+                Arc::clone(&touched_owners),
                 start,
                 end,
                 options.min_frequency,
@@ -1261,31 +1321,46 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
             }
         }
     }
-    let initial_mailbox_capacity = mailbox_capacity(&initial_mailboxes);
+    let initial_mailbox_capacity: usize = initial_mailboxes
+        .iter()
+        .map(|m| {
+            m.lock()
+                .expect("initial mailbox poisoned")
+                .records
+                .capacity()
+        })
+        .sum();
     for worker in &workers {
         worker
             .commands
             .send(Command::BuildScalars)
-            .map_err(|_| TrainError::InternalInvariant("owner init send failed"))?;
+            .map_err(|_| TrainError::InternalInvariant("scalar init send failed"))?;
     }
+    let mut frontier = Frontier::new(worker_count);
     let mut initial_scalar_keys = 0;
     let mut initial_scalar_capacity = 0;
     let mut initial_heap_capacity = 0;
     let mut initial_eligible_capacity = 0;
-    for worker in &workers {
+    let mut owner_scalar_capacities = vec![0; worker_count];
+    let mut owner_heap_capacities = vec![0; worker_count];
+    for (id, worker) in workers.iter().enumerate() {
         match recv(worker)? {
             Reply::Scalars {
+                top,
                 keys,
                 capacity,
                 heap_capacity,
                 eligible_capacity,
             } => {
+                frontier.replace(id, top);
                 initial_scalar_keys += keys;
                 initial_scalar_capacity += capacity;
                 initial_heap_capacity += heap_capacity;
                 initial_eligible_capacity += eligible_capacity;
+                owner_scalar_capacities[id] = capacity;
+                owner_heap_capacities[id] = heap_capacity;
             }
-            _ => return Err(TrainError::InternalInvariant("expected owner init reply")),
+            _ => return Err(TrainError::InternalInvariant("expected scalar init reply")),
         }
     }
     drop(initial_mailboxes);
@@ -1297,13 +1372,13 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     }
     let mut initial_index_memory = IndexMemory::default();
     for worker in &workers {
-        let Reply::Built(memory) = recv(worker)? else {
+        let Reply::Built(m) = recv(worker)? else {
             return Err(TrainError::InternalInvariant("expected index init reply"));
         };
-        initial_index_memory.position_len += memory.position_len;
-        initial_index_memory.position_capacity += memory.position_capacity;
-        initial_index_memory.map_len += memory.map_len;
-        initial_index_memory.map_capacity += memory.map_capacity;
+        initial_index_memory.position_len += m.position_len;
+        initial_index_memory.position_capacity += m.position_capacity;
+        initial_index_memory.map_len += m.map_len;
+        initial_index_memory.map_capacity += m.map_capacity;
     }
     drop(eligibles);
     let init_seconds = started.elapsed().as_secs_f64();
@@ -1312,99 +1387,109 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     let mut actual_merges = 0;
     let mut position_visits = 0;
     let mut stale_visits = 0;
-    let mut heap_pops = 0;
-    let mut epochs = 0;
-    let mut max_width = 0;
-    let mut stop_self = 0;
-    let mut stop_conflict = 0;
     let mut aa_epochs = 0;
     let mut aa_gather_positions = 0;
     let mut select_seconds = 0.0;
     let mut plan_seconds = 0.0;
-    let mut apply_seconds = 0.0;
     let mut owner_reduce_seconds = 0.0;
-    let mut owner_reduce_work_seconds_sum = 0.0;
-    let mut worker_plan_seconds_sum = 0.0;
-    let mut worker_apply_seconds_sum = 0.0;
-    let mut worker_delta_keys_total = 0;
+    let mut apply_seconds = 0.0;
+    let mut active_plan_workers_total = 0;
+    let mut active_owner_workers_total = 0;
+    let mut active_apply_workers_total = 0;
+    let mut max_active_plan_workers = 0;
+    let mut max_active_owner_workers = 0;
     let mut owner_delta_keys_total = 0;
-    let mut owner_drop_keys_total = 0;
-    let mut refill_messages = 0;
-    let mut messages = 6 * worker_count; // init scalar/index send+reply, plus initial replies
-    let mut mailbox_capacity_peak = initial_mailbox_capacity;
+    let mut worker_delta_keys_total = 0;
+    let mut retired_keys_total = 0;
+    let mut prune_entries_total = 0;
     let mut plan_capacity_peak = 0;
-    let mut group_capacity_peak = 0;
     let mut edge_capacity_peak = 0;
-    let mut owner_scalar_capacity_peak = initial_scalar_capacity;
-    let mut owner_heap_capacity_peak = initial_heap_capacity;
+    let mut active_plan_capacity_peak = 0;
+    let mut active_edge_capacity_peak = 0;
+    let mut plan_capacities = vec![0; worker_count];
+    let mut edge_capacities = vec![0; worker_count];
+    let mut plan_capacity_total = 0;
+    let mut edge_capacity_total = 0;
+    let mut owner_scalar_capacity_total = initial_scalar_capacity;
+    let mut owner_heap_capacity_total = initial_heap_capacity;
+    let mut owner_scalar_capacity_peak = owner_scalar_capacity_total;
+    let mut owner_heap_capacity_peak = owner_heap_capacity_total;
+    let mut messages = 6 * worker_count;
     while merges.len() < options.max_merges {
-        let selection_started = Instant::now();
-        let prefix = select_prefix(
-            &workers,
-            options.max_merges - merges.len(),
-            cap,
-            &mut heap_pops,
-            &mut refill_messages,
-            &mut stop_self,
-            &mut stop_conflict,
-        )?;
-        select_seconds += selection_started.elapsed().as_secs_f64();
-        if prefix.is_empty() {
+        let select_started = Instant::now();
+        let Some((selected_owner, head)) = frontier.best() else {
             break;
+        };
+        if head.frequency < options.min_frequency {
+            return Err(TrainError::InternalInvariant(
+                "cached owner top below minimum",
+            ));
         }
-        epochs += 1;
-        max_width = max_width.max(prefix.len());
-        let first_new_id = u32::try_from(lengths.len())
-            .map_err(|_| TrainError::Overflow("fresh token ID exceeds u32"))?;
-        let mut specs = Vec::with_capacity(prefix.len());
-        for (key, frequency) in prefix {
-            let a = (key >> 32) as u32;
-            let b = key as u32;
-            let new_id = u32::try_from(lengths.len())
+        if owner_pair(head.key, worker_count) != selected_owner || head.holders == 0 {
+            return Err(TrainError::InternalInvariant("cached owner head malformed"));
+        }
+        let epoch = (merges.len() + 1) as u64;
+        let a = (head.key >> 32) as u32;
+        let b = head.key as u32;
+        let rule = {
+            let mut table = lengths.write().expect("length table poisoned");
+            let new_id = u32::try_from(table.len())
                 .map_err(|_| TrainError::Overflow("fresh token ID exceeds u32"))?;
-            let new_length = lengths[a as usize]
-                .checked_add(lengths[b as usize])
+            let a_length = table[a as usize] as usize;
+            let b_length = table[b as usize] as usize;
+            let new_length = table[a as usize]
+                .checked_add(table[b as usize])
                 .ok_or(TrainError::Overflow("merged token length exceeds u32"))?;
-            specs.push(RuleSpec {
-                key,
+            table.push(new_length);
+            RuleSpec {
+                key: head.key,
                 a,
                 b,
                 new_id,
                 new_length,
-                a_length: lengths[a as usize] as usize,
-                b_length: lengths[b as usize] as usize,
-                frequency,
-            });
-            lengths.push(new_length);
-        }
-        let rules = Arc::new(specs);
+                a_length,
+                b_length,
+                frequency: head.frequency,
+            }
+        };
+        select_seconds += select_started.elapsed().as_secs_f64();
         let plan_started = Instant::now();
-        if rules[0].a == rules[0].b {
+        let holder_workers: Vec<usize> = groups.members(head.holders).collect();
+        let plan_mask = if ALL { all_groups } else { head.holders };
+        let plan_workers: Vec<usize> = groups.members(plan_mask).collect();
+        if plan_workers.is_empty() {
+            return Err(TrainError::InternalInvariant(
+                "selected pair has no holders",
+            ));
+        }
+        active_plan_workers_total += plan_workers.len();
+        max_active_plan_workers = max_active_plan_workers.max(plan_workers.len());
+        let mut gathered_visits = 0;
+        let mut gathered_stale = 0;
+        if a == b {
             aa_epochs += 1;
-            let rule = rules[0];
-            for worker in &workers {
-                worker
+            for &id in &plan_workers {
+                workers[id]
                     .commands
-                    .send(Command::GatherSelf(rule))
+                    .send(Command::GatherSelf { epoch, rule })
                     .map_err(|_| TrainError::InternalInvariant("AA gather send failed"))?;
             }
-            messages += 2 * worker_count;
+            messages += 2 * plan_workers.len();
             let mut valid = Vec::new();
-            for worker in &workers {
-                let Reply::Gathered(reply) = recv(worker)? else {
+            for &id in &plan_workers {
+                let Reply::Gathered(reply) = recv(&workers[id])? else {
                     return Err(TrainError::InternalInvariant("expected AA gather reply"));
                 };
-                position_visits += reply.visited;
-                stale_visits += reply.stale;
-                worker_plan_seconds_sum += reply.work_seconds;
-                let _ = reply.valid_capacity;
+                gathered_visits += reply.visited;
+                gathered_stale += reply.stale;
                 valid.extend(reply.valid_positions);
+                let _ = reply.work_seconds;
             }
             aa_gather_positions += valid.len();
             valid.sort_unstable();
-            if valid.windows(2).any(|pair| pair[0] == pair[1]) {
+            if valid.windows(2).any(|x| x[0] == x[1]) {
                 return Err(TrainError::InternalInvariant(
-                    "duplicate live AA occurrence",
+                    "duplicate AA live occurrence",
                 ));
             }
             let mut selected = Vec::new();
@@ -1412,19 +1497,26 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
             for raw in valid {
                 let pos = raw as usize;
                 if pos < previous_after {
-                    stale_visits += 1;
+                    gathered_stale += 1;
                     continue;
                 }
                 previous_after = pos + rule.a_length + rule.b_length;
                 selected.push(raw);
             }
             let selected = Arc::new(selected);
-            for (i, worker) in workers.iter().enumerate() {
-                let start = i * selected.len() / worker_count;
-                let end = (i + 1) * selected.len() / worker_count;
-                worker
+            for &id in &plan_workers {
+                let (start, end) = if let Ok(slot) = holder_workers.binary_search(&id) {
+                    (
+                        slot * selected.len() / holder_workers.len(),
+                        (slot + 1) * selected.len() / holder_workers.len(),
+                    )
+                } else {
+                    (0, 0)
+                };
+                workers[id]
                     .commands
                     .send(Command::PrepareSelf {
+                        epoch,
                         rule,
                         positions: Arc::clone(&selected),
                         start,
@@ -1432,109 +1524,130 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
                     })
                     .map_err(|_| TrainError::InternalInvariant("AA prepare send failed"))?;
             }
-            messages += 2 * worker_count;
         } else {
-            let selected = Arc::new(rules.iter().map(|r| (r.key, r.new_id)).collect());
-            for worker in &workers {
-                worker
+            for &id in &plan_workers {
+                workers[id]
                     .commands
-                    .send(Command::PrepareBatch {
-                        rules: Arc::clone(&rules),
-                        selected: Arc::clone(&selected),
-                    })
+                    .send(Command::Prepare { epoch, rule })
                     .map_err(|_| TrainError::InternalInvariant("prepare send failed"))?;
             }
-            messages += 2 * worker_count;
         }
+        messages += 2 * plan_workers.len();
+        position_visits += gathered_visits;
+        stale_visits += gathered_stale;
         let mut planned = 0;
-        let mut round_plan_capacity = 0;
-        let mut round_group_capacity = 0;
-        let mut round_edge_capacity = 0;
-        for worker in &workers {
-            let Reply::Prepared(reply) = recv(worker)? else {
+        let mut plan_capacity = 0;
+        let mut edge_capacity = 0;
+        for &id in &plan_workers {
+            let Reply::Prepared(reply) = recv(&workers[id])? else {
                 return Err(TrainError::InternalInvariant("expected prepared reply"));
             };
             position_visits += reply.visited;
             stale_visits += reply.stale;
             planned += reply.valid;
-            round_plan_capacity += reply.plan_capacity_bytes;
-            round_group_capacity += reply.group_capacity_bytes;
-            round_edge_capacity += reply.edge_capacity * std::mem::size_of::<NewEdge>();
             worker_delta_keys_total += reply.delta_keys;
-            worker_plan_seconds_sum += reply.work_seconds;
+            let new_plan_capacity = reply.plan_capacity_bytes;
+            let new_edge_capacity = reply.edge_capacity * std::mem::size_of::<NewEdge>();
+            plan_capacity += new_plan_capacity;
+            edge_capacity += new_edge_capacity;
+            plan_capacity_total = plan_capacity_total - plan_capacities[id] + new_plan_capacity;
+            edge_capacity_total = edge_capacity_total - edge_capacities[id] + new_edge_capacity;
+            plan_capacities[id] = new_plan_capacity;
+            edge_capacities[id] = new_edge_capacity;
+            let _ = reply.work_seconds;
         }
-        plan_capacity_peak = plan_capacity_peak.max(round_plan_capacity);
-        group_capacity_peak = group_capacity_peak.max(round_group_capacity);
-        edge_capacity_peak = edge_capacity_peak.max(round_edge_capacity);
-        mailbox_capacity_peak = mailbox_capacity_peak.max(mailbox_capacity(&delta_mailboxes));
+        if planned == 0 {
+            return Err(TrainError::InternalInvariant(
+                "selected pair had no valid matches",
+            ));
+        }
+        plan_capacity_peak = plan_capacity_peak.max(plan_capacity_total);
+        edge_capacity_peak = edge_capacity_peak.max(edge_capacity_total);
+        active_plan_capacity_peak = active_plan_capacity_peak.max(plan_capacity);
+        active_edge_capacity_peak = active_edge_capacity_peak.max(edge_capacity);
         plan_seconds += plan_started.elapsed().as_secs_f64();
         let reduce_started = Instant::now();
-        let drops: Sets = Arc::new((0..worker_count).map(|_| OnceLock::new()).collect());
-        for worker in &workers {
-            worker
+        let touched = touched_owners.swap(0, Ordering::SeqCst) | groups.bit(selected_owner);
+        let owner_mask = if ALL { all_groups } else { touched };
+        let owner_workers: Vec<usize> = groups.members(owner_mask).collect();
+        active_owner_workers_total += owner_workers.len();
+        max_active_owner_workers = max_active_owner_workers.max(owner_workers.len());
+        for &id in &owner_workers {
+            workers[id]
                 .commands
                 .send(Command::Reduce {
-                    first_new_id,
-                    rules: Arc::clone(&rules),
-                    drops: Arc::clone(&drops),
+                    epoch,
+                    first_new_id: rule.new_id,
+                    selected: (id == selected_owner).then_some(rule),
                 })
                 .map_err(|_| TrainError::InternalInvariant("owner reduce send failed"))?;
         }
-        messages += 2 * worker_count;
-        let mut scalar_capacity = 0;
-        let mut heap_capacity = 0;
-        for worker in &workers {
-            match recv(worker)? {
-                Reply::Reduced {
-                    delta_keys,
-                    scalar_keys,
-                    scalar_capacity: sc,
-                    heap_capacity: hc,
-                    dropped,
-                    seconds,
-                } => {
-                    owner_delta_keys_total += delta_keys;
-                    owner_drop_keys_total += dropped;
-                    scalar_capacity += sc;
-                    heap_capacity += hc;
-                    owner_reduce_work_seconds_sum += seconds;
-                    let _ = scalar_keys;
-                }
-                _ => return Err(TrainError::InternalInvariant("expected owner reduce reply")),
-            }
+        messages += 2 * owner_workers.len();
+        let mut recipients = 0;
+        for &id in &owner_workers {
+            let Reply::Reduced {
+                top,
+                recipients: mask,
+                delta_keys,
+                dropped,
+                prune_entries,
+                seconds,
+                scalar_capacity,
+                heap_capacity,
+            } = recv(&workers[id])?
+            else {
+                return Err(TrainError::InternalInvariant(
+                    "expected owner reduction reply",
+                ));
+            };
+            frontier.replace(id, top);
+            recipients |= mask;
+            owner_delta_keys_total += delta_keys;
+            retired_keys_total += dropped;
+            prune_entries_total += prune_entries;
+            owner_scalar_capacity_total =
+                owner_scalar_capacity_total - owner_scalar_capacities[id] + scalar_capacity;
+            owner_heap_capacity_total =
+                owner_heap_capacity_total - owner_heap_capacities[id] + heap_capacity;
+            owner_scalar_capacities[id] = scalar_capacity;
+            owner_heap_capacities[id] = heap_capacity;
+            let _ = seconds;
         }
-        owner_scalar_capacity_peak = owner_scalar_capacity_peak.max(scalar_capacity);
-        owner_heap_capacity_peak = owner_heap_capacity_peak.max(heap_capacity);
-        for rule in rules.iter() {
-            merges.push(Rule {
-                left: rule.a,
-                right: rule.b,
-                frequency: rule.frequency,
-            });
-        }
+        owner_scalar_capacity_peak = owner_scalar_capacity_peak.max(owner_scalar_capacity_total);
+        owner_heap_capacity_peak = owner_heap_capacity_peak.max(owner_heap_capacity_total);
         owner_reduce_seconds += reduce_started.elapsed().as_secs_f64();
         let apply_started = Instant::now();
-        for worker in &workers {
-            worker
+        let apply_mask = if ALL {
+            all_groups
+        } else {
+            head.holders | recipients
+        };
+        let apply_workers: Vec<usize> = groups.members(apply_mask).collect();
+        active_apply_workers_total += apply_workers.len();
+        for &id in &apply_workers {
+            workers[id]
                 .commands
-                .send(Command::Apply(Arc::clone(&drops)))
+                .send(Command::Apply { epoch })
                 .map_err(|_| TrainError::InternalInvariant("apply send failed"))?;
         }
-        messages += 2 * worker_count;
+        messages += 2 * apply_workers.len();
         let mut applied = 0;
-        for worker in &workers {
-            let Reply::Applied(reply) = recv(worker)? else {
-                return Err(TrainError::InternalInvariant("expected applied reply"));
+        for &id in &apply_workers {
+            let Reply::Applied(reply) = recv(&workers[id])? else {
+                return Err(TrainError::InternalInvariant("expected apply reply"));
             };
             applied += reply.merges;
-            worker_apply_seconds_sum += reply.work_seconds;
+            let _ = (reply.work_seconds, reply.pruned);
         }
         if applied != planned {
-            return Err(TrainError::InternalInvariant(
-                "batch plan/apply count mismatch",
-            ));
+            return Err(TrainError::InternalInvariant("plan/apply merge mismatch"));
         }
         actual_merges += applied;
+        merges.push(Rule {
+            left: a,
+            right: b,
+            frequency: rule.frequency,
+        });
         apply_seconds += apply_started.elapsed().as_secs_f64();
     }
     let merge_seconds = merge_started.elapsed().as_secs_f64();
@@ -1545,13 +1658,14 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
             .map_err(|_| TrainError::InternalInvariant("finish send failed"))?;
     }
     let mut final_memory = IndexMemory::default();
-    let mut index_peak_sum = IndexMemory::default();
+    let mut peak_memory = IndexMemory::default();
     let mut final_scalar_keys = 0;
     let mut final_scalar_capacity = 0;
     let mut final_heap_capacity = 0;
-    let mut worker_plan_peak_bytes_sum = 0;
-    let mut worker_group_peak_bytes_sum = 0;
-    let mut worker_edge_peak_bytes_sum = 0;
+    let mut router_capacity = 0;
+    let mut worker_plan_peak = 0;
+    let mut worker_edge_peak = 0;
+    let mut heap_pops = 0;
     for worker in &workers {
         let Reply::Final(reply) = recv(worker)? else {
             return Err(TrainError::InternalInvariant("expected final reply"));
@@ -1560,36 +1674,40 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
         final_memory.position_capacity += reply.memory.position_capacity;
         final_memory.map_len += reply.memory.map_len;
         final_memory.map_capacity += reply.memory.map_capacity;
-        index_peak_sum.position_len += reply.peak_memory.position_len;
-        index_peak_sum.position_capacity += reply.peak_memory.position_capacity;
-        index_peak_sum.map_len += reply.peak_memory.map_len;
-        index_peak_sum.map_capacity += reply.peak_memory.map_capacity;
+        peak_memory.position_len += reply.peak_memory.position_len;
+        peak_memory.position_capacity += reply.peak_memory.position_capacity;
+        peak_memory.map_len += reply.peak_memory.map_len;
+        peak_memory.map_capacity += reply.peak_memory.map_capacity;
         final_scalar_keys += reply.scalar_keys;
         final_scalar_capacity += reply.scalar_capacity;
         final_heap_capacity += reply.heap_capacity;
-        worker_plan_peak_bytes_sum += reply.plan_peak_bytes;
-        worker_group_peak_bytes_sum += reply.group_peak_bytes;
-        worker_edge_peak_bytes_sum += reply.edge_peak_bytes;
-        let _ = (reply.worker_plan_seconds, reply.worker_apply_seconds);
+        router_capacity += reply.router_capacity;
+        worker_plan_peak += reply.plan_peak_bytes;
+        worker_edge_peak += reply.edge_peak_bytes;
+        heap_pops += reply.heap_pops;
     }
-    messages += 2 * worker_count + refill_messages;
+    messages += 2 * worker_count;
     drop(workers);
     let mut final_tokens = Vec::new();
     let mut pos = 0;
+    let table = lengths.read().expect("length table poisoned");
     loop {
         let token = load::<UNCHECKED>(&corpus, pos);
         final_tokens.push(token);
         if pos == last {
             break;
         }
-        pos = pos.checked_add(lengths[token as usize] as usize).ok_or(
-            TrainError::InternalInvariant("final token boundary overflow"),
-        )?;
+        pos = pos
+            .checked_add(table[token as usize] as usize)
+            .ok_or(TrainError::InternalInvariant("final boundary overflow"))?;
         if pos > last {
-            return Err(TrainError::InternalInvariant("final token outside corpus"));
+            return Err(TrainError::InternalInvariant(
+                "final boundary outside corpus",
+            ));
         }
     }
-    let max_token_length = lengths.iter().copied().max().unwrap_or(1);
+    let max_token_length = table.iter().copied().max().unwrap_or(1);
+    let shared_length_capacity_bytes = table.capacity() * std::mem::size_of::<u32>();
     let core = core_result(
         merges,
         final_tokens,
@@ -1610,8 +1728,28 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     metric(&mut metrics, "workers_actual", worker_count as f64);
     metric(
         &mut metrics,
+        "force_all_dispatch",
+        if ALL { 1.0 } else { 0.0 },
+    );
+    metric(
+        &mut metrics,
         "shared_corpus_bytes",
         (corpus_positions * 4) as f64,
+    );
+    metric(
+        &mut metrics,
+        "shared_length_capacity_bytes",
+        shared_length_capacity_bytes as f64,
+    );
+    metric(
+        &mut metrics,
+        "owner_scalar_record_bytes",
+        std::mem::size_of::<PairScalar>() as f64,
+    );
+    metric(
+        &mut metrics,
+        "delta_record_bytes",
+        std::mem::size_of::<Delta>() as f64,
     );
     metric(
         &mut metrics,
@@ -1640,7 +1778,7 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     );
     metric(
         &mut metrics,
-        "initial_scalar_map_capacity_sum",
+        "initial_scalar_capacity_sum",
         initial_scalar_capacity as f64,
     );
     metric(
@@ -1675,38 +1813,49 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     );
     metric(
         &mut metrics,
-        "final_index_map_entries_sum",
-        final_memory.map_len as f64,
-    );
-    metric(
-        &mut metrics,
         "final_index_map_capacity_sum",
         final_memory.map_capacity as f64,
     );
     metric(
         &mut metrics,
         "index_position_capacity_peak_bytes_sum",
-        (index_peak_sum.position_capacity * 4) as f64,
+        (peak_memory.position_capacity * 4) as f64,
     );
+    metric(&mut metrics, "final_scalar_keys", final_scalar_keys as f64);
     metric(
         &mut metrics,
-        "index_map_capacity_peak_sum",
-        index_peak_sum.map_capacity as f64,
-    );
-    metric(
-        &mut metrics,
-        "final_owner_scalar_keys",
-        final_scalar_keys as f64,
-    );
-    metric(
-        &mut metrics,
-        "final_owner_scalar_capacity_sum",
+        "final_scalar_capacity_sum",
         final_scalar_capacity as f64,
     );
     metric(
         &mut metrics,
-        "final_owner_heap_capacity_sum",
+        "final_heap_capacity_sum",
         final_heap_capacity as f64,
+    );
+    metric(
+        &mut metrics,
+        "router_capacity_entries_sum",
+        router_capacity as f64,
+    );
+    metric(
+        &mut metrics,
+        "plan_capacity_peak_bytes",
+        plan_capacity_peak as f64,
+    );
+    metric(
+        &mut metrics,
+        "active_plan_capacity_peak_bytes",
+        active_plan_capacity_peak as f64,
+    );
+    metric(
+        &mut metrics,
+        "edge_capacity_peak_bytes",
+        edge_capacity_peak as f64,
+    );
+    metric(
+        &mut metrics,
+        "active_edge_capacity_peak_bytes",
+        active_edge_capacity_peak as f64,
     );
     metric(
         &mut metrics,
@@ -1720,81 +1869,50 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     );
     metric(
         &mut metrics,
-        "mailbox_capacity_peak_entries",
-        mailbox_capacity_peak as f64,
-    );
-    metric(
-        &mut metrics,
-        "plan_capacity_peak_bytes",
-        plan_capacity_peak as f64,
-    );
-    metric(
-        &mut metrics,
-        "plan_group_capacity_peak_bytes",
-        group_capacity_peak as f64,
-    );
-    metric(
-        &mut metrics,
-        "plan_start_record_bytes",
-        if COMPACT { 4.0 } else { 16.0 },
-    );
-    metric(
-        &mut metrics,
-        "plan_group_record_bytes",
-        if COMPACT { 16.0 } else { 0.0 },
-    );
-    metric(
-        &mut metrics,
-        "new_edge_capacity_peak_bytes",
-        edge_capacity_peak as f64,
-    );
-    metric(
-        &mut metrics,
         "worker_plan_peak_bytes_sum",
-        worker_plan_peak_bytes_sum as f64,
-    );
-    metric(
-        &mut metrics,
-        "worker_plan_group_peak_bytes_sum",
-        worker_group_peak_bytes_sum as f64,
+        worker_plan_peak as f64,
     );
     metric(
         &mut metrics,
         "worker_edge_peak_bytes_sum",
-        worker_edge_peak_bytes_sum as f64,
+        worker_edge_peak as f64,
     );
-    metric(&mut metrics, "certificate_epochs", epochs as f64);
-    metric(&mut metrics, "certificate_max_width", max_width as f64);
-    metric(&mut metrics, "certificate_stop_self", stop_self as f64);
     metric(
         &mut metrics,
-        "certificate_stop_conflict",
-        stop_conflict as f64,
+        "frontier_capacity_bytes",
+        frontier.capacity_bytes() as f64,
     );
+    metric(&mut metrics, "rules", core.rules as f64);
     metric(&mut metrics, "aa_epochs", aa_epochs as f64);
     metric(
         &mut metrics,
         "aa_gather_positions",
         aa_gather_positions as f64,
     );
-    metric(&mut metrics, "select_seconds", select_seconds);
-    metric(&mut metrics, "plan_seconds", plan_seconds);
-    metric(&mut metrics, "owner_reduce_seconds", owner_reduce_seconds);
     metric(
         &mut metrics,
-        "owner_reduce_work_seconds_sum",
-        owner_reduce_work_seconds_sum,
-    );
-    metric(&mut metrics, "apply_seconds", apply_seconds);
-    metric(
-        &mut metrics,
-        "worker_plan_seconds_sum",
-        worker_plan_seconds_sum,
+        "active_plan_workers_total",
+        active_plan_workers_total as f64,
     );
     metric(
         &mut metrics,
-        "worker_apply_seconds_sum",
-        worker_apply_seconds_sum,
+        "active_owner_workers_total",
+        active_owner_workers_total as f64,
+    );
+    metric(
+        &mut metrics,
+        "active_apply_workers_total",
+        active_apply_workers_total as f64,
+    );
+    metric(
+        &mut metrics,
+        "max_active_plan_workers",
+        max_active_plan_workers as f64,
+    );
+    metric(
+        &mut metrics,
+        "max_active_owner_workers",
+        max_active_owner_workers as f64,
     );
     metric(
         &mut metrics,
@@ -1808,19 +1926,30 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     );
     metric(
         &mut metrics,
-        "owner_drop_keys_total",
-        owner_drop_keys_total as f64,
+        "retired_keys_total",
+        retired_keys_total as f64,
     );
+    metric(&mut metrics, "prune_entries", prune_entries_total as f64);
     metric(
         &mut metrics,
-        "candidate_refill_messages",
-        refill_messages as f64,
+        "prune_mailbox_locks",
+        prune_entries_total as f64,
     );
+    metric(&mut metrics, "select_seconds", select_seconds);
+    metric(&mut metrics, "plan_seconds", plan_seconds);
+    metric(&mut metrics, "owner_reduce_seconds", owner_reduce_seconds);
+    metric(&mut metrics, "apply_seconds", apply_seconds);
     metric(&mut metrics, "round_messages", messages as f64);
     metric(
         &mut metrics,
         "unchecked_corpus_access",
         if UNCHECKED { 1.0 } else { 0.0 },
     );
+    metric(
+        &mut metrics,
+        "grouped_holder_mask",
+        if worker_count > 64 { 1.0 } else { 0.0 },
+    );
+    let _ = (delta_mailboxes, prune_mailboxes, touched_owners);
     Ok(Result { core, metrics })
 }

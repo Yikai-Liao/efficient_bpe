@@ -1,0 +1,74 @@
+[
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_pair_owned_single",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 3.042478902,
+    "median_vm_hwm_mib": 93.625
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_pair_owned_single",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 2.052176846,
+    "median_vm_hwm_mib": 121.9609375
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_sparse_owner",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 2.861562957,
+    "median_vm_hwm_mib": 109.9140625
+  },
+  {
+    "case_id": "en-4m-continuous",
+    "variant": "parallel_sparse_owner",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.3203664800000001,
+    "median_vm_hwm_mib": 136.484375
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_pair_owned_single",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 2.010133831,
+    "median_vm_hwm_mib": 106.57421875
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_pair_owned_single",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.317869068,
+    "median_vm_hwm_mib": 118.375
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_sparse_owner",
+    "workers": 1,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 1.637042699,
+    "median_vm_hwm_mib": 123.328125
+  },
+  {
+    "case_id": "zh-4m-continuous",
+    "variant": "parallel_sparse_owner",
+    "workers": 4,
+    "bounds": "checked",
+    "samples": 1,
+    "median_call_seconds": 0.893796262,
+    "median_vm_hwm_mib": 143.01171875
+  }
+]
