@@ -4,7 +4,7 @@
 
 本轮入口是 [Rust 全消融报告](ABLATION_REPORT.md)、[版本覆盖表](ABLATION_COVERAGE.md) 和 [演进设计](EVOLUTION_DESIGN.md)。连续文本并行的匹配顺序、共享写入与屏障不变量见 [PARALLEL_DESIGN.md](PARALLEL_DESIGN.md)。原始数据、环境哈希和复现矩阵见 [ablation_results](ablation_results/README.md)。
 
-最新算法演进见 [频率分片与稀疏调度报告](OWNER_PARALLEL_REPORT.md)：pair 频率/堆分片、Plan4 消融、按活跃参与者派发的单轮实验，以及近似批次的轻量压缩评分。此前 worker 局部位置索引与精确批次的基础见 [连续语料批量并行报告](BATCH_PARALLEL_REPORT.md)。当前性能结果为单次诊断；日常性能筛选默认约 1.5 秒，完整矩阵留到变体收敛后运行。原始结果见 [batch_results](batch_results/README.md)。
+最新算法演进见 [频率分片与稀疏调度报告](OWNER_PARALLEL_REPORT.md)：pair 频率/堆分片、Plan4 消融、流水线、实际空间证书，以及全局位置索引的独立原型。此前 worker 局部位置索引与精确批次的基础见 [连续语料批量并行报告](BATCH_PARALLEL_REPORT.md)。当前性能结果为单次诊断；日常使用 256 KiB 轻量筛选，完整矩阵留到变体收敛后运行。原始结果见 [batch_results](batch_results/README.md)。全局索引与频率 owner 的后续整合条件见 [POSTING_OWNER_DESIGN.md](POSTING_OWNER_DESIGN.md)，该设计尚未实现。
 
 此前多线程扩展不足后的跨领域研究、精确候选前缀证明和串行批宽探针见 [并行重设计](PARALLEL_RETHINK.md)。公开实现的线程曲线见 [扩展性证据](PARALLEL_SCALING_EVIDENCE.md)，下一步状态分片方案见 [双层归属设计](BATCH_OWNERSHIP_DESIGN.md)。
 
@@ -24,6 +24,10 @@ python rust/tools/run_batch_matrix.py \
 ```
 
 每次复现用新的输出目录。初始紧凑 alphabet、u32 position/ID/length 和 u64 count 范围均有显式限制；当前连续并行采用 4U 端点，尚未将所有紧凑后端并行化。外存训练器仍是设计方向。
+
+并行 runner 默认 `--parallel-core-budget workers`：整个训练进程，包括协调线程，只允许使用 p 个 CPU，p=1 与直接串行使用同一 CPU。显式 `all` 保留旧的 worker 数实验，但这种结果不得称为严格 p 核扩展性。每次比较都同时给出同实现 1→p 和最佳直接串行的完整 `call_seconds`；完整规则、频率与最终 token 先验证一致。
+
+新版 ablation、radical v2/v4 和 boxed CLI 提供 `train_vm_hwm_mib`，在训练返回后、构造指纹与完整轨迹 JSON 前读取进程高水位。它包含启动、输入解析及训练，适合相同输入协议下的训练内存比较；它不是单独分配器的净占用。保留的 `vm_hwm_mib` 在输出准备之后读取，可能被完整轨迹的临时内存抬高。旧归档仅有后者，不与新字段混算内存收益。
 
 ## 早期基线的实现范围
 

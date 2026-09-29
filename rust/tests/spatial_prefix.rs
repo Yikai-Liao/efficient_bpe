@@ -17,7 +17,13 @@ fn prepared(pieces: &[(Vec<u32>, u64)], alphabet: usize) -> Prepared {
     input
 }
 
-fn spatial(input: Prepared, limit: usize, workers: usize, bounds: Bounds) -> (usize, usize) {
+fn spatial(
+    input: Prepared,
+    limit: usize,
+    workers: usize,
+    bounds: Bounds,
+    variant: &str,
+) -> (usize, usize) {
     let expected = train(
         input.clone(),
         TrainOptions {
@@ -35,7 +41,7 @@ fn spatial(input: Prepared, limit: usize, workers: usize, bounds: Bounds) -> (us
             min_frequency: 1,
             bounds,
         },
-        "parallel_pair_owned_spatial",
+        variant,
     )
     .unwrap();
     assert_eq!(actual.core.merges, expected.merges);
@@ -54,7 +60,15 @@ fn separated_ab_bc_share_a_spatial_batch() {
     pieces.extend((0..9).map(|_| (vec![2, 3], 1)));
     for workers in [1, 4] {
         for bounds in [Bounds::Checked, Bounds::Unchecked] {
-            assert_eq!(spatial(prepared(&pieces, 3), 2, workers, bounds), (1, 2));
+            for variant in [
+                "parallel_pair_owned_spatial",
+                "parallel_pair_owned_spatial_extra",
+            ] {
+                assert_eq!(
+                    spatial(prepared(&pieces, 3), 2, workers, bounds, variant),
+                    (1, 2)
+                );
+            }
         }
     }
 }
@@ -64,7 +78,15 @@ fn actual_abc_overlap_keeps_serial_order() {
     let pieces = vec![(vec![1, 2, 3], 3); 8];
     for workers in [1, 4] {
         for bounds in [Bounds::Checked, Bounds::Unchecked] {
-            assert_eq!(spatial(prepared(&pieces, 3), 2, workers, bounds), (2, 2));
+            for variant in [
+                "parallel_pair_owned_spatial",
+                "parallel_pair_owned_spatial_extra",
+            ] {
+                assert_eq!(
+                    spatial(prepared(&pieces, 3), 2, workers, bounds, variant),
+                    (2, 2)
+                );
+            }
         }
     }
 }

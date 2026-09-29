@@ -1,0 +1,23 @@
+{
+  "cases": 20,
+  "random_cases": 8,
+  "compared_runs": 80,
+  "explicit_compact_limit_skips": 0,
+  "variants": [
+    "parallel_pair_owned_spatial"
+  ],
+  "workers_for_parallel": [
+    1,
+    4
+  ],
+  "bounds": [
+    "checked",
+    "unchecked"
+  ],
+  "oracle": "full-recount Python naive; complete merge trace and final tokens",
+  "all_compared_traces_match": true,
+  "all_compared_fingerprints_match": true,
+  "seed": 20260930,
+  "binary_sha256": "118d07b6e13b2026dd47651fd1d28fb24009dcd28529b3c579fff16188e743ab",
+  "skips": []
+}

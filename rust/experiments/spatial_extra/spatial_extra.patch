@@ -1,0 +1,326 @@
+--- a/rust/src/ablation/parallel_spatial.rs
++++ b/rust/src/ablation/parallel_spatial.rs
+@@ -208,7 +208,10 @@
+     BuildIndex,
+     Prefetch(usize),
+     MeasureWindow(Arc<Vec<u64>>),
+-    ProbeWindow(Arc<Vec<u64>>),
++    ProbeWindow {
++        keys: Arc<Vec<u64>>,
++        base_width: usize,
++    },
+     ReturnCandidates(Arc<HashSet<u64>>),
+     PrepareBatch {
+         rules: Arc<Vec<RuleSpec>>,
+@@ -407,13 +410,15 @@
+     (after <= last).then_some((right, after))
+ }
+ 
+-/// Every overlapping pair has a left occurrence whose right neighbor is the
+-/// other pair. Read only the stable corpus; selected lists remain in the index.
+-fn probe_window<const UNCHECKED: bool>(
++/// The type-only base has no internal overlap. In EXTRA_ONLY mode every
++/// remaining conflict touches an extension occurrence, checked on both sides.
++/// Read only the stable corpus; selected lists remain in the index.
++fn probe_window<const UNCHECKED: bool, const EXTRA_ONLY: bool>(
+     corpus: &[AtomicU32],
+     index: &HashMap<u64, Vec<u32>>,
+     lengths: &[u32],
+     keys: &[u64],
++    base_width: usize,
+ ) -> ProbeReply {
+     let started = Instant::now();
+     let ranks: HashMap<u64, usize> = keys.iter().enumerate().map(|(i, &key)| (key, i)).collect();
+@@ -421,7 +426,11 @@
+     let mut cutoff = keys.len();
+     let mut visited = 0;
+     let mut stale = 0;
+-    for (rank, &key) in keys.iter().enumerate() {
++    for (rank, &key) in keys
++        .iter()
++        .enumerate()
++        .skip(if EXTRA_ONLY { base_width } else { 0 })
++    {
+         let a = (key >> 32) as u32;
+         let b = key as u32;
+         let a_length = lengths[a as usize] as usize;
+@@ -449,6 +458,14 @@
+                 if after > last {
+                     stale += 1;
+                     continue;
++                }
++                if EXTRA_ONLY {
++                    let left = load::<UNCHECKED>(corpus, pos - 1);
++                    if left != 0
++                        && let Some(&left_rank) = ranks.get(&pair_key(left, a))
++                    {
++                        cutoff = cutoff.min(rank.max(left_rank));
++                    }
+                 }
+                 let c = load::<UNCHECKED>(corpus, after);
+                 if c != 0
+@@ -892,7 +909,7 @@
+ }
+ 
+ #[allow(clippy::too_many_arguments)]
+-fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
++fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const EXTRA_ONLY: bool>(
+     worker_id: usize,
+     corpus: Arc<Vec<AtomicU32>>,
+     pivots: Arc<Vec<u32>>,
+@@ -992,9 +1009,11 @@
+                         .map(|key| index.get(key).map_or(0, Vec::len))
+                         .collect(),
+                 )),
+-                Command::ProbeWindow(keys) => Ok(Reply::Probed(probe_window::<UNCHECKED>(
+-                    &corpus, &index, &lengths, &keys,
+-                ))),
++                Command::ProbeWindow { keys, base_width } => {
++                    Ok(Reply::Probed(probe_window::<UNCHECKED, EXTRA_ONLY>(
++                        &corpus, &index, &lengths, &keys, base_width,
++                    )))
++                }
+                 Command::ReturnCandidates(selected) => {
+                     scalars.return_candidates(&selected);
+                     Ok(Reply::Returned)
+@@ -1190,7 +1209,7 @@
+ }
+ 
+ #[allow(clippy::too_many_arguments)]
+-fn select_prefix(
++fn select_prefix<const EXTRA_ONLY: bool>(
+     workers: &[Worker],
+     remaining: usize,
+     cap: usize,
+@@ -1312,7 +1331,7 @@
+         spatial.budget_epochs += usize::from(scan_width < pending.len());
+         if scan_width > base_width {
+             let probe_keys = Arc::new(keys[..scan_width].to_vec());
+-            let expected_visits = histories[..scan_width]
++            let expected_visits = histories[if EXTRA_ONLY { base_width } else { 0 }..scan_width]
+                 .iter()
+                 .fold(0_usize, |sum, &length| sum.saturating_add(length));
+             let visits_before = spatial.probe_visits;
+@@ -1320,7 +1339,10 @@
+             for worker in workers {
+                 worker
+                     .commands
+-                    .send(Command::ProbeWindow(Arc::clone(&probe_keys)))
++                    .send(Command::ProbeWindow {
++                        keys: Arc::clone(&probe_keys),
++                        base_width,
++                    })
+                     .map_err(|_| TrainError::InternalInvariant("spatial probe send failed"))?;
+             }
+             spatial.probe_messages += 2 * workers.len();
+@@ -1376,10 +1398,18 @@
+     options: Options,
+     cap: usize,
+ ) -> TrainResult<Result> {
+-    run::<UNCHECKED, false>(input, options, cap)
+-}
+-
+-fn run<const UNCHECKED: bool, const COMPACT: bool>(
++    run::<UNCHECKED, false, false>(input, options, cap)
++}
++
++pub(super) fn train_extra<const UNCHECKED: bool>(
++    input: Prepared,
++    options: Options,
++    cap: usize,
++) -> TrainResult<Result> {
++    run::<UNCHECKED, false, true>(input, options, cap)
++}
++
++fn run<const UNCHECKED: bool, const COMPACT: bool, const EXTRA_ONLY: bool>(
+     input: Prepared,
+     options: Options,
+     cap: usize,
+@@ -1408,7 +1438,7 @@
+         .map(|id| {
+             let start = 1 + id * (last - 1) / worker_count;
+             let end = 1 + (id + 1) * (last - 1) / worker_count;
+-            spawn_worker::<UNCHECKED, COMPACT>(
++            spawn_worker::<UNCHECKED, COMPACT, EXTRA_ONLY>(
+                 id,
+                 Arc::clone(&corpus),
+                 Arc::clone(&pivots),
+@@ -1523,7 +1553,7 @@
+     let mut spatial = SpatialStats::default();
+     while merges.len() < options.max_merges {
+         let selection_started = Instant::now();
+-        let prefix = select_prefix(
++        let prefix = select_prefix::<EXTRA_ONLY>(
+             &workers,
+             options.max_merges - merges.len(),
+             cap,
+@@ -2089,15 +2119,62 @@
+             .collect();
+         let separate_index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![4])]);
+         assert_eq!(
+-            probe_window::<false>(&separate, &separate_index, &lengths, &keys).cutoff,
++            probe_window::<false, false>(&separate, &separate_index, &lengths, &keys, 1).cutoff,
+             2
+         );
+ 
+         let chain: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
+         let chain_index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![2])]);
+         assert_eq!(
+-            probe_window::<false>(&chain, &chain_index, &lengths, &keys).cutoff,
++            probe_window::<false, false>(&chain, &chain_index, &lengths, &keys, 1).cutoff,
+             1
+         );
+     }
+-}
++
++    #[test]
++    fn extension_only_finds_overlap_to_its_left() {
++        let keys = [pair_key(1, 2), pair_key(2, 3)];
++        let lengths = [0, 1, 1, 1];
++        let corpus: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
++        let index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![2])]);
++        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
++        assert_eq!(reply.cutoff, 1);
++        assert_eq!(reply.visited, 1); // Only BC is scanned.
++    }
++
++    #[test]
++    fn extension_only_finds_overlap_to_its_right() {
++        let keys = [pair_key(2, 3), pair_key(1, 2)];
++        let lengths = [0, 1, 1, 1];
++        let corpus: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
++        let index = HashMap::from([(keys[0], vec![2]), (keys[1], vec![1])]);
++        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
++        assert_eq!(reply.cutoff, 1);
++        assert_eq!(reply.visited, 1); // Only AB is scanned.
++    }
++
++    #[test]
++    fn extension_only_does_not_cross_piece_boundary() {
++        let keys = [pair_key(1, 2), pair_key(2, 3)];
++        let lengths = [0, 1, 1, 1];
++        let corpus: Vec<_> = [0, 1, 2, 0, 2, 3, 0]
++            .into_iter()
++            .map(AtomicU32::new)
++            .collect();
++        let index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![4])]);
++        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
++        assert_eq!(reply.cutoff, 2);
++        assert_eq!(reply.visited, 1);
++    }
++
++    #[test]
++    fn extension_left_lookup_uses_multislot_token_endpoint() {
++        let keys = [pair_key(4, 2), pair_key(2, 3)];
++        let lengths = [0, 1, 1, 1, 2];
++        let corpus: Vec<_> = [0, 4, 4, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
++        let index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![3])]);
++        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
++        assert_eq!(reply.cutoff, 1);
++        assert_eq!(reply.visited, 1);
++    }
++}
+--- a/rust/src/ablation/parallel.rs
++++ b/rust/src/ablation/parallel.rs
+@@ -170,6 +170,7 @@
+             | "pair_owned"
+             | "pair_owned_pipeline"
+             | "pair_owned_spatial"
++            | "pair_owned_spatial_extra"
+             | "pair_owned_single"
+             | "pair_owned_compact"
+             | "sparse_owner"
+@@ -193,6 +194,13 @@
+         return Ok(Result { core, metrics });
+     }
+     match mode {
++        "pair_owned_spatial_extra" => {
++            if options.bounds == crate::Bounds::Unchecked {
++                spatial::train_extra::<true>(input, options, 256)
++            } else {
++                spatial::train_extra::<false>(input, options, 256)
++            }
++        }
+         "pair_owned_spatial" => {
+             if options.bounds == crate::Bounds::Unchecked {
+                 spatial::train::<true>(input, options, 256)
+--- a/rust/src/ablation/trainer.rs
++++ b/rust/src/ablation/trainer.rs
+@@ -41,6 +41,7 @@
+         "parallel_pair_owned",
+         "parallel_pair_owned_pipeline",
+         "parallel_pair_owned_spatial",
++        "parallel_pair_owned_spatial_extra",
+         "parallel_pair_owned_single",
+         "parallel_pair_owned_compact",
+         "parallel_sparse_owner",
+--- a/rust/tools/ablation_differential.py
++++ b/rust/tools/ablation_differential.py
+@@ -38,6 +38,7 @@
+                      "parallel_pair_owned_compact", "parallel_pair_owned_single",
+                      "parallel_pair_owned_pipeline",
+                      "parallel_pair_owned_spatial",
++                     "parallel_pair_owned_spatial_extra",
+                      "parallel_sparse_owner", "parallel_sparse_owner_all"}
+ COMPACT_VARIANTS = {"halfword", "h3", "h25", "filtered_h3", "unfused_halfword", "unfused_h3",
+                     "combined_filtered_h3",
+--- a/rust/tests/spatial_prefix.rs
++++ b/rust/tests/spatial_prefix.rs
+@@ -17,7 +17,13 @@
+     input
+ }
+ 
+-fn spatial(input: Prepared, limit: usize, workers: usize, bounds: Bounds) -> (usize, usize) {
++fn spatial(
++    input: Prepared,
++    limit: usize,
++    workers: usize,
++    bounds: Bounds,
++    variant: &str,
++) -> (usize, usize) {
+     let expected = train(
+         input.clone(),
+         TrainOptions {
+@@ -35,7 +41,7 @@
+             min_frequency: 1,
+             bounds,
+         },
+-        "parallel_pair_owned_spatial",
++        variant,
+     )
+     .unwrap();
+     assert_eq!(actual.core.merges, expected.merges);
+@@ -54,7 +60,15 @@
+     pieces.extend((0..9).map(|_| (vec![2, 3], 1)));
+     for workers in [1, 4] {
+         for bounds in [Bounds::Checked, Bounds::Unchecked] {
+-            assert_eq!(spatial(prepared(&pieces, 3), 2, workers, bounds), (1, 2));
++            for variant in [
++                "parallel_pair_owned_spatial",
++                "parallel_pair_owned_spatial_extra",
++            ] {
++                assert_eq!(
++                    spatial(prepared(&pieces, 3), 2, workers, bounds, variant),
++                    (1, 2)
++                );
++            }
+         }
+     }
+ }
+@@ -64,7 +78,15 @@
+     let pieces = vec![(vec![1, 2, 3], 3); 8];
+     for workers in [1, 4] {
+         for bounds in [Bounds::Checked, Bounds::Unchecked] {
+-            assert_eq!(spatial(prepared(&pieces, 3), 2, workers, bounds), (2, 2));
++            for variant in [
++                "parallel_pair_owned_spatial",
++                "parallel_pair_owned_spatial_extra",
++            ] {
++                assert_eq!(
++                    spatial(prepared(&pieces, 3), 2, workers, bounds, variant),
++                    (2, 2)
++                );
++            }
+         }
+     }
+ }

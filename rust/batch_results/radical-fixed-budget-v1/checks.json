@@ -1,0 +1,78 @@
+{
+  "status": "passed",
+  "source_snapshot": "native-source-snapshot.tar.gz",
+  "source_hashes": "native-source-hashes.json",
+  "binary_paths": {
+    "ablation": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "v2": "rust/target/reruns/radical-fixed-budget-v1/v2",
+    "v4": "rust/target/reruns/radical-fixed-budget-v1/v4",
+    "boxed": "rust/target/reruns/radical-fixed-budget-v1/boxed"
+  },
+  "binary_sha256": {
+    "ablation": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+    "v2": "4b25835013efd5c755fb83edfe5746734c87e7697cf5b331c82ea1298894d5e4",
+    "v4": "f2d54e50cb59626998a10c066809348d6900fad71e1c77d5a2a199c7525f47d9",
+    "boxed": "444570d5b62b8ddbefa48c88af4f7c516b6548b350dfbb77ae25fb526c87988f"
+  },
+  "shared_target_dir": "/root/code/efficient_bpe/rust/target",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "validation": {
+    "v4_lib_tests": "passed 5/5",
+    "boxed_lib_tests": "passed 6/6",
+    "root_strict_clippy": "passed",
+    "v4_strict_clippy": "passed",
+    "boxed_strict_clippy": "passed",
+    "all_release_builds": "passed",
+    "differential": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "versions": [
+        "v4",
+        "boxed"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "bounds": "checked (CLI fixed)",
+      "compared_runs": 80,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "v4": "f2d54e50cb59626998a10c066809348d6900fad71e1c77d5a2a199c7525f47d9",
+        "boxed": "444570d5b62b8ddbefa48c88af4f7c516b6548b350dfbb77ae25fb526c87988f"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "native_rows": 12,
+    "radical_rows": 12,
+    "repeats": 1,
+    "all_radical_complete_traces_match": true,
+    "cpu_budget_policy": "workers",
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "native_binary_and_fixture_hashes": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250"
+  },
+  "native_4m_calibration": {
+    "rows": 12,
+    "repeats": 1,
+    "all_fingerprints_stable": true,
+    "cpu_budget_policy": "workers",
+    "memory_metric": "train_vm_hwm_mib"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "variant": "parallel_pair_owned_spatial",
+  "binary_path": "rust/target/reruns/pair-owned-spatial-v1/ablation",
+  "binary_sha256": "118d07b6e13b2026dd47651fd1d28fb24009dcd28529b3c579fff16188e743ab",
+  "binary_git_ignored": true,
+  "source_snapshot": "native-source-snapshot.tar.gz",
+  "source_hashes": "native-source-hashes.json",
+  "validation": {
+    "spatial_focused_tests": "passed 2/2 (agent)",
+    "strict_clippy": "passed (agent)",
+    "release_build": "passed",
+    "differential": {
+      "cases": 20,
+      "random_cases": 8,
+      "compared_runs": 80,
+      "explicit_compact_limit_skips": 0,
+      "variants": [
+        "parallel_pair_owned_spatial"
+      ],
+      "workers_for_parallel": [
+        1,
+        4
+      ],
+      "bounds": [
+        "checked",
+        "unchecked"
+      ],
+      "oracle": "full-recount Python naive; complete merge trace and final tokens",
+      "all_compared_traces_match": true,
+      "all_compared_fingerprints_match": true,
+      "seed": 20260930,
+      "binary_sha256": "118d07b6e13b2026dd47651fd1d28fb24009dcd28529b3c579fff16188e743ab",
+      "skips": []
+    }
+  },
+  "quick": {
+    "rows": 16,
+    "repeats": 1,
+    "comparisons": [
+      {
+        "case": "quick-en-continuous-262144",
+        "workers": 1,
+        "pair_owned_call_seconds": 0.191826236,
+        "spatial_call_seconds": 0.193778701,
+        "pair_owned_vm_hwm_mib": 9.75390625,
+        "spatial_vm_hwm_mib": 9.796875,
+        "fingerprint_match": true,
+        "spatial_probe_visits": 515737.0,
+        "spatial_probe_seconds": 0.027905876000000013,
+        "spatial_widened_epochs": 15.0
+      },
+      {
+        "case": "quick-en-continuous-262144",
+        "workers": 4,
+        "pair_owned_call_seconds": 0.083142881,
+        "spatial_call_seconds": 0.090772449,
+        "pair_owned_vm_hwm_mib": 11.609375,
+        "spatial_vm_hwm_mib": 11.62890625,
+        "fingerprint_match": true,
+        "spatial_probe_visits": 515737.0,
+        "spatial_probe_seconds": 0.008570495,
+        "spatial_widened_epochs": 15.0
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "workers": 1,
+        "pair_owned_call_seconds": 0.102967003,
+        "spatial_call_seconds": 0.120064257,
+        "pair_owned_vm_hwm_mib": 7.37109375,
+        "spatial_vm_hwm_mib": 7.140625,
+        "fingerprint_match": true,
+        "spatial_probe_visits": 54249.0,
+        "spatial_probe_seconds": 0.005343012999999999,
+        "spatial_widened_epochs": 9.0
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "workers": 4,
+        "pair_owned_call_seconds": 0.058481032,
+        "spatial_call_seconds": 0.069556661,
+        "pair_owned_vm_hwm_mib": 10.01171875,
+        "spatial_vm_hwm_mib": 9.9921875,
+        "fingerprint_match": true,
+        "spatial_probe_visits": 54249.0,
+        "spatial_probe_seconds": 0.004626577,
+        "spatial_widened_epochs": 9.0
+      }
+    ],
+    "source_hashes_match_snapshot": true,
+    "all_fingerprints_stable": true
+  },
+  "memory_metric": "vm_hwm_mib"
+}

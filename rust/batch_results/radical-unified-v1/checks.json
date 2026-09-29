@@ -1,0 +1,174 @@
+{
+  "status": "passed",
+  "shared_target_dir": "/root/code/efficient_bpe/rust/target",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "binary_paths": {
+    "v1": "rust/target/reruns/radical-unified-v1/v1",
+    "v2": "rust/target/reruns/radical-unified-v1/v2",
+    "v3": "rust/target/reruns/radical-unified-v1/v3"
+  },
+  "binary_sha256": {
+    "v1": "ac00758a0499b73c6c8619c0b0a45cdc3ba5f49293ea3c247dc417f90929d2dd",
+    "v2": "25ade1f30200b1845ffb8415e4cff778f16cb651ccf9538645aaa3bba44fc0a4",
+    "v3": "541e3d30a429355ec361004e9131cd58c0d44ecd7fb7812c5b4902eadc511d12"
+  },
+  "source_snapshot": "native-source-snapshot.tar.gz",
+  "source_hashes": "native-source-hashes.json",
+  "validation": {
+    "library_tests": {
+      "v1": "passed 5/5",
+      "v2": "passed 5/5",
+      "v3": "passed 5/5"
+    },
+    "release_build": {
+      "v1": "passed",
+      "v2": "passed",
+      "v3": "passed after json macro recursion limit 256"
+    },
+    "quick_complete_traces": "12/12 matched combined_filtered reference; fingerprints and fixture SHA matched"
+  },
+  "quick": {
+    "rows": 12,
+    "repeats": 1,
+    "comparison": [
+      {
+        "case": "quick-en-continuous-262144",
+        "version": "v1",
+        "workers": 1,
+        "call_seconds": 0.117585672,
+        "vm_hwm_mib": 9.48046875,
+        "best_direct_scalar": "combined_filtered_halfword",
+        "best_direct_scalar_call_seconds": 0.09632573,
+        "best_scalar_over_radical_speedup": 0.8191961517216145,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-en-continuous-262144",
+        "version": "v1",
+        "workers": 4,
+        "call_seconds": 0.119904368,
+        "vm_hwm_mib": 10.21875,
+        "best_direct_scalar": "combined_filtered_halfword",
+        "best_direct_scalar_call_seconds": 0.09632573,
+        "best_scalar_over_radical_speedup": 0.8033546367551848,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-en-continuous-262144",
+        "version": "v2",
+        "workers": 1,
+        "call_seconds": 0.084678464,
+        "vm_hwm_mib": 8.40625,
+        "best_direct_scalar": "combined_filtered_halfword",
+        "best_direct_scalar_call_seconds": 0.09632573,
+        "best_scalar_over_radical_speedup": 1.137546968258659,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-en-continuous-262144",
+        "version": "v2",
+        "workers": 4,
+        "call_seconds": 0.111656191,
+        "vm_hwm_mib": 9.31640625,
+        "best_direct_scalar": "combined_filtered_halfword",
+        "best_direct_scalar_call_seconds": 0.09632573,
+        "best_scalar_over_radical_speedup": 0.862699409117404,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-en-continuous-262144",
+        "version": "v3",
+        "workers": 1,
+        "call_seconds": 0.106100031,
+        "vm_hwm_mib": 8.10546875,
+        "best_direct_scalar": "combined_filtered_halfword",
+        "best_direct_scalar_call_seconds": 0.09632573,
+        "best_scalar_over_radical_speedup": 0.9078765490652873,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-en-continuous-262144",
+        "version": "v3",
+        "workers": 4,
+        "call_seconds": 0.109496601,
+        "vm_hwm_mib": 9.26171875,
+        "best_direct_scalar": "combined_filtered_halfword",
+        "best_direct_scalar_call_seconds": 0.09632573,
+        "best_scalar_over_radical_speedup": 0.8797143392606315,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "version": "v1",
+        "workers": 1,
+        "call_seconds": 0.04508003,
+        "vm_hwm_mib": 6.98828125,
+        "best_direct_scalar": "combined_filtered",
+        "best_direct_scalar_call_seconds": 0.036504809,
+        "best_scalar_over_radical_speedup": 0.8097778328896409,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "version": "v1",
+        "workers": 4,
+        "call_seconds": 0.055095982,
+        "vm_hwm_mib": 6.96484375,
+        "best_direct_scalar": "combined_filtered",
+        "best_direct_scalar_call_seconds": 0.036504809,
+        "best_scalar_over_radical_speedup": 0.6625675353240822,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "version": "v2",
+        "workers": 1,
+        "call_seconds": 0.050565258,
+        "vm_hwm_mib": 7.30078125,
+        "best_direct_scalar": "combined_filtered",
+        "best_direct_scalar_call_seconds": 0.036504809,
+        "best_scalar_over_radical_speedup": 0.7219345939063536,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "version": "v2",
+        "workers": 4,
+        "call_seconds": 0.053377081,
+        "vm_hwm_mib": 6.671875,
+        "best_direct_scalar": "combined_filtered",
+        "best_direct_scalar_call_seconds": 0.036504809,
+        "best_scalar_over_radical_speedup": 0.683904183520264,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "version": "v3",
+        "workers": 1,
+        "call_seconds": 0.059998983,
+        "vm_hwm_mib": 10.6953125,
+        "best_direct_scalar": "combined_filtered",
+        "best_direct_scalar_call_seconds": 0.036504809,
+        "best_scalar_over_radical_speedup": 0.6084237961166775,
+        "complete_trace_match": true
+      },
+      {
+        "case": "quick-zh-continuous-262144",
+        "version": "v3",
+        "workers": 4,
+        "call_seconds": 0.073682599,
+        "vm_hwm_mib": 12.76953125,
+        "best_direct_scalar": "combined_filtered",
+        "best_direct_scalar_call_seconds": 0.036504809,
+        "best_scalar_over_radical_speedup": 0.4954332433360555,
+        "complete_trace_match": true
+      }
+    ],
+    "memory_metric": "vm_hwm_mib",
+    "call_boundary": "input JSON parsed and source bytes dropped before timer; full training call measured"
+  }
+}

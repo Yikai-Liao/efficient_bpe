@@ -208,7 +208,10 @@ enum Command {
     BuildIndex,
     Prefetch(usize),
     MeasureWindow(Arc<Vec<u64>>),
-    ProbeWindow(Arc<Vec<u64>>),
+    ProbeWindow {
+        keys: Arc<Vec<u64>>,
+        base_width: usize,
+    },
     ReturnCandidates(Arc<HashSet<u64>>),
     PrepareBatch {
         rules: Arc<Vec<RuleSpec>>,
@@ -407,13 +410,15 @@ fn valid_pair<const UNCHECKED: bool>(
     (after <= last).then_some((right, after))
 }
 
-/// Every overlapping pair has a left occurrence whose right neighbor is the
-/// other pair. Read only the stable corpus; selected lists remain in the index.
-fn probe_window<const UNCHECKED: bool>(
+/// The type-only base has no internal overlap. In EXTRA_ONLY mode every
+/// remaining conflict touches an extension occurrence, checked on both sides.
+/// Read only the stable corpus; selected lists remain in the index.
+fn probe_window<const UNCHECKED: bool, const EXTRA_ONLY: bool>(
     corpus: &[AtomicU32],
     index: &HashMap<u64, Vec<u32>>,
     lengths: &[u32],
     keys: &[u64],
+    base_width: usize,
 ) -> ProbeReply {
     let started = Instant::now();
     let ranks: HashMap<u64, usize> = keys.iter().enumerate().map(|(i, &key)| (key, i)).collect();
@@ -421,7 +426,11 @@ fn probe_window<const UNCHECKED: bool>(
     let mut cutoff = keys.len();
     let mut visited = 0;
     let mut stale = 0;
-    for (rank, &key) in keys.iter().enumerate() {
+    for (rank, &key) in keys
+        .iter()
+        .enumerate()
+        .skip(if EXTRA_ONLY { base_width } else { 0 })
+    {
         let a = (key >> 32) as u32;
         let b = key as u32;
         let a_length = lengths[a as usize] as usize;
@@ -449,6 +458,14 @@ fn probe_window<const UNCHECKED: bool>(
                 if after > last {
                     stale += 1;
                     continue;
+                }
+                if EXTRA_ONLY {
+                    let left = load::<UNCHECKED>(corpus, pos - 1);
+                    if left != 0
+                        && let Some(&left_rank) = ranks.get(&pair_key(left, a))
+                    {
+                        cutoff = cutoff.min(rank.max(left_rank));
+                    }
                 }
                 let c = load::<UNCHECKED>(corpus, after);
                 if c != 0
@@ -892,7 +909,7 @@ impl PairState {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
+fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const EXTRA_ONLY: bool>(
     worker_id: usize,
     corpus: Arc<Vec<AtomicU32>>,
     pivots: Arc<Vec<u32>>,
@@ -992,9 +1009,11 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
                         .map(|key| index.get(key).map_or(0, Vec::len))
                         .collect(),
                 )),
-                Command::ProbeWindow(keys) => Ok(Reply::Probed(probe_window::<UNCHECKED>(
-                    &corpus, &index, &lengths, &keys,
-                ))),
+                Command::ProbeWindow { keys, base_width } => {
+                    Ok(Reply::Probed(probe_window::<UNCHECKED, EXTRA_ONLY>(
+                        &corpus, &index, &lengths, &keys, base_width,
+                    )))
+                }
                 Command::ReturnCandidates(selected) => {
                     scalars.return_candidates(&selected);
                     Ok(Reply::Returned)
@@ -1190,7 +1209,7 @@ fn fetch(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn select_prefix(
+fn select_prefix<const EXTRA_ONLY: bool>(
     workers: &[Worker],
     remaining: usize,
     cap: usize,
@@ -1312,7 +1331,7 @@ fn select_prefix(
         spatial.budget_epochs += usize::from(scan_width < pending.len());
         if scan_width > base_width {
             let probe_keys = Arc::new(keys[..scan_width].to_vec());
-            let expected_visits = histories[..scan_width]
+            let expected_visits = histories[if EXTRA_ONLY { base_width } else { 0 }..scan_width]
                 .iter()
                 .fold(0_usize, |sum, &length| sum.saturating_add(length));
             let visits_before = spatial.probe_visits;
@@ -1320,7 +1339,10 @@ fn select_prefix(
             for worker in workers {
                 worker
                     .commands
-                    .send(Command::ProbeWindow(Arc::clone(&probe_keys)))
+                    .send(Command::ProbeWindow {
+                        keys: Arc::clone(&probe_keys),
+                        base_width,
+                    })
                     .map_err(|_| TrainError::InternalInvariant("spatial probe send failed"))?;
             }
             spatial.probe_messages += 2 * workers.len();
@@ -1376,10 +1398,18 @@ pub(super) fn train<const UNCHECKED: bool>(
     options: Options,
     cap: usize,
 ) -> TrainResult<Result> {
-    run::<UNCHECKED, false>(input, options, cap)
+    run::<UNCHECKED, false, false>(input, options, cap)
 }
 
-fn run<const UNCHECKED: bool, const COMPACT: bool>(
+pub(super) fn train_extra<const UNCHECKED: bool>(
+    input: Prepared,
+    options: Options,
+    cap: usize,
+) -> TrainResult<Result> {
+    run::<UNCHECKED, false, true>(input, options, cap)
+}
+
+fn run<const UNCHECKED: bool, const COMPACT: bool, const EXTRA_ONLY: bool>(
     input: Prepared,
     options: Options,
     cap: usize,
@@ -1408,7 +1438,7 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
         .map(|id| {
             let start = 1 + id * (last - 1) / worker_count;
             let end = 1 + (id + 1) * (last - 1) / worker_count;
-            spawn_worker::<UNCHECKED, COMPACT>(
+            spawn_worker::<UNCHECKED, COMPACT, EXTRA_ONLY>(
                 id,
                 Arc::clone(&corpus),
                 Arc::clone(&pivots),
@@ -1523,7 +1553,7 @@ fn run<const UNCHECKED: bool, const COMPACT: bool>(
     let mut spatial = SpatialStats::default();
     while merges.len() < options.max_merges {
         let selection_started = Instant::now();
-        let prefix = select_prefix(
+        let prefix = select_prefix::<EXTRA_ONLY>(
             &workers,
             options.max_merges - merges.len(),
             cap,
@@ -2089,15 +2119,62 @@ mod tests {
             .collect();
         let separate_index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![4])]);
         assert_eq!(
-            probe_window::<false>(&separate, &separate_index, &lengths, &keys).cutoff,
+            probe_window::<false, false>(&separate, &separate_index, &lengths, &keys, 1).cutoff,
             2
         );
 
         let chain: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
         let chain_index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![2])]);
         assert_eq!(
-            probe_window::<false>(&chain, &chain_index, &lengths, &keys).cutoff,
+            probe_window::<false, false>(&chain, &chain_index, &lengths, &keys, 1).cutoff,
             1
         );
+    }
+
+    #[test]
+    fn extension_only_finds_overlap_to_its_left() {
+        let keys = [pair_key(1, 2), pair_key(2, 3)];
+        let lengths = [0, 1, 1, 1];
+        let corpus: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
+        let index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![2])]);
+        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
+        assert_eq!(reply.cutoff, 1);
+        assert_eq!(reply.visited, 1); // Only BC is scanned.
+    }
+
+    #[test]
+    fn extension_only_finds_overlap_to_its_right() {
+        let keys = [pair_key(2, 3), pair_key(1, 2)];
+        let lengths = [0, 1, 1, 1];
+        let corpus: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
+        let index = HashMap::from([(keys[0], vec![2]), (keys[1], vec![1])]);
+        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
+        assert_eq!(reply.cutoff, 1);
+        assert_eq!(reply.visited, 1); // Only AB is scanned.
+    }
+
+    #[test]
+    fn extension_only_does_not_cross_piece_boundary() {
+        let keys = [pair_key(1, 2), pair_key(2, 3)];
+        let lengths = [0, 1, 1, 1];
+        let corpus: Vec<_> = [0, 1, 2, 0, 2, 3, 0]
+            .into_iter()
+            .map(AtomicU32::new)
+            .collect();
+        let index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![4])]);
+        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
+        assert_eq!(reply.cutoff, 2);
+        assert_eq!(reply.visited, 1);
+    }
+
+    #[test]
+    fn extension_left_lookup_uses_multislot_token_endpoint() {
+        let keys = [pair_key(4, 2), pair_key(2, 3)];
+        let lengths = [0, 1, 1, 1, 2];
+        let corpus: Vec<_> = [0, 4, 4, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
+        let index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![3])]);
+        let reply = probe_window::<false, true>(&corpus, &index, &lengths, &keys, 1);
+        assert_eq!(reply.cutoff, 1);
+        assert_eq!(reply.visited, 1);
     }
 }

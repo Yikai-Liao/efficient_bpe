@@ -118,6 +118,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     )?;
     let call_cpu_seconds = process_cpu()? - cpu;
     let call_seconds = wall.elapsed().as_secs_f64();
+    // Snapshot before fingerprint/trace formatting allocates output buffers.
+    // This is the process high-water through training, including input parsing.
+    let train_vm_hwm_mib = vm_hwm_mib()?;
     let metrics = result.metrics;
     let result = result.core;
     // Python's old fingerprint uses json.dumps defaults: arrays of unsigned
@@ -156,6 +159,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             "train_seconds":result.train_seconds,
             "call_seconds":call_seconds,"call_cpu_seconds":call_cpu_seconds,
             "peak_rss_mib":peak_rss_kib()? as f64/1024.0,
+            "train_vm_hwm_mib":train_vm_hwm_mib,
             "vm_hwm_mib":vm_hwm_mib()?,
         })
     );

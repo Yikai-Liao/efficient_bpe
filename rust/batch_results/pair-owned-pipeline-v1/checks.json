@@ -149,5 +149,21 @@
   },
   "note": "n=1 screening; call_seconds is the comparison metric; pipeline merge_seconds includes Finish cleanup whereas baseline merge_seconds does not. VmHWM is the native process memory high-water field.",
   "binary_path": "rust/target/reruns/pair-owned-pipeline-v1/ablation",
-  "binary_git_ignored": true
+  "binary_git_ignored": true,
+  "cpu_budget_correction": {
+    "quick_and_smoke_policy": "all",
+    "allowed_process_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "worker_counts": [
+      1,
+      4
+    ],
+    "interpretation": "Worker count was not a fixed process CPU budget; do not call ratios one-core versus four-core scaling. Preserve raw timings; use a new workers-policy calibration for that claim."
+  }
 }

@@ -38,6 +38,7 @@ PARALLEL_VARIANTS = {"parallel_broadcast", "parallel_owner", "parallel_occurrenc
                      "parallel_pair_owned_compact", "parallel_pair_owned_single",
                      "parallel_pair_owned_pipeline",
                      "parallel_pair_owned_spatial",
+                     "parallel_pair_owned_spatial_extra",
                      "parallel_sparse_owner", "parallel_sparse_owner_all"}
 COMPACT_VARIANTS = {"halfword", "h3", "h25", "filtered_h3", "unfused_halfword", "unfused_h3",
                     "combined_filtered_h3",

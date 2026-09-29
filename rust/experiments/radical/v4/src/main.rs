@@ -1,5 +1,7 @@
+#![recursion_limit = "256"]
+
 use efficient_bpe_rust::{Bounds, Prepared, TrainOptions};
-use radical_birth_postings_v2::{Config, train};
+use radical_birth_postings_v4::{Config, train};
 use serde::Deserialize;
 use serde_json::json;
 use sha2::{Digest, Sha256};
@@ -14,8 +16,9 @@ struct Input {
     weights: Vec<u64>,
 }
 
-fn process_hwm_mib() -> Result<f64, Box<dyn Error>> {
-    Ok(std::fs::read_to_string("/proc/self/status")?.lines()
+fn vm_hwm_mib() -> Result<f64, Box<dyn Error>> {
+    let status = std::fs::read_to_string("/proc/self/status")?;
+    Ok(status.lines()
         .find_map(|line| line.strip_prefix("VmHWM:"))
         .ok_or("VmHWM missing")?
         .split_whitespace().next().ok_or("VmHWM value missing")?
@@ -61,8 +64,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Config { workers, chunk_size },
     )?;
     let call_seconds = started.elapsed().as_secs_f64();
-    // Include process startup/input parsing, exclude later fingerprint/trace allocations.
-    let train_vm_hwm_mib = process_hwm_mib()?;
+    let train_vm_hwm_mib = vm_hwm_mib()?;
     let merges: Vec<[u64; 3]> = result.rules.iter()
         .map(|r| [r.left as u64, r.right as u64, r.frequency]).collect();
     let compact = serde_json::to_string(&(&merges, &result.final_tokens))?;
@@ -70,9 +72,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     if let Some(path) = trace_path {
         std::fs::write(path, serde_json::to_vec(&json!({"merges": merges, "final": result.final_tokens}))?)?;
     }
-    let vm_hwm_mib = process_hwm_mib()?;
+    let vm_hwm_mib = vm_hwm_mib()?;
     println!("{}", json!({
-        "variant": "radical_birth_postings_v2", "workers": workers,
+        "variant": "radical_birth_postings_v4", "workers": workers,
         "chunk_size": chunk_size, "rules": result.rules.len(),
         "fixture_sha256": fixture_sha256,
         "fingerprint": fingerprint,
@@ -85,9 +87,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         "init_seconds": result.metrics.init_seconds,
         "initial_count_seconds": result.metrics.initial_count_seconds,
         "initial_fill_seconds": result.metrics.initial_fill_seconds,
+        "select_seconds": result.metrics.select_seconds,
         "plan_seconds": result.metrics.plan_seconds,
         "chunk_summary_seconds": result.metrics.chunk_summary_seconds,
         "apply_seconds": result.metrics.apply_seconds,
+        "combine_seconds": result.metrics.combine_seconds,
         "frequency_reduce_seconds": result.metrics.frequency_reduce_seconds,
         "birth_sort_seconds": result.metrics.birth_sort_seconds,
         "birth_append_seconds": result.metrics.birth_append_seconds,
@@ -107,6 +111,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         "peak_plan_len": result.metrics.peak_plan_len,
         "peak_birth_records": result.metrics.peak_birth_records,
         "peak_delta_keys": result.metrics.peak_delta_keys,
+        "batch_rounds": result.metrics.batch_rounds,
+        "batch_rules": result.metrics.batch_rules,
+        "max_batch_width": result.metrics.max_batch_width,
+        "singleton_rounds": result.metrics.singleton_rounds,
+        "flat_tasks": result.metrics.flat_tasks,
+        "planned_positions": result.metrics.planned_positions,
+        "peak_flat_tasks": result.metrics.peak_flat_tasks,
+        "peak_task_starts": result.metrics.peak_task_starts,
     }));
     Ok(())
 }

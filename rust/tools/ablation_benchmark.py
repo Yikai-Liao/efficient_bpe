@@ -24,6 +24,7 @@ PARALLEL = {"parallel_broadcast", "parallel_owner", "parallel_occurrence",
             "parallel_pair_owned_compact", "parallel_pair_owned_single",
             "parallel_pair_owned_pipeline",
             "parallel_pair_owned_spatial",
+            "parallel_pair_owned_spatial_extra",
             "parallel_sparse_owner", "parallel_sparse_owner_all"}
 BASE_VARIANTS = (
     "full_clear", "endpoints", "lean", "packed", "unfused_endpoints",
@@ -141,8 +142,8 @@ def main():
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--seed", type=int, default=20260930)
     parser.add_argument("--scalar-cpu", type=int, default=5)
-    parser.add_argument("--parallel-core-budget", choices=("all", "workers"), default="all",
-                        help="all preserves the original affinity; workers limits the entire process, including its coordinator, to p CPUs")
+    parser.add_argument("--parallel-core-budget", choices=("all", "workers"), default="workers",
+                        help="workers (default) limits the entire process, including its coordinator, to p CPUs; all explicitly restores the original unrestricted worker-count experiment")
     parser.add_argument("--rules", type=int, default=None,
                         help="override rules for every fixture")
     parser.add_argument("--min-frequency", type=int, default=None,

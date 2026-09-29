@@ -170,6 +170,7 @@ pub fn train(
             | "pair_owned"
             | "pair_owned_pipeline"
             | "pair_owned_spatial"
+            | "pair_owned_spatial_extra"
             | "pair_owned_single"
             | "pair_owned_compact"
             | "sparse_owner"
@@ -193,6 +194,13 @@ pub fn train(
         return Ok(Result { core, metrics });
     }
     match mode {
+        "pair_owned_spatial_extra" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                spatial::train_extra::<true>(input, options, 256)
+            } else {
+                spatial::train_extra::<false>(input, options, 256)
+            }
+        }
         "pair_owned_spatial" => {
             if options.bounds == crate::Bounds::Unchecked {
                 spatial::train::<true>(input, options, 256)
