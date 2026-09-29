@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "sort_std_hash_std",
+    "sort_radix_hash_std",
+    "sort_std_hash_ahash",
+    "sort_radix_hash_ahash"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 160,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_aa_radix": "60fcc00acd299107a47622c4022882a7eea6d4ba90d6f78c37e53c774643aaef"
+  },
+  "modes_sha256": "4e7630a02b079a3afbad6157a33f345903096692da4420bf8d10f6e9402762d4",
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

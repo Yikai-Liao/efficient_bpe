@@ -1,0 +1,9 @@
+{
+  "oracle": {
+    "type": {"binary": "owned_lazy_neighbor", "args": ["--batch-certificate", "type"]},
+    "birth_neighbor64": {"binary": "owned_lazy_neighbor", "args": ["--batch-certificate", "birth-neighbor64"]},
+    "lazy_default": {"binary": "owned_lazy_neighbor", "args": ["--batch-certificate", "lazy-neighbor64"]},
+    "lazy_force_parallel": {"binary": "owned_lazy_neighbor", "args": ["--batch-certificate", "lazy-neighbor64", "--mask-parallel-threshold", "1"]},
+    "lazy_force_serial": {"binary": "owned_lazy_neighbor", "args": ["--batch-certificate", "lazy-neighbor64", "--mask-parallel-threshold", "18446744073709551615"]}
+  }
+}

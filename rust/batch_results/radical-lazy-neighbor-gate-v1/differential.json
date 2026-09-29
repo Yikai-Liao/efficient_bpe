@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "type",
+    "birth_neighbor64",
+    "lazy_default",
+    "lazy_force_parallel",
+    "lazy_force_serial"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 200,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_lazy_neighbor": "d8bbcde4d0516329e11f72a8d1665ac4a810c52d1715421d0164eb0d2887839d"
+  },
+  "modes_sha256": "710541ff008d46108f2c9b6cdf52067154d7f6af0aed0e297850ee012e454622",
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

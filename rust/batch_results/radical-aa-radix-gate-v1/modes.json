@@ -1,0 +1,8 @@
+{
+  "oracle": {
+    "sort_std_hash_std": {"binary": "owned_aa_radix", "args": ["--aa-sort", "std", "--integer-hash", "std"]},
+    "sort_radix_hash_std": {"binary": "owned_aa_radix", "args": ["--aa-sort", "radix", "--integer-hash", "std"]},
+    "sort_std_hash_ahash": {"binary": "owned_aa_radix", "args": ["--aa-sort", "std", "--integer-hash", "ahash"]},
+    "sort_radix_hash_ahash": {"binary": "owned_aa_radix", "args": ["--aa-sort", "radix", "--integer-hash", "ahash"]}
+  }
+}

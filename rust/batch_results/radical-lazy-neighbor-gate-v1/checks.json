@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "debug_lib_tests": "17/17",
+  "strict_clippy_all_targets": "passed -D warnings",
+  "release_build": "passed",
+  "oracle": {
+    "cases": 20,
+    "modes": 5,
+    "workers": [
+      1,
+      4
+    ],
+    "full_trace_matches": 200
+  },
+  "quick": {
+    "rows": 14,
+    "cases": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_matches": 14,
+    "w4_force_serial_controls": 2
+  },
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "default_parallel_builds_on_quick_fixtures": 0,
+  "source_snapshot_sha256": "9a64c5a1ed265aebe52fe7349db0823d6f18c9837a86bacacc8221fc2cd73c62",
+  "source_hashes": "new-source-hashes.json",
+  "shared_source_provenance": "shared-source-provenance.json",
+  "binary_sha256": "d8bbcde4d0516329e11f72a8d1665ac4a810c52d1715421d0164eb0d2887839d",
+  "binary_path": "rust/target/reruns/radical-lazy-neighbor-gate-v1/owned_lazy_neighbor",
+  "limitations": [
+    "One repeat per 256 KiB cell, so timing is diagnostic only.",
+    "Default threshold caused no parallel mask builds on these fixtures; the quick screen cannot measure that path's performance.",
+    "Batch boundaries and intermediate birth counts may change between exact certificates; complete output traces are the semantic criterion.",
+    "Capacity-scaled byte counters are payload proxies, not actual HashMap allocation or process RSS."
+  ]
+}

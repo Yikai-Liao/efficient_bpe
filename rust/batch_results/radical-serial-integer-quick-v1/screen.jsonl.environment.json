@@ -1,0 +1,45 @@
+{
+  "git_head_during_measurement": "7d6eb8105683e5817cf981cf6b19822777aa4df0",
+  "manifest": "rust/batch_results/quick-fixtures-262144-512.json",
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "binary_sha256": {
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+    "owner": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+    "native": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250"
+  },
+  "source_archives": {
+    "serial": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+    "owner": "rust/batch_results/radical-local-hash-v1/new-source-snapshot.tar.gz",
+    "native": "rust/batch_results/radical-fixed-budget-v1"
+  },
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "seed": 20260930,
+  "repeats": 1,
+  "rows": 22,
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds (CLOCK_PROCESS_CPUTIME_ID)",
+  "semantic_check": "full merge-rule and final-token trace plus SHA-256 fingerprint"
+}

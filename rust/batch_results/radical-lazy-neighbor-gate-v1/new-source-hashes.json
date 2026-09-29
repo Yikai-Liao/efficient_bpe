@@ -1,0 +1,8 @@
+{
+  "rust/experiments/radical/owned_lazy_neighbor/Cargo.lock": "d0f84d171b593d74f7e5ff37ba1e63d97cbc716d81578745d7a5622ffc0097ba",
+  "rust/experiments/radical/owned_lazy_neighbor/Cargo.toml": "c2031661b50f393953a86389d894fdbdc41595312e4cea522c5cf7e1255dbda7",
+  "rust/experiments/radical/owned_lazy_neighbor/DESIGN.md": "5b3bbf9eadc0a8fafd8f0545516d9298be8a814643fb0f59624e8d1cf1949feb",
+  "rust/experiments/radical/owned_lazy_neighbor/src/lib.rs": "d5f07a5e402796b1bc3f6d39285c704d2583266618c8d0e67fed03a02820b600",
+  "rust/experiments/radical/owned_lazy_neighbor/src/main.rs": "78780542784439a9dc17b86c90040017322b8fea7d6237b6345af5a2f6ab494b",
+  "rust/experiments/radical/owned_lazy_neighbor/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+}

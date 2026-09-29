@@ -330,3 +330,20 @@ shards 让固定 W=4 个生产任务向 S=4/8/16 个逻辑 owner 路由。英文
 ## 直接串行同哈希控制已完成正确性门控
 
 [serial_integer_hash](experiments/radical/serial_integer_hash/DESIGN.md)从原 `Init::Counted`、Combined<u64>、普通 lazy heap 串行路径提取最小内核，只对 counts/index/fresh-set 的 hasher 作全调用泛型分派，原 endpoint/halfword 后端和 heap 通过只读路径复用。它支持 CF/CF16、checked/unchecked、std/aHash 八种组合，并拒绝 workers≠1。通过 6 项 Rust 测试、严格 Clippy、156/156 合法完整 oracle；另 4 例 CF16 初始 alphabet 超域按原合同拒绝。CF16 是单个 Vec<u16> 加 BitLinks，合并 token 在其前两个物理位置放完整 u32 ID 的两半，并非限制 fresh ID≤65535。此控制本轮尚未计时，不能用前轮 aHash owner 的时间猜测它的速度。
+
+## 同哈希串行对照与两项独立算法小测
+
+后续[串行小测](batch_results/radical-serial-integer-quick-v1/README.md)补齐了性能，22/22 完整轨迹匹配。256 KiB、512 规则、每格 n=1，同窗口 CF32 aHash checked 的英文/中文为 0.0386/0.0198 秒，owner aHash W4 为 0.0314/0.0180 秒。CF32 unchecked 为 0.0329/0.0207 秒，不能默认去掉边界检查就一定更快。原有直接串行保留标准哈希造成了明显混杂；此小测中公平基线已经很接近四核版。它尚未在 4 MiB 复核，不能把小样本比值移植到前一表，也不能以单次最小值给所有串行实现定排名。
+
+独立实现的[按需邻接摘要](experiments/radical/owned_lazy_neighbor/DESIGN.md)通过 17 项 Rust 测试、strict Clippy、200/200 完整 oracle；[14 调用小测](batch_results/radical-lazy-neighbor-gate-v1/README.md)全部匹配。它将摘要从每个 Entry 的永久 8 字节改为全局稀疏 key→mask 缓存：首次类型冲突时建立，选中 key 整批结束才退役，未选 key 保留。每 key 最多扫描一次，其总额外历史位置访问有 O(N) 摊销界；缓存最多为已选规则和每批首个失败候选建立，build 数≤R+B≤2R。没有逐线程复制索引。
+
+| 256 KiB / 512 规则 / n=1 | type / birth / lazy 批次 | birth → lazy 摘要访问数 | type / birth / lazy W4 调用 | birth → lazy W4 HWM |
+|---|---:|---:|---:|---:|
+| 英文 | 69 / 60 / 61 | 530,725 → 32,801 | 0.0611 / 0.0516 / 0.0584 s | 8.94 → 8.51 MiB |
+| 中文 | 87 / 82 / 82 | 149,188 → 4,751 | 0.0223 / 0.0266 / 0.0295 s | 8.99 → 8.02 MiB |
+
+两语料分别建立 68/66 个 mask、命中 10/2 次，最大单次历史扫描为 4,091/550，均未达到默认 8,192 的并行阈值。因此额外跑的 W4 强制串行控制与默认实际上走同一路径，不能从差值推断冷建并行是否有用。按需方案确实减少了摘要工作和本次峰值内存，但速度没有一致战胜 type 控制；只保留独立实验，不叠入 aHash 默认。两种摘要会改变后续批次划分及保守碰撞，不能要求总批次数严格单调，或要求不同批次下 born 记录计数完全相等。
+
+另一项[原地 AA radix](experiments/radical/owned_aa_radix/DESIGN.md)通过 13 项 Rust 测试、strict Clippy、160/160 完整 oracle；[12 调用小测](batch_results/radical-aa-radix-gate-v1/README.md)也全部匹配。它把选中 AA 的 u32 历史位置排序由最坏 O(H log H) 换为固定最多四字节层的 O(H)，不申请 H 长度缓冲，三个 256 项数组的同时栈载荷上界 24 KiB。此版本 radix 为串行，控制是原 Rayon 并行比较排序，不可混淆。
+
+65,536 字符 unary 和 AB 交替例累计排序 131,054/65,519 个位置。四核 std→radix 的 AA 排序阶段分别为 1.29→2.04 ms、0.96→1.07 ms，未获得局部速度收益；自然英文只排序 250 个位置、阶段占完整调用不到 0.1%，没有端到端加速空间。当前应保留更明确的复杂度保证作为可选方案，不能因最坏界更好就默认切换。下一步更有意义的是改变 AA 全局 parity 的并行组织，以及[在写入中恢复批前邻居](FUSED_ENDPOINT_SNAPSHOT_NEXT.md)以去掉非 AA 的 plan→apply 屏障；这些新设计尚无性能结论。

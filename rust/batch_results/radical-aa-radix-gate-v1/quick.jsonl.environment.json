@@ -1,0 +1,52 @@
+{
+  "manifest_sha256": {
+    "rust/ablation_results/fixtures.json": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b",
+    "rust/batch_results/quick-fixtures-262144-512.json": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c"
+  },
+  "case_ids": [
+    "quick-en-continuous-262144",
+    "single-piece-ab-65536",
+    "single-run-a-65536"
+  ],
+  "binary_sha256": "60fcc00acd299107a47622c4022882a7eea6d4ba90d6f78c37e53c774643aaef",
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_aa_radix/Cargo.lock": "b4ca5ccd8613ca67ba3b8c436039167ac2eec80308ba530a2f675397d7b894af",
+    "rust/experiments/radical/owned_aa_radix/Cargo.toml": "1acdaa1d60550d4a5874e7239ab39d2be3ee0c2c929697314feaee1a29b5b0ba",
+    "rust/experiments/radical/owned_aa_radix/DESIGN.md": "e7e37dbb1b0c79dbd839135da6a36af80d539efbb9390c923d70245f8a2346a1",
+    "rust/experiments/radical/owned_aa_radix/src/aa_radix.rs": "a0fd8b4abb41881d6ce2c6a51cc065588c4b768557a7b924a5bfc6ba0dd8b3d7",
+    "rust/experiments/radical/owned_aa_radix/src/lib.rs": "5b4c1a9d70103dbe9215a3b866b5a91dd7566794473f685a3496ad46f5d85cde",
+    "rust/experiments/radical/owned_aa_radix/src/main.rs": "c02a4e7bb4b6488d0410756ecd9c14e55c9367523293749b1713b785e4af9c6b",
+    "rust/experiments/radical/owned_aa_radix/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+  },
+  "new_source_snapshot_sha256": "7eec5399ad84d1ddd6d19f8d48cc2b2835082c36ca6e9d89165af326afe24b53",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "seed": 20260930,
+  "repeats": 1,
+  "rows": 12,
+  "integer_hash": "ahash",
+  "heap_policy": "lazy",
+  "chunk_size": 4096,
+  "std_sort_implementation": "Rayon pool.install(par_sort_unstable)",
+  "radix_sort_implementation": "serial in-place u32 radix",
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "semantic_check": "full rule trace and final tokens plus SHA-256 fingerprint"
+}

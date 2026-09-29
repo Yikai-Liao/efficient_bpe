@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "debug_lib_tests": "13/13",
+  "strict_clippy_all_targets": "passed -D warnings",
+  "release_build": "passed after offline Cargo.lock generation",
+  "oracle": {
+    "cases": 20,
+    "modes": 4,
+    "workers": [
+      1,
+      4
+    ],
+    "full_trace_matches": 160
+  },
+  "quick": {
+    "rows": 12,
+    "cases": 3,
+    "sort_modes": [
+      "std",
+      "radix"
+    ],
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_matches": 12
+  },
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "source_snapshot_sha256": "7eec5399ad84d1ddd6d19f8d48cc2b2835082c36ca6e9d89165af326afe24b53",
+  "source_hashes": "new-source-hashes.json",
+  "shared_source_provenance": "shared-source-provenance.json",
+  "binary_sha256": "60fcc00acd299107a47622c4022882a7eea6d4ba90d6f78c37e53c774643aaef",
+  "binary_path": "rust/target/reruns/radical-aa-radix-gate-v1/owned_aa_radix",
+  "limitations": [
+    "One run per cell; phase and whole-call timing are diagnostic only.",
+    "The std mode uses Rayon parallel sort while radix is serial; compare whole calls under the same process CPU budget.",
+    "Natural EN has very little AA sorting, so it is a low-AA control rather than a sort-throughput benchmark."
+  ]
+}
