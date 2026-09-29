@@ -5,6 +5,8 @@
 //! rule's independent, preplanned replacements instead. The latter pays a
 //! serial planning cost, reported separately; it is not a claim of speedup.
 
+#[path = "parallel_certified.rs"]
+mod certified;
 #[path = "parallel_occurrence.rs"]
 mod occurrence;
 #[path = "parallel_occurrence_snapshot.rs"]
@@ -156,6 +158,9 @@ pub fn train(
             | "occurrence_adaptive"
             | "occurrence_adaptive_256"
             | "occurrence_adaptive_4096"
+            | "certified"
+            | "certified_single"
+            | "batch_relaxed"
     ) {
         return Err(TrainError::InvalidInput("unknown parallel mode"));
     }
@@ -175,6 +180,21 @@ pub fn train(
         return Ok(Result { core, metrics });
     }
     match mode {
+        "batch_relaxed" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                certified::train_relaxed::<true>(input, options, 256)
+            } else {
+                certified::train_relaxed::<false>(input, options, 256)
+            }
+        }
+        "certified" | "certified_single" => {
+            let cap = if mode == "certified_single" { 1 } else { 256 };
+            if options.bounds == crate::Bounds::Unchecked {
+                certified::train::<true>(input, options, cap)
+            } else {
+                certified::train::<false>(input, options, cap)
+            }
+        }
         "broadcast" => piece::train(input, options, false, false, false),
         "owner" if options.workers > 128 => piece::train(input, options, false, false, true),
         "owner" => piece::train(input, options, true, false, false),

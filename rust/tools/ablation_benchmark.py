@@ -19,7 +19,8 @@ PARALLEL = {"parallel_broadcast", "parallel_owner", "parallel_occurrence",
             "parallel_occurrence_snapshot", "parallel_occurrence_adaptive",
             "parallel_occurrence_adaptive_256", "parallel_occurrence_adaptive_4096",
             "parallel_serial", "parallel_occurrence_grouped",
-            "parallel_occurrence_grouped_adaptive"}
+            "parallel_occurrence_grouped_adaptive", "parallel_certified",
+            "parallel_certified_single", "parallel_batch_relaxed"}
 BASE_VARIANTS = (
     "full_clear", "endpoints", "lean", "packed", "unfused_endpoints",
     "unfused_halfword", "unfused_h3", "separate_counted", "linked12", "linked16",

@@ -20,6 +20,7 @@ DEFAULT_VARIANTS = (
     "bitmap_u32", "halfword", "h3", "h25", "filtered", "arena",
     "arena_counted", "filtered_h3", "combined", "combined_filtered",
     "certified_prefix_probe",
+    "parallel_certified", "parallel_certified_single",
     "combined_filtered_h3", "combined_filtered_halfword",
     "bucket", "bucket_normalized", "parallel_broadcast", "parallel_owner",
     "parallel_occurrence", "parallel_occurrence_snapshot",
@@ -30,7 +31,8 @@ PARALLEL_VARIANTS = {"parallel_broadcast", "parallel_owner", "parallel_occurrenc
                      "parallel_occurrence_snapshot", "parallel_occurrence_adaptive",
                      "parallel_occurrence_adaptive_256",
                      "parallel_occurrence_adaptive_4096", "parallel_serial", "parallel_occurrence_grouped",
-                     "parallel_occurrence_grouped_adaptive"}
+                     "parallel_occurrence_grouped_adaptive", "parallel_certified",
+                     "parallel_certified_single"}
 COMPACT_VARIANTS = {"halfword", "h3", "h25", "filtered_h3", "unfused_halfword", "unfused_h3",
                     "combined_filtered_h3",
                     "combined_filtered_halfword"}
