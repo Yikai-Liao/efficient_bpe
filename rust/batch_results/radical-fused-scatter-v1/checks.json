@@ -1,0 +1,112 @@
+{
+  "status": "passed",
+  "validation": {
+    "fused_debug_lib_tests": "9/9 passed",
+    "scatter_debug_lib_tests": "11/11 passed after final Clippy fix",
+    "direct_debug_lib_tests": "10/10 passed",
+    "strict_clippy_all_targets": "all three crates passed -D warnings",
+    "release_builds": "all three passed",
+    "complete_python_oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "versions": [
+        "fused_separate",
+        "fused_owner",
+        "fused_overlap",
+        "scatter_owner",
+        "scatter_scatter",
+        "direct_combined",
+        "direct_old"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "compared_runs": 280,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "owned_fused": "d57c4d99a54788491c592082fb8e487484ddc45ff0864c2008f3561f76edfccf",
+        "owned_scatter": "1314014ad570cb5c871332ea6246025c744f1dbd4d605b7fd248d8cd0427157d",
+        "owned_direct": "be77cb6a08f70128e664849aa3265fe34ec608c7ef5f9d77fae2742e0e84cb2f"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "rows": 32,
+    "versions": 8,
+    "cases": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_match": true,
+    "same_deterministic_work_as_combo": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "process_cpu_metric": "call_cpu_seconds",
+    "scatter_default_threshold": 4096,
+    "scatter_heavy_keys_all_zero": true
+  },
+  "screen_4m": {
+    "rows": 28,
+    "versions": 7,
+    "cases": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "fingerprints_match_prior_reference": true,
+    "same_deterministic_work_across_new_modes": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "process_cpu_metric": "call_cpu_seconds",
+    "scatter_heavy_keys_en_w4": 87,
+    "scatter_heavy_keys_zh_w4": 3
+  },
+  "source_snapshot_sha256": "cb4581f69eb6095c202e661a925447cae96f724a9fa456356f67cf4167abbc48",
+  "source_hashes_file": "new-source-hashes.json",
+  "binary_sha256": {
+    "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+    "fused_separate": "d57c4d99a54788491c592082fb8e487484ddc45ff0864c2008f3561f76edfccf",
+    "fused_owner": "d57c4d99a54788491c592082fb8e487484ddc45ff0864c2008f3561f76edfccf",
+    "fused_overlap": "d57c4d99a54788491c592082fb8e487484ddc45ff0864c2008f3561f76edfccf",
+    "scatter_owner": "1314014ad570cb5c871332ea6246025c744f1dbd4d605b7fd248d8cd0427157d",
+    "scatter_scatter": "1314014ad570cb5c871332ea6246025c744f1dbd4d605b7fd248d8cd0427157d",
+    "direct_combined": "be77cb6a08f70128e664849aa3265fe34ec608c7ef5f9d77fae2742e0e84cb2f",
+    "direct_old": "be77cb6a08f70128e664849aa3265fe34ec608c7ef5f9d77fae2742e0e84cb2f"
+  },
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "binary_paths": {
+    "combo": "rust/target/reruns/radical-layout-combo-v1/combo",
+    "native": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "fused": "rust/target/reruns/radical-fused-scatter-v1/owned_fused",
+    "scatter": "rust/target/reruns/radical-fused-scatter-v1/owned_scatter",
+    "direct": "rust/target/reruns/radical-fused-scatter-v1/owned_direct"
+  }
+}

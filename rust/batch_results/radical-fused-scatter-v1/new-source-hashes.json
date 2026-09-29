@@ -1,0 +1,20 @@
+{
+  "rust/experiments/radical/owned_direct/Cargo.lock": "dfed7b9108a2d25091154e4774c5cb146b7a44d56da29a2451a9de1f6e7c5a81",
+  "rust/experiments/radical/owned_direct/Cargo.toml": "b1eac8ea2d426d973b79eae019f009b0edf3d8877d8d9de86cb19d42eb3ee554",
+  "rust/experiments/radical/owned_direct/DESIGN.md": "83a4e36e056bfb152c43901753ff8262a5ff907f6da4787ea847af36b93c67cd",
+  "rust/experiments/radical/owned_direct/src/lib.rs": "f18d5b5ae36b7a4b3e26020430a68d61879f771def3f89ded25b7aa1da178441",
+  "rust/experiments/radical/owned_direct/src/main.rs": "34fe4ace8393c50d206161351e3804ea1bcc05d8905f77517aac6d5478c40ba2",
+  "rust/experiments/radical/owned_direct/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+  "rust/experiments/radical/owned_fused/Cargo.lock": "1b917c391e00f6bc73e04d31095403eae907d703de16b2ff813a55496a65e4cc",
+  "rust/experiments/radical/owned_fused/Cargo.toml": "ebac2c2042b1b74fcacce62eb23199afd33791636761c6544deb15d5a7305cfb",
+  "rust/experiments/radical/owned_fused/DESIGN.md": "c49e450ef4076623991b4493d8ece6f2c00e8ee9006161aa0d535b935e91d8a0",
+  "rust/experiments/radical/owned_fused/src/lib.rs": "440fdc2731311af3c18837340853862c07420221b571a7fe0dbf3997879628d9",
+  "rust/experiments/radical/owned_fused/src/main.rs": "0085cbe9d403f6f7d513f3959ded4ef944d8ba6449a73ae564968581e5eb7c24",
+  "rust/experiments/radical/owned_fused/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+  "rust/experiments/radical/owned_scatter/Cargo.lock": "67ede216460722c4e2bcb7b5d6bb8fc426ab3835f5c6dbdaeea0af9d3c552892",
+  "rust/experiments/radical/owned_scatter/Cargo.toml": "905c5c3169334a18a098dfe505bfc13d67f37942ff583e69c3489da4ae842734",
+  "rust/experiments/radical/owned_scatter/DESIGN.md": "a9b4aa539c5799956058513f9211d568fd529c73d830bdbf5beaea97cbb9fb4e",
+  "rust/experiments/radical/owned_scatter/src/lib.rs": "eba5b7064d9411f71447ea49b68eb190257ab88379883d8b29eace46b175cb13",
+  "rust/experiments/radical/owned_scatter/src/main.rs": "f150f4711238a5493749549e78784c4abb0ce1ec055bc3b2a951bd07377b52c3",
+  "rust/experiments/radical/owned_scatter/src/small_posting.rs": "cb6e533512b212cc2a2a229331ff0e704c687431b6c72de9d3e9ae22b5f6f4c5"
+}

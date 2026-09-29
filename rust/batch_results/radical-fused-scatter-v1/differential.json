@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "fused_separate",
+    "fused_owner",
+    "fused_overlap",
+    "scatter_owner",
+    "scatter_scatter",
+    "direct_combined",
+    "direct_old"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 280,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_fused": "d57c4d99a54788491c592082fb8e487484ddc45ff0864c2008f3561f76edfccf",
+    "owned_scatter": "1314014ad570cb5c871332ea6246025c744f1dbd4d605b7fd248d8cd0427157d",
+    "owned_direct": "be77cb6a08f70128e664849aa3265fe34ec608c7ef5f9d77fae2742e0e84cb2f"
+  },
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}
