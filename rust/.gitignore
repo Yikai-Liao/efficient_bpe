@@ -4,4 +4,5 @@
 __pycache__/
 
 /ablation_results/reruns/
+/batch_results/reruns/
 *.progress.log

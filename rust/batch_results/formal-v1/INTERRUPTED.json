@@ -1,0 +1,5 @@
+{
+  "status": "incomplete; deliberately interrupted",
+  "reason": "User requested lightweight iteration and full matrix only after variants converge.",
+  "use_for_formal_conclusions": false
+}

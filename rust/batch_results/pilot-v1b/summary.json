@@ -1,0 +1,90 @@
+{
+  "status": "single-sample diagnostic; not final ranking",
+  "runs": 32,
+  "cases": [
+    {
+      "case_id": "en-16m-continuous",
+      "samples_per_configuration": 1,
+      "fastest_direct_serial_of_two": "combined_filtered",
+      "fastest_direct_serial_seconds": 6.483003353,
+      "exact_batch_1_seconds": 9.819736628,
+      "exact_batch_4_seconds": 4.055788862,
+      "exact_batch_1_to_4_speedup": 2.421165638084441,
+      "exact_batch_4_vs_fastest_direct_serial": 1.5984568165619664,
+      "exact_batch_4_vm_hwm_mib": 356.73828125,
+      "exact_batch_4_cpu_per_wall": 2.7002492973955015,
+      "exact_outputs_match": true,
+      "relaxed_outputs_match_across_workers": false
+    },
+    {
+      "case_id": "en-1m--paragraph",
+      "samples_per_configuration": 1,
+      "fastest_direct_serial_of_two": "combined_filtered",
+      "fastest_direct_serial_seconds": 0.553393849,
+      "exact_batch_1_seconds": 0.735436709,
+      "exact_batch_4_seconds": 0.503844612,
+      "exact_batch_1_to_4_speedup": 1.4596498433925895,
+      "exact_batch_4_vs_fastest_direct_serial": 1.0983422980416828,
+      "exact_batch_4_vm_hwm_mib": 40.00390625,
+      "exact_batch_4_cpu_per_wall": 1.9474509911004072,
+      "exact_outputs_match": true,
+      "relaxed_outputs_match_across_workers": false
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "samples_per_configuration": 1,
+      "fastest_direct_serial_of_two": "combined_filtered",
+      "fastest_direct_serial_seconds": 1.73778367,
+      "exact_batch_1_seconds": 3.45930784,
+      "exact_batch_4_seconds": 1.607025142,
+      "exact_batch_1_to_4_speedup": 2.15261587985784,
+      "exact_batch_4_vs_fastest_direct_serial": 1.081366821577705,
+      "exact_batch_4_vm_hwm_mib": 146.765625,
+      "exact_batch_4_cpu_per_wall": 2.2538028281825104,
+      "exact_outputs_match": true,
+      "relaxed_outputs_match_across_workers": true
+    },
+    {
+      "case_id": "zh-16m-continuous",
+      "samples_per_configuration": 1,
+      "fastest_direct_serial_of_two": "combined_filtered_halfword",
+      "fastest_direct_serial_seconds": 3.078667723,
+      "exact_batch_1_seconds": 4.914333344,
+      "exact_batch_4_seconds": 2.610869252,
+      "exact_batch_1_to_4_speedup": 1.88225945831469,
+      "exact_batch_4_vs_fastest_direct_serial": 1.1791734575148307,
+      "exact_batch_4_vm_hwm_mib": 276.01953125,
+      "exact_batch_4_cpu_per_wall": 2.2897212506603144,
+      "exact_outputs_match": true,
+      "relaxed_outputs_match_across_workers": false
+    },
+    {
+      "case_id": "zh-4m--regex",
+      "samples_per_configuration": 1,
+      "fastest_direct_serial_of_two": "combined_filtered_halfword",
+      "fastest_direct_serial_seconds": 0.478883321,
+      "exact_batch_1_seconds": 0.710512237,
+      "exact_batch_4_seconds": 0.525780233,
+      "exact_batch_1_to_4_speedup": 1.351348324652593,
+      "exact_batch_4_vs_fastest_direct_serial": 0.9108051062847773,
+      "exact_batch_4_vm_hwm_mib": 56.53515625,
+      "exact_batch_4_cpu_per_wall": 1.8405263383113912,
+      "exact_outputs_match": true,
+      "relaxed_outputs_match_across_workers": false
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "samples_per_configuration": 1,
+      "fastest_direct_serial_of_two": "combined_filtered_halfword",
+      "fastest_direct_serial_seconds": 1.117449875,
+      "exact_batch_1_seconds": 1.8261486850000002,
+      "exact_batch_4_seconds": 1.01764136,
+      "exact_batch_1_to_4_speedup": 1.794491415914935,
+      "exact_batch_4_vs_fastest_direct_serial": 1.0980782807412621,
+      "exact_batch_4_vm_hwm_mib": 125.3046875,
+      "exact_batch_4_cpu_per_wall": 1.9957157696499281,
+      "exact_outputs_match": true,
+      "relaxed_outputs_match_across_workers": true
+    }
+  ]
+}

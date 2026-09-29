@@ -1,0 +1,108 @@
+{
+  "binary_sha256": "f2af9196829d5493aab21816c5556ad9c994fe2f3df4849e18325e028ada0df2",
+  "repeats": 1,
+  "pilot": true,
+  "protocol": "Entire child process uses p CPUs including the coordinator; p=1 and scalar both use CPU 5.",
+  "stages": [
+    {
+      "name": "small",
+      "command": [
+        "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+        "/root/code/efficient_bpe/rust/tools/ablation_benchmark.py",
+        "--profile",
+        "all",
+        "--manifest",
+        "/root/code/efficient_bpe/rust/ablation_results/fixtures.json",
+        "--cases",
+        "en-4m-continuous,zh-4m-continuous,en-1m--paragraph,zh-4m--regex",
+        "--variants",
+        "combined_filtered,combined_filtered_halfword,parallel_certified",
+        "--workers",
+        "1,4",
+        "--bounds",
+        "checked",
+        "--parallel-core-budget",
+        "workers",
+        "--repeats",
+        "1",
+        "--output",
+        "/root/code/efficient_bpe/rust/batch_results/pilot-v1b/small.jsonl"
+      ]
+    },
+    {
+      "name": "large",
+      "command": [
+        "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+        "/root/code/efficient_bpe/rust/tools/ablation_benchmark.py",
+        "--profile",
+        "all",
+        "--manifest",
+        "/root/code/efficient_bpe/rust/ablation_results/large-fixtures.json",
+        "--cases",
+        "en-16m-continuous,zh-16m-continuous",
+        "--variants",
+        "combined_filtered,combined_filtered_halfword,parallel_certified",
+        "--workers",
+        "1,4",
+        "--bounds",
+        "checked",
+        "--parallel-core-budget",
+        "workers",
+        "--repeats",
+        "1",
+        "--output",
+        "/root/code/efficient_bpe/rust/batch_results/pilot-v1b/large.jsonl"
+      ]
+    },
+    {
+      "name": "single-round",
+      "command": [
+        "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+        "/root/code/efficient_bpe/rust/tools/ablation_benchmark.py",
+        "--profile",
+        "all",
+        "--manifest",
+        "/root/code/efficient_bpe/rust/ablation_results/fixtures.json",
+        "--cases",
+        "en-4m-continuous,zh-4m-continuous",
+        "--variants",
+        "parallel_certified_single",
+        "--workers",
+        "1,4",
+        "--bounds",
+        "checked",
+        "--parallel-core-budget",
+        "workers",
+        "--repeats",
+        "1",
+        "--output",
+        "/root/code/efficient_bpe/rust/batch_results/pilot-v1b/single-round.jsonl"
+      ]
+    },
+    {
+      "name": "relaxed",
+      "command": [
+        "/tmp/efficient-bpe-audit-20260929/env/bin/python",
+        "/root/code/efficient_bpe/rust/tools/ablation_benchmark.py",
+        "--profile",
+        "all",
+        "--manifest",
+        "/root/code/efficient_bpe/rust/ablation_results/fixtures.json",
+        "--cases",
+        "en-4m-continuous,zh-4m-continuous",
+        "--variants",
+        "parallel_batch_relaxed",
+        "--workers",
+        "1,4",
+        "--bounds",
+        "checked",
+        "--parallel-core-budget",
+        "workers",
+        "--repeats",
+        "1",
+        "--output",
+        "/root/code/efficient_bpe/rust/batch_results/pilot-v1b/relaxed.jsonl"
+      ]
+    }
+  ]
+}

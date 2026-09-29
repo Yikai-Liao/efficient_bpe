@@ -4,7 +4,9 @@
 
 本轮入口是 [Rust 全消融报告](ABLATION_REPORT.md)、[版本覆盖表](ABLATION_COVERAGE.md) 和 [演进设计](EVOLUTION_DESIGN.md)。连续文本并行的匹配顺序、共享写入与屏障不变量见 [PARALLEL_DESIGN.md](PARALLEL_DESIGN.md)。原始数据、环境哈希和复现矩阵见 [ablation_results](ablation_results/README.md)。
 
-多线程扩展不足后的跨领域研究、精确候选前缀证明和原生批宽结果见 [并行重设计](PARALLEL_RETHINK.md)。当前探针不含并行批量应用，不能把批宽解释成加速比。
+最新实现与迭代入口见 [连续语料批量并行报告](BATCH_PARALLEL_REPORT.md)：已实现 worker 局部位置索引、精确候选前缀的并行应用、单轮消融和近似批次。当前结果为单次诊断；日常性能筛选默认约 1.5 秒，完整矩阵留到变体收敛后运行。原始结果见 [batch_results](batch_results/README.md)。
+
+此前多线程扩展不足后的跨领域研究、精确候选前缀证明和串行批宽探针见 [并行重设计](PARALLEL_RETHINK.md)。公开实现的线程曲线见 [扩展性证据](PARALLEL_SCALING_EVIDENCE.md)，下一步状态分片方案见 [双层归属设计](BATCH_OWNERSHIP_DESIGN.md)。
 
 早期基线结果见 [REPORT.md](REPORT.md)，其接口契约见 [DESIGN.md](DESIGN.md)，hotpath 使用方法见 [HOTPATH.md](HOTPATH.md)。原始 Python 文件保持原样。这里实现的是 **BPE 训练核心**；文本解码、推理编码和完整 tokenizer API 不在计时核心内。
 
@@ -15,9 +17,10 @@ rust/target/release/ablation --list-variants
 rust/target/release/ablation --input rust/fixtures/zh-1m-regex.json \
   --variant combined_filtered --bounds unchecked --rules 3000
 rust/target/release/ablation --input rust/fixtures/ablation/en-4m-continuous.json \
-  --variant parallel_occurrence_adaptive --workers 4 --bounds unchecked
-python rust/tools/run_ablation_matrix.py \
-  --output-dir rust/ablation_results/reruns/example --repeats 5
+  --variant parallel_certified --workers 4 --bounds unchecked
+# 默认轻量筛选；只在最终对比时显式添加 --full
+python rust/tools/run_batch_matrix.py \
+  --output-dir rust/batch_results/reruns/example
 ```
 
 每次复现用新的输出目录。初始紧凑 alphabet、u32 position/ID/length 和 u64 count 范围均有显式限制；当前连续并行采用 4U 端点，尚未将所有紧凑后端并行化。外存训练器仍是设计方向。

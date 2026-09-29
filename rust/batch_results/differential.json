@@ -1,0 +1,26 @@
+{
+  "cases": 112,
+  "random_cases": 100,
+  "compared_runs": 1792,
+  "explicit_compact_limit_skips": 0,
+  "variants": [
+    "parallel_certified",
+    "parallel_certified_single"
+  ],
+  "workers_for_parallel": [
+    1,
+    2,
+    4,
+    6
+  ],
+  "bounds": [
+    "checked",
+    "unchecked"
+  ],
+  "oracle": "full-recount Python naive; complete merge trace and final tokens",
+  "all_compared_traces_match": true,
+  "all_compared_fingerprints_match": true,
+  "seed": 20260930,
+  "binary_sha256": "f2af9196829d5493aab21816c5556ad9c994fe2f3df4849e18325e028ada0df2",
+  "skips": []
+}

@@ -1,0 +1,95 @@
+{
+  "native_source_commit": "c2e8c69",
+  "binary_sha256": "f2af9196829d5493aab21816c5556ad9c994fe2f3df4849e18325e028ada0df2",
+  "rust_tests": {
+    "library": 24,
+    "certificate_reference": 6,
+    "exact_parallel": 5,
+    "relaxed_replay": 2,
+    "all_passed": true
+  },
+  "clippy": {
+    "command": "cargo clippy --all-targets -- -D warnings",
+    "passed": true
+  },
+  "build": {
+    "command": "cargo build --release --bins --locked",
+    "passed": true
+  },
+  "differential": {
+    "cases": 112,
+    "random_cases": 100,
+    "compared_runs": 1792,
+    "explicit_compact_limit_skips": 0,
+    "variants": [
+      "parallel_certified",
+      "parallel_certified_single"
+    ],
+    "workers_for_parallel": [
+      1,
+      2,
+      4,
+      6
+    ],
+    "bounds": [
+      "checked",
+      "unchecked"
+    ],
+    "oracle": "full-recount Python naive; complete merge trace and final tokens",
+    "all_compared_traces_match": true,
+    "all_compared_fingerprints_match": true,
+    "seed": 20260930,
+    "binary_sha256": "f2af9196829d5493aab21816c5556ad9c994fe2f3df4849e18325e028ada0df2",
+    "skips": []
+  },
+  "readonly_review": [
+    "Two independent subagents reviewed phase barriers, unchecked bounds, edge ownership, low-frequency deletion and error cleanup; no concrete violation found. This is not Miri/sanitizer validation."
+  ],
+  "memory_scope": [
+    "Only one shared corpus; occurrence fragments partition records across workers.",
+    "Per-pair map headers, token-length tables, initial local count maps and scratch buffers add memory.",
+    "Index peak sums add worker-specific maxima and need not occur simultaneously; map capacities count slots, not bytes.",
+    "VmHWM measures process peak; component counters do not constitute a complete allocator ledger."
+  ],
+  "performance_status": {
+    "pilot-v1b": "32 complete single-sample diagnostics; not final ranking",
+    "formal-v1": "interrupted on user request; incomplete, excluded",
+    "quick-v1": "10 complete lightweight runs; output equality checked within each semantic family"
+  },
+  "policy": "Quick screen first, selected smoke next; full matrix only after variants converge.",
+  "sources_sha256": {
+    "rust/src/ablation/backends.rs": "abaa40844e6b649a1fb655b6c53580967550274c98ab93263d4b2a1280c39826",
+    "rust/src/ablation/index.rs": "3f37f7963b4ff36f7ef98235930537b8f2f8becbf33e20ff28c0be957a108418",
+    "rust/src/ablation/micro.rs": "7cc588925985695434b59fa32399fd5b06e03743a8fa3853f62e3c2e0da3b957",
+    "rust/src/ablation/mod.rs": "296c7174193897482bb4497f30a93fd8dbc597c9ecb30e865f63c01052e2672b",
+    "rust/src/ablation/parallel.rs": "8ac667594d72c69e9da2b9cb1d7779ec9d51bba788cde60602676528ba68ba7c",
+    "rust/src/ablation/parallel_certified.rs": "ec69eb045ed7374e0839a9aa41bf7a0b567e813a4de0a7b6e7833d0358aa7012",
+    "rust/src/ablation/parallel_occurrence.rs": "9c1d534b4618d1f083ebf7d6ece09a26cb173df08fabb5bb0cfffb395688ad26",
+    "rust/src/ablation/parallel_occurrence_snapshot.rs": "ef9366efc7722e01f49a791d8ed9f7daf630b4b39cde94320fa84c53a4880df4",
+    "rust/src/ablation/parallel_piece.rs": "8225968265762dd9b15f88c4d41e97d253e767d3e0a9be639b604be2f6075a54",
+    "rust/src/ablation/queue.rs": "413aceb20b5b7d59d0d615806ea366fa5dd1325c78c1be329a5eafbc9a8bf7be",
+    "rust/src/ablation/spans.rs": "99c5334c6b2d052b46c693426a8bb2e16dc20719692646214629997040c2bf31",
+    "rust/src/ablation/trainer.rs": "31010309b1d63a18cb110ec3b9929e1d6b67fa86676a8b95b03b14276576b215",
+    "rust/src/backend.rs": "cabdf2dd0504a30d86605200a7aeb17f3f6eaa8b717c42c7ce9f40e7ea2ef8c2",
+    "rust/src/bin/ablation.rs": "1308aa046eec2a8dafaf6269d7fe517a1646c98ea0c15c41884a1c7b6b15530b",
+    "rust/src/bin/boundary_micro.rs": "c63105dcad74c6b22300a396926e8524667758c2734c969403d4e1ddc662d094",
+    "rust/src/lib.rs": "25db823d277f468f25aabe0e2558fb66532fd5bd13855aaddc933c7073678053",
+    "rust/src/main.rs": "224259a1f649ddc21758fb0e352f5653e1b211c6a8f2e2febf20417f7dbb8f85",
+    "rust/src/trainer.rs": "3d7e8c5d87bd3df9eeab26d0795a07337be000415e60029cc4a61a4ecaebae40"
+  },
+  "quality_tool": {
+    "self_test": "257 fixed-merge samples plus 800 randomized samples; weight and both JSON key orders included",
+    "agent_reported_passed": true,
+    "native_trace_smoke": "Existing release binary, tiny two-rule fixture: final-first JSON parsed successfully",
+    "full_quality_comparison_run": false,
+    "source_sha256": "3e24855a79c6e726e7fc7e4c4b86b2b319b0b7dc72b3f2962387bcfac24b23ea"
+  },
+  "lightweight_runner": {
+    "syntax_and_help_checked": true,
+    "quick_runs": 10,
+    "matrix_seconds": 1.472259911999572,
+    "includes": "Benchmark subprocess stages and output checks",
+    "excludes": "Compilation, fixture generation and parent preflight",
+    "full_matrix_resumed": false
+  }
+}

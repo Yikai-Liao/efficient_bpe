@@ -1,0 +1,38 @@
+[
+  {
+    "case_id": "quick-en-continuous-262144",
+    "dataset": "quick-en-continuous-262144",
+    "split": "continuous-single-piece",
+    "source": "benchmarks/bpe_core_comparison/data/en-4m.txt",
+    "source_sha256": "dc4c81cebdc0b7ef3ebd1326d214a22823b7f55829370cf27afe02c453d4fbbc",
+    "source_byte_offset": 0,
+    "input_bytes": 262144,
+    "input_sha256": "47a46fe4310b86e63cddb2a364291f06115bce551528941e98e95e5c29e4b128",
+    "file": "fixtures/batch-quick/quick-en-continuous-262144.json",
+    "fixture_sha256": "8935a3a761ca9ee2c929b291bceb7d0437ea6aab33cec42f529fbb8557d6c653",
+    "corpus_positions": 260983,
+    "initial_alphabet": 273,
+    "stored_piece_count": 1,
+    "piece_weight": 1,
+    "rules": 512,
+    "min_frequency": 2
+  },
+  {
+    "case_id": "quick-zh-continuous-262144",
+    "dataset": "quick-zh-continuous-262144",
+    "split": "continuous-single-piece",
+    "source": "benchmarks/bpe_core_comparison/data/zh-4m.txt",
+    "source_sha256": "8e73ef2774b7ff8810c57e05348fd809daff3c8db0711d45b19aa5420369c497",
+    "source_byte_offset": 0,
+    "input_bytes": 262144,
+    "input_sha256": "5242a3982547d5d9f04703c9aa499d6134ad2f1416efbc53ae62528ae15f109f",
+    "file": "fixtures/batch-quick/quick-zh-continuous-262144.json",
+    "fixture_sha256": "f2de15d6c18ac0574ff3a86de00e3b9278361fb7729ded8bf768bca27830637e",
+    "corpus_positions": 108317,
+    "initial_alphabet": 3726,
+    "stored_piece_count": 1,
+    "piece_weight": 1,
+    "rules": 512,
+    "min_frequency": 2
+  }
+]
