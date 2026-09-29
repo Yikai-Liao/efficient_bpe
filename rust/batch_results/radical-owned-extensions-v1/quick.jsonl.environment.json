@@ -1,0 +1,49 @@
+{
+  "manifest": "rust/batch_results/quick-fixtures-262144-512.json",
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "radical_binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "probe_off": "78909921bee7d91d8086ce16e2b3551f334b372dc8b2f5a2db38e48751cc02ba",
+    "probe_budgeted": "78909921bee7d91d8086ce16e2b3551f334b372dc8b2f5a2db38e48751cc02ba",
+    "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "counts_eager": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4"
+  },
+  "source_snapshot": "rust/batch_results/radical-owned-extensions-v1/new-source-snapshot.tar.gz",
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_counts/Cargo.lock": "b5fae8331494e315d70168a3cfdc68e0f25d47ecd93e811cb8932e05d3a06d66",
+    "rust/experiments/radical/owned_counts/Cargo.toml": "f5a08a41701737767d58fa95e8e82f85a3f682c49cfd255ab6cbe8bed7510eee",
+    "rust/experiments/radical/owned_counts/DESIGN.md": "f0ea78f4cf9b11586966cc5dc316e15ebed52bc94888de53afd8de2885387bbf",
+    "rust/experiments/radical/owned_counts/src/lib.rs": "33d7fdf835be3fb102696e394d1c84396274949fe7e480fb2c1979eadf042e95",
+    "rust/experiments/radical/owned_counts/src/main.rs": "011a2e18f396e3205462ce6c339761e594172a8cb88690d2766baabffe82ebcb",
+    "rust/experiments/radical/owned_probe/Cargo.lock": "e1392cbebf350be4f1d9d5bc62fa14caa5eaa6c5ae7de2b3c4b5ab9f842e51e0",
+    "rust/experiments/radical/owned_probe/Cargo.toml": "8061adef3d3616bfb9349564a81e098d6df03e73ae027b69644de7495f123772",
+    "rust/experiments/radical/owned_probe/DESIGN.md": "17b0a49996d4dabe8d73c2214c3f30261fad6da97f5ad8ca900f0a6e3553dcf9",
+    "rust/experiments/radical/owned_probe/src/lib.rs": "386a228da8ca609e33f6c7e78a3e8b893efd42b7a2ba12dffe4b2b54c8ca71b5",
+    "rust/experiments/radical/owned_probe/src/main.rs": "e5bfe3829918f1caa01db62fb37c54ed8811a73b6336391058c7d8e7d414147e"
+  },
+  "baseline_source_snapshot": "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      5,
+      0,
+      1,
+      2
+    ]
+  },
+  "seed": 20260930,
+  "repeats": 1,
+  "fingerprint": "complete rule trace plus final token sequence",
+  "training_memory_metric": "train_vm_hwm_mib"
+}

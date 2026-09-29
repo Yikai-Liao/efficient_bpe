@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "owned_lazy",
+    "owned_eager",
+    "batched_boxed"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "bounds": "checked (CLI fixed)",
+  "compared_runs": 120,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "owned_eager": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "batched_boxed": "5895dbb89f15a70d12c9a87c17e3b9cd798639fe41d0f7c9bdc4afe68c02186d"
+  },
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

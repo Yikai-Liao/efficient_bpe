@@ -1,0 +1,32 @@
+{
+  "manifest": "rust/ablation_results/fixtures.json",
+  "manifest_sha256": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b",
+  "binary_sha256": {
+    "native": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+    "owned": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1"
+  },
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "seed": 20260930,
+  "repeats": 1,
+  "training_memory_metric": "train_vm_hwm_mib",
+  "source_snapshot": "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+  "source_snapshot_sha256": "731c82c52de4593f7d5b0842f98a70c254c501bcaa38972d3cb2c2c95598a167"
+}

@@ -1,0 +1,99 @@
+{
+  "status": "passed",
+  "source_snapshot": "native-source-snapshot.tar.gz",
+  "source_snapshot_sha256": "731c82c52de4593f7d5b0842f98a70c254c501bcaa38972d3cb2c2c95598a167",
+  "source_hashes": "native-source-hashes.json",
+  "binary_paths": {
+    "native": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "v4": "rust/target/reruns/radical-fixed-budget-v1/v4",
+    "boxed": "rust/target/reruns/radical-fixed-budget-v1/boxed",
+    "owned": "rust/target/reruns/radical-owner-boxed-v1/owned",
+    "batched_boxed": "rust/target/reruns/radical-owner-boxed-v1/batched_boxed"
+  },
+  "binary_sha256": {
+    "v4": "f2d54e50cb59626998a10c066809348d6900fad71e1c77d5a2a199c7525f47d9",
+    "boxed": "444570d5b62b8ddbefa48c88af4f7c516b6548b350dfbb77ae25fb526c87988f",
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "owned_eager": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "batched_boxed": "5895dbb89f15a70d12c9a87c17e3b9cd798639fe41d0f7c9bdc4afe68c02186d",
+    "native": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250"
+  },
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "shared_target_dir": "rust/target",
+  "validation": {
+    "owned_lib_tests": "passed 5/5 after final lifetime edit",
+    "owned_strict_clippy": "passed",
+    "owned_release_build": "passed",
+    "batched_boxed_lib_tests": "passed 6/6",
+    "batched_boxed_strict_clippy": "passed",
+    "batched_boxed_release_build": "passed",
+    "oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "versions": [
+        "owned_lazy",
+        "owned_eager",
+        "batched_boxed"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "bounds": "checked (CLI fixed)",
+      "compared_runs": 120,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+        "owned_eager": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+        "batched_boxed": "5895dbb89f15a70d12c9a87c17e3b9cd798639fe41d0f7c9bdc4afe68c02186d"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "native_rows": 12,
+    "radical_rows": 20,
+    "repeats": 1,
+    "full_trace_and_fingerprint_match": true,
+    "v4_batched_boxed_owned_deterministic_work_equal": true,
+    "deterministic_fields": [
+      "batch_rounds",
+      "max_batch_width",
+      "generated_birth_records",
+      "stored_born_postings",
+      "posting_visits"
+    ],
+    "cpu_budget_policy": "workers",
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  },
+  "smoke_4m": {
+    "rows": 12,
+    "repeats": 1,
+    "fingerprints_match_by_case": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  }
+}

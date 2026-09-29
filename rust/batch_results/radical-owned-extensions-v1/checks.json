@@ -1,0 +1,80 @@
+{
+  "status": "passed",
+  "new_source_snapshot": "new-source-snapshot.tar.gz",
+  "new_source_snapshot_sha256": "4316b78fcc60fa04cd3f037c02ff0b6e9309ba63d399ec450c6b06d1efca108b",
+  "new_source_hashes": "new-source-hashes.json",
+  "baseline_source_snapshot": "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+  "binary_paths": {
+    "native": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "owned": "rust/target/reruns/radical-owner-boxed-v1/owned",
+    "owned_probe": "rust/target/reruns/radical-owned-extensions-v1/owned_probe",
+    "owned_counts": "rust/target/reruns/radical-owned-extensions-v1/owned_counts"
+  },
+  "binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "probe_off": "78909921bee7d91d8086ce16e2b3551f334b372dc8b2f5a2db38e48751cc02ba",
+    "probe_budgeted": "78909921bee7d91d8086ce16e2b3551f334b372dc8b2f5a2db38e48751cc02ba",
+    "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "counts_eager": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "native": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250"
+  },
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "shared_target_dir": "rust/target",
+  "validation": {
+    "owned_probe_lib_tests": "passed 8/8 after test cap correction",
+    "owned_probe_strict_clippy": "passed",
+    "owned_probe_release_build": "passed",
+    "owned_counts_lib_tests": "passed 5/5",
+    "owned_counts_strict_clippy": "passed",
+    "owned_counts_release_build": "passed",
+    "oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "variants": [
+        "probe_off",
+        "probe_budgeted",
+        "counts_lazy",
+        "counts_eager"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "bounds": "checked (CLI fixed)",
+      "compared_runs": 160,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "probe_off": "78909921bee7d91d8086ce16e2b3551f334b372dc8b2f5a2db38e48751cc02ba",
+        "probe_budgeted": "78909921bee7d91d8086ce16e2b3551f334b372dc8b2f5a2db38e48751cc02ba",
+        "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+        "counts_eager": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "native_rows": 4,
+    "experiment_rows": 20,
+    "repeats": 1,
+    "full_trace_and_fingerprint_match": true,
+    "work_count_equal_except_budgeted_probe": true,
+    "counts_delta_entry_bytes": 24,
+    "cpu_budget_policy": "workers",
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  }
+}
