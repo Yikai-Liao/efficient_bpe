@@ -1,0 +1,30 @@
+[
+  {
+    "workers": 1,
+    "wall_seconds": 3.1309032809949713,
+    "worker_cpu_seconds": 2.9335216479999997,
+    "observed_parallelism": 0.936956968874412,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "workers": 4,
+    "wall_seconds": 3.463130670992541,
+    "worker_cpu_seconds": 12.477702144,
+    "observed_parallelism": 3.6030122248964584,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+]

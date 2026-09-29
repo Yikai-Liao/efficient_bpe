@@ -1,0 +1,39 @@
+{
+  "language": "en",
+  "dataset": "wikimedia/wikipedia",
+  "revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
+  "shard": "20231101.en/train-00028-of-00041.parquet",
+  "raw_sha256": "10589a39188af404fa458da252df7dcf22c6f6395a1501d9243ef56ce4c3c148",
+  "eligible_paragraphs": 963134,
+  "selection": "lowest blake2b-64(article id, paragraph index) ranks",
+  "line_byte_range": [
+    32,
+    8192
+  ],
+  "sizes": {
+    "1": {
+      "path": "en-1m.txt",
+      "bytes": 1048035,
+      "lines": 3291,
+      "sha256": "830150d2e68195b12a2ef93dd07abae1626453668eb9c09eeb6ca946228426d6"
+    },
+    "4": {
+      "path": "en-4m.txt",
+      "bytes": 4194232,
+      "lines": 13269,
+      "sha256": "dc4c81cebdc0b7ef3ebd1326d214a22823b7f55829370cf27afe02c453d4fbbc"
+    },
+    "16": {
+      "path": "en-16m.txt",
+      "bytes": 16776969,
+      "lines": 53285,
+      "sha256": "41b20e33253a4db8c66b95536cbadc86c79072e81eb9e5cd59ef136490abdec9"
+    },
+    "32": {
+      "path": "en-32m.txt",
+      "bytes": 33553717,
+      "lines": 106893,
+      "sha256": "9051ea9e02a71fe068fde3cf484eb61556735d66bc2f7a04d4e5db6a203b9e45"
+    }
+  }
+}

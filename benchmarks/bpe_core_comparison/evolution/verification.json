@@ -1,0 +1,18 @@
+{
+  "timed_training_processes": 366,
+  "boundary_micro_processes": 12,
+  "separate_memory_profiles": 9,
+  "semantic_groups": 14,
+  "all_fingerprints_match": true,
+  "all_snapshots_match": true,
+  "result_sha256": {
+    "real-results.jsonl": "f6d918e62964d76400f37e593b7620842f3f174a66f0f551c9005b2028ebe8f8",
+    "edge-results.jsonl": "d4e94bdd39541795de7b8e1c9e9527e188451b3215b0a23e5427396e8d011844",
+    "chain-results.jsonl": "a1ee5dc6ccb20f550b97b0fb2aff5a451d501c95680a5297c3de577cafdb7632",
+    "scale-results.jsonl": "20fcff7089df82a04c9627df21a82789735c0774f5948a9acd09c5d290e645b9",
+    "parallel-results.jsonl": "a0b406a75c99a44d850fb226af67a8e0f37e63d342c1b8c4c0dd09bd7de390f3",
+    "parallel-edge-results.jsonl": "2f4f2fcbbc89e5a04483043c00faae4eae03cfd082c6b31d69b8a8c383f8905a",
+    "span-results.jsonl": "4b4b72cf5ca01398f06d82aa9c7360f56f77d207a3296d0382ab1ddb847c99e1",
+    "parallel-memory.jsonl": "8cafe3dba9e05b6cdee881e2475dddaa9c22fbba3f1bd04671245079aa970600"
+  }
+}

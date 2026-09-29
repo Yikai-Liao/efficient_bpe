@@ -1,0 +1,18 @@
+# Global occurrence arena experiment
+
+`arena_driver.py` keeps the rule trace of `python_rewrite/common_fused.py` while changing pair bookkeeping. A pair is packed as `(left_id << 32) | right_id`, so integer tie order equals tuple lexicographic order for u32 IDs. One dictionary maps packed pairs to reusable state slots. State heads and tails are `array('I')`; frequencies are Python integers in a list so weighted counts above `2^64−1` remain exact. Heap entries store the packed pair key, never a reusable slot index.
+
+All occurrence positions share two `array('I')` buffers: position and next-link. Each state points to an ordered chain. When a selected pair's chain is visited, its current node is recycled **after saving the next node index**; new pairs can then reuse that slot without changing the remaining selected chain. New pair chains preserve the baseline's append order, which matters for left-to-right treatment of self-overlap. Initial counting is two-pass: first compute weighted frequencies, then allocate occurrence nodes only for pairs meeting `min_frequency`. Old pair frequencies only decrease, so a sub-threshold old pair cannot become eligible later. A fresh-ID pair is accumulated for the whole current rule and dropped only after selected-chain iteration finishes.
+
+`arena_counted_driver.py` is an initialization ablation. The original driver creates a state slot while counting every distinct initial pair, then discards rare states; its state arrays retain that high-water allocation. The counted driver first uses a temporary packed-key → weighted-frequency dictionary, creates state slots only for pairs meeting `min_frequency`, deletes the temporary dictionary, and then builds eligible position chains. Its merge loop is identical. This reduces retained state arrays when most initial pairs are rare, but the temporary dictionary may raise initialization peak RSS; process measurements are needed to determine the net effect.
+
+The result reports array logical bytes (`len × itemsize`) separately from allocated array-buffer capacity (`array.__sizeof__ − empty-array.__sizeof__`) for the occurrence and state arrays. `initial_occurrence_bytes` is the two occurrence arrays' logical size after initialization, while `initial_unfiltered_offset_bytes` is the hypothetical 4-byte-per-position size before frequency filtering. It also reports occurrence pool high-water slots, currently active records, and reuse counts. The frequency list's allocated pointer capacity is separate; Python integer objects, the packed-key dictionary, heap entries, backend arrays, and allocator fragmentation are **not** included in those array-buffer fields. Process RSS is still required for a total-memory claim. The occurrence pool uses 8 logical bytes per allocated slot versus 4 bytes per offset in a per-pair `array('I')`; it saves many per-pair Python array headers and reuses slots. It can therefore help on many sparse pairs, while a corpus dominated by a few large pair lists may favor the baseline.
+
+The arena is a mutable ownership unit, not a concurrent shared table. For multithreaded or multiprocess training, each word shard should own its own backend, pair-state mapping, local counts, and occurrence pool. A coordinator can maintain the global priority queue, choose a rule from reduced shard counts, and send that rule to each owner. Concurrent writes to one Python dictionary/pool would require fine-grained synchronization and contend on the GIL; this experiment makes no parallel-speed claim.
+
+Small differential checks:
+
+```bash
+cd /root/code/efficient_bpe/benchmarks/bpe_core_comparison/evolution
+python3 -m unittest -q test_arena.py
+```

@@ -1,0 +1,38 @@
+[
+  {
+    "variant": "baseline",
+    "seconds": 8.1542,
+    "maxrss_MiB": 144.49,
+    "vocab_hash": "28daa18f8e9db2331ee40bc7469e7bc6354000ec4307707ae8d4fc90ef183ea0"
+  },
+  {
+    "variant": "array_init",
+    "seconds": 7.8431,
+    "maxrss_MiB": 125.19,
+    "vocab_hash": "28daa18f8e9db2331ee40bc7469e7bc6354000ec4307707ae8d4fc90ef183ea0"
+  },
+  {
+    "variant": "baseline",
+    "seconds": 7.9099,
+    "maxrss_MiB": 144.63,
+    "vocab_hash": "28daa18f8e9db2331ee40bc7469e7bc6354000ec4307707ae8d4fc90ef183ea0"
+  },
+  {
+    "variant": "array_init",
+    "seconds": 7.7725,
+    "maxrss_MiB": 125.04,
+    "vocab_hash": "28daa18f8e9db2331ee40bc7469e7bc6354000ec4307707ae8d4fc90ef183ea0"
+  },
+  {
+    "variant": "baseline",
+    "seconds": 7.9766,
+    "maxrss_MiB": 144.71,
+    "vocab_hash": "28daa18f8e9db2331ee40bc7469e7bc6354000ec4307707ae8d4fc90ef183ea0"
+  },
+  {
+    "variant": "array_init",
+    "seconds": 7.9979,
+    "maxrss_MiB": 125.09,
+    "vocab_hash": "28daa18f8e9db2331ee40bc7469e7bc6354000ec4307707ae8d4fc90ef183ea0"
+  }
+]

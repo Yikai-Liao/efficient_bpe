@@ -1,0 +1,20 @@
+[
+  {
+    "dataset": "en-4m",
+    "input_sha256": "dc4c81cebdc0b7ef3ebd1326d214a22823b7f55829370cf27afe02c453d4fbbc",
+    "input_bytes": 4194232,
+    "corpus_positions": 577590,
+    "prepared_buffer_bytes": 2310360,
+    "peak_rss_mib": 69.31640625,
+    "current_rss_mib": 32.88671875
+  },
+  {
+    "dataset": "zh-4m",
+    "input_sha256": "8e73ef2774b7ff8810c57e05348fd809daff3c8db0711d45b19aa5420369c497",
+    "input_bytes": 4188394,
+    "corpus_positions": 1218853,
+    "prepared_buffer_bytes": 4875412,
+    "peak_rss_mib": 67.65234375,
+    "current_rss_mib": 34.390625
+  }
+]

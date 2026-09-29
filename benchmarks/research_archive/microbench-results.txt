@@ -1,0 +1,4 @@
+{'n': 1000, 'old_seconds': 0.068632, 'boundary_seconds': 0.006161, 'ratio': 11.14}
+{'n': 2000, 'old_seconds': 0.265724, 'boundary_seconds': 0.010505, 'ratio': 25.3}
+{'n': 4000, 'old_seconds': 1.08636, 'boundary_seconds': 0.023295, 'ratio': 46.63}
+{'n': 8000, 'old_seconds': 4.330311, 'boundary_seconds': 0.045481, 'ratio': 95.21}

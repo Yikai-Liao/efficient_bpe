@@ -1,0 +1,14 @@
+{
+  "timed_processes": 321,
+  "rows": {
+    "real": 75,
+    "fused": 45,
+    "scale": 45,
+    "micro": 84,
+    "queue": 24,
+    "chain": 48
+  },
+  "matching_semantic_groups": 23,
+  "all_fingerprints_match": true,
+  "all_snapshots_match": true
+}
