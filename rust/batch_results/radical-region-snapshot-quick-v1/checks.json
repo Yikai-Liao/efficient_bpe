@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "measured_calls": 12,
+  "full_trace_matches": 12,
+  "binary_sha256": "9e052a0acfb03c5ffbf90dbaae6fe7150e2de39dc4b6f488e903c724c42391ac",
+  "new_source_snapshot_sha256": "572779499ef6635bdae80b0da68251fa1cd0df0823647f9de36e0f548c5a7c8f",
+  "shared_source_provenance_sha256": "67771fb65ef90fe5e8258c32fde1f46c8a95c5601c8a1935b1d0ca120dcb0657",
+  "cpu_affinity": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "repetitions": 1,
+  "n1_not_stable_ranking": true,
+  "snapshot_w4_endpoint_activation": {
+    "quick-en-continuous-262144": {
+      "boundary_queries": 21,
+      "deferred_stores": 2
+    },
+    "quick-zh-continuous-262144": {
+      "boundary_queries": 2,
+      "deferred_stores": 0
+    }
+  }
+}

@@ -6,7 +6,9 @@
 远端读完全由批前边界描述符回答，越界写到所有任务 join 后才回放，
 则各任务只借用不相交的 `&mut [u32]`，语料不需要共享原子格。
 非 AA 的精确 token-disjoint 证书和旧 ID 不复生性质是语义证明的一部分；
-AA 必须保留先全局 parity/规划、后写入的阶段。当前尚无实现或计时证据。
+AA 必须保留先全局 parity/规划、后写入的阶段。[独立 Rust 原型](experiments/radical/owned_region_snapshot/DESIGN.md)
+已通过 23 项测试（含 5 项边界模型）和 171 次完整轨迹对照；实现先保留
+AtomicU32 存储，仅对独占区间调用 get_mut 做普通访问。计时结论见本轮实验归档。
 
 ## 每个 cut 的常数状态
 

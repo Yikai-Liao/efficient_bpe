@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "measured_calls": 16,
+  "full_trace_matches": 16,
+  "binary_sha256": {
+    "pending": "2e12c5bcc8b2cbf42a7aef26b896e38600f37dd6c9e7126b0d356e00818f41a7",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  },
+  "new_source_snapshot_sha256": "4a42fbc5a1bdce02b82f7861706e20048cb5158517c14828501f45ac506921a5",
+  "shared_source_provenance_sha256": "67771fb65ef90fe5e8258c32fde1f46c8a95c5601c8a1935b1d0ca120dcb0657",
+  "cpu_affinity": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "repetitions": 1,
+  "n1_not_stable_ranking": true,
+  "high_min_B_E": [
+    33681,
+    3306
+  ],
+  "high_min_untimed_serial_oracle_calls": 1,
+  "high_min_oracle_sha256": "82b600521fa2945114629bc47732930781c78a3a71aae084c4911f414e2b7e0b"
+}

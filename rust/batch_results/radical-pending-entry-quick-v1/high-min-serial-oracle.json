@@ -1,0 +1,28 @@
+{
+  "case_id": "quick-en-continuous-262144",
+  "minimum": 16,
+  "unmeasured_correctness_call": 1,
+  "command": [
+    "/root/code/efficient_bpe/rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+    "--input",
+    "/root/code/efficient_bpe/rust/fixtures/batch-quick/quick-en-continuous-262144.json",
+    "--workers",
+    "1",
+    "--rules",
+    "512",
+    "--min-frequency",
+    "16",
+    "--trace",
+    "/tmp/pending-entry-screen-qdp88zrb/serial-high-min.json",
+    "--backend",
+    "combined_filtered",
+    "--integer-hash",
+    "ahash",
+    "--bounds",
+    "checked"
+  ],
+  "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+  "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+  "trace_sha256": "f9e879995998b119519d5b230335a03e173d6f4f9c69e83eee257dc49798dc75",
+  "rules": 512
+}

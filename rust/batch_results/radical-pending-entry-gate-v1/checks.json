@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "fmt_check": true,
+  "debug_lib_tests": "14/14",
+  "snapshot_local_model_tests": null,
+  "strict_clippy_all_targets": true,
+  "release_build": true,
+  "standard_fulltrace_matches": 240,
+  "directed_fulltrace_matches": 24,
+  "dynamic_smoke_fulltrace_matches": 0,
+  "binary_sha256": "2e12c5bcc8b2cbf42a7aef26b896e38600f37dd6c9e7126b0d356e00818f41a7",
+  "shared_git_base_commit": "af7f05d5cc57bf44cad7af84c9cef931d4f1ed37",
+  "new_source_snapshot_sha256": "4a42fbc5a1bdce02b82f7861706e20048cb5158517c14828501f45ac506921a5",
+  "source_hashes_match_current_files": true,
+  "first_failure_record": "FIRST_FAILURES.md"
+}

@@ -1,6 +1,8 @@
 # 下一原型：只替换非 AA 的跨区访问协议
 
-待实现。先使用[边界快照审查](REGION_BOUNDARY_SNAPSHOT_REVIEW.md)的严格
+已实现于 [owned_region_snapshot](experiments/radical/owned_region_snapshot/DESIGN.md)，
+23 项 Rust 测试及 171 次完整轨迹对照通过。以下保留原隔离实验设计。
+使用[边界快照审查](REGION_BOUNDARY_SNAPSHOT_REVIEW.md)的严格
 协议，独立克隆 `owned_region_fused`，只比较 atomic-region 与
 snapshot-region 的非 AA 批次。选规则、hash、owner 提交、posting 投影和
 AA 路径全部相同，避免把新的 owner 或位图改动混进来。这个实验首先验证

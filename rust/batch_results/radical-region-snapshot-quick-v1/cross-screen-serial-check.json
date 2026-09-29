@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "snapshot_rows_compared": 12,
+  "checked_fields": [
+    "fixture_sha256",
+    "fingerprint",
+    "min_frequency",
+    "requested_rules"
+  ],
+  "reference": "serial_cf32/aHash/checked rows in pending screen",
+  "scope": "Cross-screen fingerprint check. Each screen separately compared complete traces; temporary trace files are not archived.",
+  "inputs_sha256": {
+    "rust/batch_results/radical-pending-entry-quick-v1/screen.jsonl": "42afe93053a7cad487ee939aed72ae329b5d2eba0674077c3675c2946466fad7",
+    "rust/batch_results/radical-region-snapshot-quick-v1/screen.jsonl": "574024d0408d632866164d5e574b313f688d19070a5eb8b84a4efbf65955a458"
+  }
+}

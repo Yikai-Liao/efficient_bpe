@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "rows": 16,
+  "repetitions": 1,
+  "seed": 20260930,
+  "high_min_untimed_serial_oracle_calls": 1,
+  "high_min_oracle_sha256": "82b600521fa2945114629bc47732930781c78a3a71aae084c4911f414e2b7e0b",
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "binary_sha256": {
+    "pending": "2e12c5bcc8b2cbf42a7aef26b896e38600f37dd6c9e7126b0d356e00818f41a7",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  },
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_pending_entry/Cargo.lock": "3e38b5e785dc5863e7f150e3138a223f54599dd9c276f24cc5025561489f37e9",
+    "rust/experiments/radical/owned_pending_entry/Cargo.toml": "075e2682110058b3945769424f3cae1c72898d9c1462d19b36818ef0e19cdbc8",
+    "rust/experiments/radical/owned_pending_entry/DESIGN.md": "42709990cc2b0e3eb18f561e12db443efbb20ac980b18ab91f071a9978d6e109",
+    "rust/experiments/radical/owned_pending_entry/src/lib.rs": "2739779436cef26795f7e6ac63bfc1710d1833eeddf33b0cc577307894ebee01",
+    "rust/experiments/radical/owned_pending_entry/src/main.rs": "91d13ca5974822ebb806fc69be5a06736ed84b929ec7208c6783965ea9252a85",
+    "rust/experiments/radical/owned_pending_entry/src/small_posting.rs": "d3fb96b80ba8816fe30df4aff1822e1ca4bad6bbd5bad09297e9416f8b07032d"
+  },
+  "new_source_snapshot_sha256": "4a42fbc5a1bdce02b82f7861706e20048cb5158517c14828501f45ac506921a5",
+  "shared_source_provenance_sha256": "67771fb65ef90fe5e8258c32fde1f46c8a95c5601c8a1935b1d0ca120dcb0657",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "semantic_check": "full merge-rule and final-token trace plus SHA-256 fingerprint"
+}

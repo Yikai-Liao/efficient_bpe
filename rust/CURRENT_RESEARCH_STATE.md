@@ -19,7 +19,9 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 - **复用已存在的表**：[owner accumulator](OWNER_ACCUMULATOR_NEXT.md)已实现，12 项 Rust 测试及 240 次完整 oracle 通过。staged/fused-fresh/fused-reuse 三种同 binary 控制隔离连续提交与少一次汇总插入的效果；[12 次小测](batch_results/radical-reuse-accumulator-quick-v1/README.md)中 W4 英文/中文各跳过约 2.3 万/1.6 万入口，完整调用却无一致收益，暂不默认整合。
 - **有条件组合**：[endpoint/bitmap 组合](experiments/radical/owned_endpoint_bitmap_combo/DESIGN.md)已通过 23 项 Rust 测试、485 次完整 oracle 和 16 次小测。AB 64 KiB 中非 AA 起点载荷归零、AA Plan 容量峰值从 524288 降至 65536 字节，两类节省可共存；组合 W1/W4 .00863/.00634 秒，仅 1.36×，n=1 不推为速度默认。EN/ZH 的 dense AA 为零，其 AA 开关是负控制。
 - **新的并行调度**：[region 投影有序 posting](REGION_ORDERED_FUSION_NEXT.md)已通过 16 项 Rust 测试和 168 次完整 oracle；[8 次小测](batch_results/radical-region-fused-quick-v1/README.md)中 W4 英文 dynamic/region .03824/.04004 秒、中文 .02187/.02540 秒，没有净速度收益。region 自身 1→4 仅约 1.58×/1.19×。按访问次数等成本计算的静态负载上界为 3.69/2.59，说明中文还有明显分区倾斜；这个比值不是实测加速比。保持独立原型，不组合为默认。
-- **下一条实质方向**：[O(T) 边界快照与区域独占访问](REGION_BOUNDARY_SNAPSHOT_REVIEW.md)经两个 Sol 和 root 交叉审查，尚未实现。目标是每个 region 只读写自己的切片，远端读来自批前常数个 token 描述符，至多 2(T−1) 次越界端点写在 join 后回放；不把 cut 当作 token 边界。[最小实现方案](REGION_BOUNDARY_SNAPSHOT_NEXT.md)先只替换非 AA 访问协议，不叠加 owner 或 AA 改动，不承诺去掉 Atomic 就提速。
+- **独占区域的端点访问**：[O(T) 边界快照](REGION_BOUNDARY_SNAPSHOT_REVIEW.md)已实现并通过 23 项 Rust 测试、171 次完整轨迹对照。每个 region 只读写自己的切片，远端读来自批前常数个 token 描述符，至多 2(T−1) 次越界端点写在 join 后回放；切点可穿过 token。AA 保留原路径，没有 N 大小的额外快照。[本轮报告](SNAPSHOT_PENDING_REPORT.md)与实验归档分别记录协议收益和计时边界。
+- **直接汇总新键**：[pending owner Entry](PENDING_OWNER_ENTRY_NEXT.md)已实现并通过 14 项 Rust 测试、264 次完整轨迹对照。同 binary 保留 staged 和使用临时表的 direct-old 控制；Entry 不增宽，但删除临时表可能换来永久表的容量高水位。[本轮报告](SNAPSHOT_PENDING_REPORT.md)包含高阈值对照及 HashMap 公开 capacity 的测量纠正。
+- **后续设计**：[固定微区](REGION_TASK_GRANULARITY_NEXT.md)尝试 T>W，以动态分派独占任务改善固定物理分区倾斜；[不可变 pair row](IMMUTABLE_PAIR_ROWS_REVIEW.md)暂因目录开销和热门 row 集中更新风险保留在审查阶段；[posting 分级存储](IMMUTABLE_POSTING_STORAGE_NEXT.md)利用只出生一次的性质设计磁盘封存，但构建峰值、AA 和频率/heap 常驻尚待解决。后三项均未实现或测得提速。
 
 ## 已筛过，避免无证据重做
 

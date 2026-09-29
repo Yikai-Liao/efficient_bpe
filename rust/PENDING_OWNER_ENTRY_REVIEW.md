@@ -51,7 +51,7 @@ map，再遍历 B 个结果，最终只把 E 个插入 owner。pending 方案对
 提交阶段的反例条件是：owner 当前 capacity 较小，本批某个高频规则在
 许多不同的右邻 `Cᵢ` 前匹配，生成 B 个各出现一次的 `(Z,Cᵢ)`，
 minimum=2。pending 方案向永久表插入这 B 个不合格新键，再全部删除；
-HashMap 删除不收缩 capacity，后续即使活跃 key 很少也保留高水位，
+不显式收缩或替换表时，底层分配可能继续保留，后续即使活跃 key 很少也有高水位风险，
 而 combined 方案可释放临时表。**这不是已构造出的完整训练反例**：
 直接取 M 个词 `[A,B,Cᵢ]` 且各 `Cᵢ` 初始就不同，会让现有
 `initial_index` 在阈值过滤前先把 Θ(M) 个原始 pair 插进 owner，
@@ -61,7 +61,7 @@ owner capacity 本来就可能达到 Θ(M)。必须用晚期出生的邻居类�
 16 字节 `SmallPosting`，比临时 `Delta` 更大，另有 touched `(key,count)`
 容量。故 E≪B、长期 K≪B 时，pending 的瞬时与后续内存都可能更差；
 E≈B 且 owner 已有足够容量时才更可能同时省时省空间。永久容量高水位
-是 `max_epoch(K+B)` 量级，而不是把每批 B 无限相加，但它可远高于
+风险由 `max_epoch(K+B)` 控制，而不是把每批 B 无限相加，但它可远高于
 当前活跃 key 数。每轮 shrink/rebuild 会引入新的 O(K+B) 工作与变量，
 不能算入这项最小实验的收益。
 
@@ -69,3 +69,17 @@ E≈B 且 owner 已有足够容量时才更可能同时省时省空间。永久�
 记录本批暂存 B、合格 E、owner 插入前后 capacity、touched Vec capacity、
 训练 HWM 与完整调用时间。若高阈值 singleton 语料导致长期 owner 容量
 明显超过 combined 控制，即使少了临时表，也应判定此路线不适合通用默认。
+
+首轮 Rust 测试纠正了一项测量假设：`HashMap::capacity()` 是不重新分配可容纳的
+元素数，不是物理 bucket 数。碰撞用例删除 256 个临时项后，公开 capacity 从
+448 降至 192；不能断言删除前后相等，也不能从下降推出已归还分配。
+[标准库 capacity 文档](https://doc.rust-lang.org/std/collections/struct.HashMap.html#method.capacity)
+只承诺上述可容纳数量。这里的容量指标应分别报告各阶段实际值，容量乘 Entry
+大小仍只是载荷代理；要断言实际分配或 RSS 节省，需分配器观测或训练内存测量。
+
+后续[轻量实验](SNAPSHOT_PENDING_REPORT.md)已补上一例完整训练中的容量差异：
+EN 256 KiB、minimum=16、W4 时，累计 B=33681、E=3306；combined/pending
+提交后公开 owner 容量峰值为 3261/7162，训练 HWM 为 7.070/7.145 MiB。
+这只证明真实训练的公开容量不同；初始 retain 的 tombstone 可能在同一分配上
+被重排或复用，从而提高可用容量。没有分配器观测时，它尚不能证明自然训练
+真的新增了永久分配，更不能证明分配字节翻倍。
