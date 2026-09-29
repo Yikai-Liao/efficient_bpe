@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "standard_fulltrace_matches": 160,
+  "directed_fulltrace_matches": 2,
+  "directed": [
+    {
+      "mode": "atomic",
+      "max_token_length": 4097,
+      "bitmap_rounds": 4,
+      "fallback_rounds": 8,
+      "atomic_or_calls": 23025
+    },
+    {
+      "mode": "word-cache",
+      "max_token_length": 4097,
+      "bitmap_rounds": 4,
+      "fallback_rounds": 8,
+      "atomic_or_calls": 773
+    }
+  ],
+  "binary_sha256": "443d3c8eb8e6196a5fbc110e004789fe3a6e336931fc85773ff0a462bedbc0d7",
+  "oracle": "Python naive full recount; complete merge trace and final tokens"
+}

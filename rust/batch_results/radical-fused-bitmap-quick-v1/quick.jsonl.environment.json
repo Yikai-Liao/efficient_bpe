@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "rows": 30,
+  "repetitions": 1,
+  "seed": 20260930,
+  "manifest_sha256": {
+    "rust/batch_results/quick-fixtures-262144-512.json": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+    "rust/ablation_results/fixtures.json": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b"
+  },
+  "binary_sha256": {
+    "fused": "522d1d96725f8eb164b8695b79039adbaa0f0d0e38534eb69e0d397fe73de0d5",
+    "bitmap": "1ea9b3b0f800085e2170731b7ac2c419fe63f8708035ffd78056c0d0bd83837a",
+    "owner": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  },
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_aa_bitmap/Cargo.lock": "90c5e08840423ef4034f8bb02d5da92fc101a23499ae15cbcd1223ef28361530",
+    "rust/experiments/radical/owned_aa_bitmap/Cargo.toml": "a6c7bad23a0e5b77501684c0c310fe14210a3841b48f53510354106a30381c33",
+    "rust/experiments/radical/owned_aa_bitmap/DESIGN.md": "ee852bb32791fa65b08b6b8f9fd13155b1afd24275336ef1a97f095f1450bbdd",
+    "rust/experiments/radical/owned_aa_bitmap/src/aa_bitmap.rs": "89b4c57f3357c399705b698aaabb043c3a6bb470a1af37613beed0be620fae51",
+    "rust/experiments/radical/owned_aa_bitmap/src/lib.rs": "9e7304544ed1ed6ad0cf2ba52a1da1941d224013185b113a21271ec354851cd0",
+    "rust/experiments/radical/owned_aa_bitmap/src/main.rs": "495322f5c1c173ed72ab595f033139939cfa7776964b5ef46b109b53a168681a",
+    "rust/experiments/radical/owned_aa_bitmap/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/radical/owned_fused_endpoint/Cargo.lock": "315c84fb1b6b684f9e524d59c850c4e559a5eecd57dde8daeb139bcedff39db5",
+    "rust/experiments/radical/owned_fused_endpoint/Cargo.toml": "22529756d7471057a1ea68683a6a2c20b68558e057f5d41964f05fcb4a0a0e36",
+    "rust/experiments/radical/owned_fused_endpoint/DESIGN.md": "ce2a0a49a2bbc21c36fc40b96b9cceb58dceb5414fd7446b36883b50dacc7794",
+    "rust/experiments/radical/owned_fused_endpoint/src/lib.rs": "b0406f6c7556e4b26f4b27a2ed05a7a459a118aeb1cfc12f8b4bfe6837898ea6",
+    "rust/experiments/radical/owned_fused_endpoint/src/main.rs": "b0ac33a3c1485a0e1357b333902e9f751c6a0e711fa976ff4584dc45f5c3ae50",
+    "rust/experiments/radical/owned_fused_endpoint/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+  },
+  "new_source_snapshot_sha256": "f6b165c92f218768de3da8d13a4ef98baaa648500c5ddd58cf9982578c0e20d2",
+  "shared_source_provenance_sha256": "a03f44a2e2b3419b9e8e1e78b340fa62f6e4df6d6bbb10a76bdb68484015c24f",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "semantic_check": "full merge-rule and final-token trace plus SHA-256 fingerprint"
+}

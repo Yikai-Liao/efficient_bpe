@@ -47,6 +47,10 @@ birth suppression 不能照搬。
 
 ## 内存序与实现边界
 
+[Rust `Ordering` 官方说明](https://doc.rust-lang.org/std/sync/atomic/enum.Ordering.html#variant.Acquire)
+规定了读到 Release 写值的 Acquire 与其前后操作的可见关系。下述 head/clear
+推理是把这条契约应用到本实现，并非仅凭 x86 指令表现或交错小测得出的结论。
+
 对右邻清零的证明依赖同一线程 `store(t, fresh|HEAD, Release)`
 **先于** `store(u, 0, Release)`。读取 u 的零值若来自后者，Acquire
 与其同步；先前 head 写因而 happens-before 随后的 t 重读。t 是批内

@@ -1,0 +1,9 @@
+{
+  "rust/experiments/radical/owned_aa_bitmap_cache/Cargo.lock": "cf342f728c3e31729c5e369dd25a2aa3a4dc36d78db7ea4217ab42d09f7f5a23",
+  "rust/experiments/radical/owned_aa_bitmap_cache/Cargo.toml": "1dccb40d8aff5a5ff5345c5a46d2fb85ff2e9581ae6aa3d58a3491dd9aace6ba",
+  "rust/experiments/radical/owned_aa_bitmap_cache/DESIGN.md": "a97fe490478fa7965359b44cc031c58b18f8533238bfa7aff9ce5364b2505ae7",
+  "rust/experiments/radical/owned_aa_bitmap_cache/src/aa_bitmap.rs": "47152095a1fd565dddd1e3e9c093bd101aaecb8efc39c39317cdd61bf7784406",
+  "rust/experiments/radical/owned_aa_bitmap_cache/src/lib.rs": "3cbf483aebece62a16a0351aa8e8ed862e7c9670d4457460116d2295aefab98d",
+  "rust/experiments/radical/owned_aa_bitmap_cache/src/main.rs": "cea6a65e89526beee3ac77fdd46b8c22ea2f4216dfac85fc7d178bb534d83ed0",
+  "rust/experiments/radical/owned_aa_bitmap_cache/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+}

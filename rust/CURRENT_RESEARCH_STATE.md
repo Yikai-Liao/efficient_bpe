@@ -14,7 +14,10 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 - **公平的直接串行常数基线**：[串行控制](experiments/radical/serial_integer_hash/DESIGN.md)已完成 22 调用同窗口小测，全部完整轨迹匹配。相同 backend/bounds 的八组 std→aHash 中七组更快，但 n=1 不作稳定排名；不能把旧串行保留 std 的差距算成并行算法创新。
 - **扩大精确批次**：[出生时摘要](EXACT_BATCH_WIDENING_NEXT.md)之后已实现[按需摘要](experiments/radical/owned_lazy_neighbor/DESIGN.md)。它不增加每个 Entry 的字段，只为首次查询 key 扫一次 posting 并缓存；build 数≤R+B，访问数≤所有 retained 历史 posting。17 项 Rust 测试及 200/200 oracle 通过，14 次小测完整匹配。英文摘要扫描由 530,725 降至 32,801 个位置、中文由 149,188 降至 4,751；额外工作与内存降低，但 W4 调用没有一致优于 type 控制，不默认整合。详见[归档](batch_results/radical-lazy-neighbor-gate-v1/README.md)。
 - **复杂度边界**：[原地 AA radix](experiments/radical/owned_aa_radix/DESIGN.md)已实现，排序固定 u32 域下最坏 O(H)、辅助数组栈载荷上界 24 KiB，无 H 长度缓冲；原控制仍是 Rayon 并行比较排序。13 项 Rust 测试、160/160 oracle 和 12 次小测通过。AA 密集两例中，W4 的 radix 排序阶段未胜过标准排序；保留复杂度选项，不作为速度默认。详见[归档](batch_results/radical-aa-radix-gate-v1/README.md)。
-- **消除一次整批屏障**：[方向标记端点与批前邻居恢复](FUSED_ENDPOINT_SNAPSHOT_NEXT.md)是新的待验证设计，试图在每次匹配内融合规划与写入，不复制语料。需要独立交错模型、弱内存序证明及 tagged-two-pass 控制；目前不作性能承诺。
+- **消除一次整批屏障**：[方向标记端点与批前邻居恢复](FUSED_ENDPOINT_SNAPSHOT_NEXT.md)已实现，14 项 Rust 测试、258 次完整 oracle 通过；同 binary 保留原/tagged 两阶段控制。[30 次小测及 20 次有限复核](ENDPOINT_BITMAP_REPORT.md)均保持精确，但 4 MiB n=2 未确认通用速度收益：融合 W1/W4 英文 1.245/0.549、中文 0.553/0.311 秒，自身扩展 2.27×/1.78×，四核结果波动大。临时起点数组消除成立，不默认切换。
+- **密集 AA 不排序、不留 Plan Vec**：[位图方案](AA_DENSE_PARITY_NEXT.md)已实现并经交叉审查，13 项 Rust 测试、166 次 oracle 通过；只有 H≥ceil(N/16) 且容量守卫通过时建立一份 N 位 bitmap。unary 小测四核 HWM 4.71→3.56 MiB，速度方向仍分化；自然 EN 未启用 bitmap，不能将其同路径耗时波动算成收益。[word-cache 后续小测](batch_results/radical-aa-bitmap-cache-quick-v1/README.md)已将原子 OR 次数减少约 19–30 倍，四格 scatter 均下降，完整调用仍方向不一。
+- **复用已存在的表**：[owner accumulator](OWNER_ACCUMULATOR_NEXT.md)已实现，12 项 Rust 测试及 240 次完整 oracle 通过。staged/fused-fresh/fused-reuse 三种同 binary 控制隔离连续提交与少一次汇总插入的效果；[12 次小测](batch_results/radical-reuse-accumulator-quick-v1/README.md)中 W4 英文/中文各跳过约 2.3 万/1.6 万入口，完整调用却无一致收益，暂不默认整合。
+- **新的并行调度与有条件组合**：[region 投影有序 posting](REGION_ORDERED_FUSION_NEXT.md)及 endpoint/bitmap 组合正在独立实现。前者只用每 key 唯一 posting，按已知 region 边界二分，使相邻位置由同一逻辑任务处理；后者验证两类临时数组能否同时消除。均保留控制，不将预期当作实测收益。
 
 ## 已筛过，避免无证据重做
 

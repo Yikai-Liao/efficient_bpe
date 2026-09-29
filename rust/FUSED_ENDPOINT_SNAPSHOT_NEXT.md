@@ -1,6 +1,11 @@
 # 在写入中恢复批前邻居：待证实的融合规划方案
 
-状态：设计假说，尚未实现或取得性能证据。目标是在精确批次内把每个 occurrence 的
+状态：已在独立 [owned_fused_endpoint](experiments/radical/owned_fused_endpoint/DESIGN.md)
+实现，并通过 14 项 Rust 测试、strict Clippy、240 次标准完整 oracle 和 18 次小粒度
+并发完整 oracle；见[门控记录](batch_results/radical-fused-endpoint-gate-v1/differential.json)。
+局部交错模型与独立内存序论证见[审查](FUSED_ENDPOINT_SNAPSHOT_REVIEW.md)。
+[首轮小测及有限 n=2 复核](ENDPOINT_BITMAP_REPORT.md)未确认通用速度收益，保留独立原型。
+原设计目标是在精确批次内把每个 occurrence 的
 规划与端点写入放到同一个任务，省掉全批 plan→apply 屏障、有效起点临时数组和第二遍
 apply 遍历。它不同于已有的 owner commit/apply 重叠实验。本轮只考虑非 AA 批次；AA
 仍用现有排序、全局 run parity 和两阶段路径。
@@ -75,3 +80,26 @@ owner aHash 的绝对耗时参考。tagged-two-pass 分离表示与屏障变化�
 同规则、不同相邻规则、左右长度 1/2/>255、head/clear/tail 的各种部分完成、最左
 最右 sentinel、stale posting、空间证书允许的类型冲突、ID 超 31 位回退。并发
 模型需要明确区分顺序一致交错验证与 Release/Acquire 的独立内存序证明。
+
+## 已有两阶段实现的计时边界
+
+在 [aHash 4 MiB、3000 规则、每格两次的原始记录](batch_results/radical-local-hash-v1/integer-long.jsonl) 中，分别对完整调用、`plan_seconds` 和 `apply_seconds` 取中位数：
+
+| 输入 | workers | 完整调用 | plan | apply | 最大单批有效起点数 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| EN | 1 | 1.310 s | 0.717 s（54.7%） | 0.0554 s（4.2%） | 310802 |
+| EN | 4 | 0.533 s | 0.238 s（44.6%） | 0.0251 s（4.7%） | 310802 |
+| ZH | 1 | 0.585 s | 0.163 s（27.8%） | 0.0108 s（1.8%） | 28315 |
+| ZH | 4 | 0.303 s | 0.0746 s（24.6%） | 0.00955 s（3.2%） | 28315 |
+
+这两个计时区间顺序执行，互不嵌套。非 AA 路径的 `plan_seconds` 计
+`prepare_batch`，但此前的 `FlatTask` 构建不在其中；`apply_seconds` 只计
+`apply_batch` 的端点写入，后续 `commit_routes` 不在其中。AA 路径的 plan
+还含规划和路由。累计 `flat_tasks` 为 EN 3614、ZH 3017；最大单批任务数
+分别为 88、50。`peak_task_starts` 与最大单批有效起点数相同。
+
+融合没有可保证的正收益，实际也可能更慢。即使让整个 apply 区间免费，完整调用的
+算术节省上限也只有 1.8%–4.7%；即使让 plan 与 apply 两个区间都免费，
+EN 的上限为 49.3%–58.9%，ZH 为 27.8%–29.6%。实际规划、邻居检查、
+路由和写入都仍需执行，因此这些上限不能当作预期收益；两次测量也不足以
+建立稳定的性能排序。

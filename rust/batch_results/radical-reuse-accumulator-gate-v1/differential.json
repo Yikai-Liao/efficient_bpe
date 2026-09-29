@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "random_cases": 8,
+  "fulltrace_matches": 240,
+  "modes": [
+    "staged",
+    "fused-fresh",
+    "fused-reuse"
+  ],
+  "hashes": [
+    "std",
+    "ahash"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "binary_sha256": "777cfad301c63d92796749354eac8b6124b5326de1eae2213c95f59a62c947d5",
+  "oracle": "Python naive full recount; complete rule trace and final tokens"
+}

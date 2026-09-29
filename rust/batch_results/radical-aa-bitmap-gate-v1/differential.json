@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "standard_fulltrace_matches": 160,
+  "directed_fulltrace_matches": 6,
+  "directed": [
+    {
+      "case": "weighted-aa-4095-4096-4097",
+      "mode": "sort",
+      "workers": 1,
+      "max_token_length": 4097,
+      "aa_bitmap_rounds": 0,
+      "aa_bitmap_fallback_rounds": 0,
+      "aa_bitmap_peak_bytes": 0,
+      "peak_aa_plan_capacity_bytes": 262144
+    },
+    {
+      "case": "weighted-aa-4095-4096-4097",
+      "mode": "sort",
+      "workers": 4,
+      "max_token_length": 4097,
+      "aa_bitmap_rounds": 0,
+      "aa_bitmap_fallback_rounds": 0,
+      "aa_bitmap_peak_bytes": 0,
+      "peak_aa_plan_capacity_bytes": 262144
+    },
+    {
+      "case": "weighted-aa-4095-4096-4097",
+      "mode": "bitmap-adaptive",
+      "workers": 1,
+      "max_token_length": 4097,
+      "aa_bitmap_rounds": 4,
+      "aa_bitmap_fallback_rounds": 8,
+      "aa_bitmap_peak_bytes": 1544,
+      "peak_aa_plan_capacity_bytes": 16384
+    },
+    {
+      "case": "weighted-aa-4095-4096-4097",
+      "mode": "bitmap-adaptive",
+      "workers": 4,
+      "max_token_length": 4097,
+      "aa_bitmap_rounds": 4,
+      "aa_bitmap_fallback_rounds": 8,
+      "aa_bitmap_peak_bytes": 1544,
+      "peak_aa_plan_capacity_bytes": 16384
+    },
+    {
+      "case": "dense-aa-4m",
+      "mode": "sort",
+      "workers": 4,
+      "max_token_length": 4096,
+      "aa_bitmap_rounds": 0,
+      "aa_bitmap_fallback_rounds": 0,
+      "aa_bitmap_peak_bytes": 0,
+      "peak_aa_plan_capacity_bytes": 67108864
+    },
+    {
+      "case": "dense-aa-4m",
+      "mode": "bitmap-adaptive",
+      "workers": 4,
+      "max_token_length": 4096,
+      "aa_bitmap_rounds": 4,
+      "aa_bitmap_fallback_rounds": 8,
+      "aa_bitmap_peak_bytes": 524296,
+      "peak_aa_plan_capacity_bytes": 4194304
+    }
+  ],
+  "binary_sha256": "1ea9b3b0f800085e2170731b7ac2c419fe63f8708035ffd78056c0d0bd83837a",
+  "oracle": "Python naive full recount; complete rule trace and final tokens"
+}

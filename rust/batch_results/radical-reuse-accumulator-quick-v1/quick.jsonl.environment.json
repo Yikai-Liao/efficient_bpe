@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "rows": 12,
+  "repetitions": 1,
+  "seed": 20260930,
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "binary_sha256": "777cfad301c63d92796749354eac8b6124b5326de1eae2213c95f59a62c947d5",
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_reuse_accumulator/Cargo.lock": "1bea67e33d0773dcdd192415ae79122a2c463ca6ce34b0d893f3a93666e2c7d6",
+    "rust/experiments/radical/owned_reuse_accumulator/Cargo.toml": "02a8f5c8a901e0b363d9a3afb22e530af8107365ad3a88a5719ac4226b305db3",
+    "rust/experiments/radical/owned_reuse_accumulator/DESIGN.md": "b66128ef2662445603e2afd5874657a73b4ffeda6f6fb238b13d15872ee450c8",
+    "rust/experiments/radical/owned_reuse_accumulator/src/lib.rs": "31fb4708f175b26d8719d2d95802ee8ad7121885a8710faeab83fb2e0424b623",
+    "rust/experiments/radical/owned_reuse_accumulator/src/main.rs": "5c91afedbdde580fe261302ca96225a299fef76a656f1a259eb17dc25bf110ea",
+    "rust/experiments/radical/owned_reuse_accumulator/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+  },
+  "new_source_snapshot_sha256": "3e62c096b87f3b3a40148f36844e9256f9aa9d9f9129c85b4d161e5f3962a156",
+  "shared_source_provenance_sha256": "a03f44a2e2b3419b9e8e1e78b340fa62f6e4df6d6bbb10a76bdb68484015c24f",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "semantic_check": "full merge-rule and final-token trace plus SHA-256 fingerprint"
+}

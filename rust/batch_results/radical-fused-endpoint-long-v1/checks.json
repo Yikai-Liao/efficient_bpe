@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "training_calls": 20,
+  "full_trace_matches": 20,
+  "groups": 10,
+  "repetitions_per_group": 2,
+  "schedule": "seeded shuffle then exact reverse",
+  "base_commit": "5536655ac4d32be04a2d2ffb1b4a930c0ad97555",
+  "binary_sha256": {
+    "fused": "522d1d96725f8eb164b8695b79039adbaa0f0d0e38534eb69e0d397fe73de0d5",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  }
+}

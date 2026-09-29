@@ -1,0 +1,8 @@
+{
+  "rust/experiments/radical/owned_reuse_accumulator/Cargo.lock": "1bea67e33d0773dcdd192415ae79122a2c463ca6ce34b0d893f3a93666e2c7d6",
+  "rust/experiments/radical/owned_reuse_accumulator/Cargo.toml": "02a8f5c8a901e0b363d9a3afb22e530af8107365ad3a88a5719ac4226b305db3",
+  "rust/experiments/radical/owned_reuse_accumulator/DESIGN.md": "b66128ef2662445603e2afd5874657a73b4ffeda6f6fb238b13d15872ee450c8",
+  "rust/experiments/radical/owned_reuse_accumulator/src/lib.rs": "31fb4708f175b26d8719d2d95802ee8ad7121885a8710faeab83fb2e0424b623",
+  "rust/experiments/radical/owned_reuse_accumulator/src/main.rs": "5c91afedbdde580fe261302ca96225a299fef76a656f1a259eb17dc25bf110ea",
+  "rust/experiments/radical/owned_reuse_accumulator/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+}

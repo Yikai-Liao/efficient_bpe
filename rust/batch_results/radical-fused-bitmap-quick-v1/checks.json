@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "quick_rows": 30,
+  "full_trace_matches": 30,
+  "fused_oracle_matches": 258,
+  "bitmap_oracle_matches": 166,
+  "natural_en_bitmap_dense_rounds": 0,
+  "git_base_commit": "5536655ac4d32be04a2d2ffb1b4a930c0ad97555",
+  "new_source_snapshot_sha256": "f6b165c92f218768de3da8d13a4ef98baaa648500c5ddd58cf9982578c0e20d2",
+  "binary_sha256": {
+    "fused": "522d1d96725f8eb164b8695b79039adbaa0f0d0e38534eb69e0d397fe73de0d5",
+    "bitmap": "1ea9b3b0f800085e2170731b7ac2c419fe63f8708035ffd78056c0d0bd83837a",
+    "owner": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  }
+}

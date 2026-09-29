@@ -1,0 +1,160 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "random_cases": 8,
+  "standard_fulltrace_matches": 240,
+  "custom_cases": [
+    "abab-16384",
+    "mixed-adjacent",
+    "weighted-boundary"
+  ],
+  "custom_fulltrace_matches": 18,
+  "custom_metrics": [
+    {
+      "case": "abab-16384",
+      "chunk": 3,
+      "repetition": 0,
+      "batch_rounds": 14,
+      "fused_batches": 1,
+      "zero_rereads": 0
+    },
+    {
+      "case": "abab-16384",
+      "chunk": 3,
+      "repetition": 1,
+      "batch_rounds": 14,
+      "fused_batches": 1,
+      "zero_rereads": 0
+    },
+    {
+      "case": "abab-16384",
+      "chunk": 3,
+      "repetition": 2,
+      "batch_rounds": 14,
+      "fused_batches": 1,
+      "zero_rereads": 0
+    },
+    {
+      "case": "abab-16384",
+      "chunk": 7,
+      "repetition": 0,
+      "batch_rounds": 14,
+      "fused_batches": 1,
+      "zero_rereads": 0
+    },
+    {
+      "case": "abab-16384",
+      "chunk": 7,
+      "repetition": 1,
+      "batch_rounds": 14,
+      "fused_batches": 1,
+      "zero_rereads": 0
+    },
+    {
+      "case": "abab-16384",
+      "chunk": 7,
+      "repetition": 2,
+      "batch_rounds": 14,
+      "fused_batches": 1,
+      "zero_rereads": 0
+    },
+    {
+      "case": "mixed-adjacent",
+      "chunk": 3,
+      "repetition": 0,
+      "batch_rounds": 16,
+      "fused_batches": 6,
+      "zero_rereads": 1
+    },
+    {
+      "case": "mixed-adjacent",
+      "chunk": 3,
+      "repetition": 1,
+      "batch_rounds": 16,
+      "fused_batches": 6,
+      "zero_rereads": 1
+    },
+    {
+      "case": "mixed-adjacent",
+      "chunk": 3,
+      "repetition": 2,
+      "batch_rounds": 16,
+      "fused_batches": 6,
+      "zero_rereads": 3
+    },
+    {
+      "case": "mixed-adjacent",
+      "chunk": 7,
+      "repetition": 0,
+      "batch_rounds": 16,
+      "fused_batches": 6,
+      "zero_rereads": 2
+    },
+    {
+      "case": "mixed-adjacent",
+      "chunk": 7,
+      "repetition": 1,
+      "batch_rounds": 16,
+      "fused_batches": 6,
+      "zero_rereads": 1
+    },
+    {
+      "case": "mixed-adjacent",
+      "chunk": 7,
+      "repetition": 2,
+      "batch_rounds": 16,
+      "fused_batches": 6,
+      "zero_rereads": 1
+    },
+    {
+      "case": "weighted-boundary",
+      "chunk": 3,
+      "repetition": 0,
+      "batch_rounds": 17,
+      "fused_batches": 5,
+      "zero_rereads": 2
+    },
+    {
+      "case": "weighted-boundary",
+      "chunk": 3,
+      "repetition": 1,
+      "batch_rounds": 17,
+      "fused_batches": 5,
+      "zero_rereads": 2
+    },
+    {
+      "case": "weighted-boundary",
+      "chunk": 3,
+      "repetition": 2,
+      "batch_rounds": 17,
+      "fused_batches": 5,
+      "zero_rereads": 4
+    },
+    {
+      "case": "weighted-boundary",
+      "chunk": 7,
+      "repetition": 0,
+      "batch_rounds": 17,
+      "fused_batches": 5,
+      "zero_rereads": 2
+    },
+    {
+      "case": "weighted-boundary",
+      "chunk": 7,
+      "repetition": 1,
+      "batch_rounds": 17,
+      "fused_batches": 5,
+      "zero_rereads": 2
+    },
+    {
+      "case": "weighted-boundary",
+      "chunk": 7,
+      "repetition": 2,
+      "batch_rounds": 17,
+      "fused_batches": 5,
+      "zero_rereads": 3
+    }
+  ],
+  "binary_sha256": "522d1d96725f8eb164b8695b79039adbaa0f0d0e38534eb69e0d397fe73de0d5",
+  "oracle": "Python naive full recount; complete rule trace and final tokens"
+}

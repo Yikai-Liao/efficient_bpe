@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "quick_rows": 8,
+  "full_trace_matches": 8,
+  "oracle_matches": 162,
+  "git_base_commit": "5536655ac4d32be04a2d2ffb1b4a930c0ad97555",
+  "source_snapshot_sha256": "61734e33e4f5794c8de58a8d643eb1f6a78f70c6b831705b7db557fe0acc2308",
+  "binary_sha256": "443d3c8eb8e6196a5fbc110e004789fe3a6e336931fc85773ff0a462bedbc0d7"
+}
