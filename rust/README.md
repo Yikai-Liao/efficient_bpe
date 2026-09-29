@@ -33,6 +33,8 @@ python rust/tools/run_batch_matrix.py \
 
 更新路径的[三项独立 Rust 实验](batch_results/radical-fused-scatter-v1/README.md)已完成：owner 本地归约后立即填充、直接扣减旧 pair 值得组合验证；大列表拆分及写入重叠尚未显示稳定净收益。七种模式通过 280 次完整 oracle，新测进程 CPU 时间帮助区分占用核数与加速比。有限长输入每格仅一次，尚不替代上述 n=2 候选结论。
 
+后续[规划原型与组合复核](batch_results/radical-planning-integrated-v1/README.md)新增 400 次完整 oracle。有界路由缓存、小规则查询表尚未显示一致短测收益；连续 owner 提交＋直接扣减的 n=2 四核中位数为 0.673/0.415 秒，自身 2.94×/2.23×。英文控制范围与候选重叠，中文四核与原组合近乎不变且单核退化，不能据比例宣布并行突破；原 grouped+inline 继续作为主要参考。
+
 ## 早期基线的实现范围
 
 - 加权相邻 pair 计数；最大频率优先，同频按 `(left_id, right_id)` 字典序选取；重叠计数，词内从左到右替换。每轮分配一个全新 ID。

@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "table_hash",
+    "table_flat",
+    "cache_off",
+    "cache_4096",
+    "integrated_separate_combined",
+    "integrated_separate_direct-old",
+    "integrated_owner-fused_combined",
+    "integrated_owner-fused_direct-old",
+    "integrated_overlap_combined",
+    "integrated_overlap_direct-old"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 400,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_selected_table": "5f60722e87ca5330cd7f93c74737dad49354a441bc4b8d7a64c77865e82e1a86",
+    "owned_route_cache": "4fea75e16ffe992ce305d7a09d9d6f509ce59535ed5f70a33923a45bced5194d",
+    "owned_fused_direct": "507ed920a44c94b0b8b80e7bd45cdc992c1a4aa2a4b9ae5f84b73236d9b3d378"
+  },
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

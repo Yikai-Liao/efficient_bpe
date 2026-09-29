@@ -1,0 +1,106 @@
+{
+  "status": "passed",
+  "validation": {
+    "selected_table_debug_lib_tests": "11/11 passed",
+    "route_cache_debug_lib_tests": "10/10 passed",
+    "fused_direct_debug_lib_tests": "9/9 passed",
+    "strict_clippy_all_targets": "all three crates passed -D warnings",
+    "release_builds": "all three passed",
+    "complete_python_oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "versions": [
+        "table_hash",
+        "table_flat",
+        "cache_off",
+        "cache_4096",
+        "integrated_separate_combined",
+        "integrated_separate_direct-old",
+        "integrated_owner-fused_combined",
+        "integrated_owner-fused_direct-old",
+        "integrated_overlap_combined",
+        "integrated_overlap_direct-old"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "compared_runs": 400,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "owned_selected_table": "5f60722e87ca5330cd7f93c74737dad49354a441bc4b8d7a64c77865e82e1a86",
+        "owned_route_cache": "4fea75e16ffe992ce305d7a09d9d6f509ce59535ed5f70a33923a45bced5194d",
+        "owned_fused_direct": "507ed920a44c94b0b8b80e7bd45cdc992c1a4aa2a4b9ae5f84b73236d9b3d378"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "rows": 28,
+    "versions": 7,
+    "cases": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_match": true,
+    "same_deterministic_work_as_combo": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "process_cpu_metric": "call_cpu_seconds"
+  },
+  "screen_4m": {
+    "rows": 28,
+    "configurations": 14,
+    "repeats": 2,
+    "fingerprints_match_prior_reference": true,
+    "same_deterministic_work_across_posting_modes": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "process_cpu_metric": "call_cpu_seconds"
+  },
+  "shared_source_provenance": "shared-source-provenance.json",
+  "new_source_snapshot_sha256": "6c0a81f8e25567e6ef3f6e2b3a3b1675ef3933ff62a8924907caf9aba898f6e9",
+  "new_source_hashes": "new-source-hashes.json",
+  "binary_sha256": {
+    "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+    "table_hash": "5f60722e87ca5330cd7f93c74737dad49354a441bc4b8d7a64c77865e82e1a86",
+    "table_flat": "5f60722e87ca5330cd7f93c74737dad49354a441bc4b8d7a64c77865e82e1a86",
+    "cache_off": "4fea75e16ffe992ce305d7a09d9d6f509ce59535ed5f70a33923a45bced5194d",
+    "cache_4096": "4fea75e16ffe992ce305d7a09d9d6f509ce59535ed5f70a33923a45bced5194d",
+    "integrated_control": "507ed920a44c94b0b8b80e7bd45cdc992c1a4aa2a4b9ae5f84b73236d9b3d378",
+    "integrated_candidate": "507ed920a44c94b0b8b80e7bd45cdc992c1a4aa2a4b9ae5f84b73236d9b3d378"
+  },
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "binary_paths": {
+    "combo": "rust/target/reruns/radical-layout-combo-v1/combo",
+    "native": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "selected_table": "rust/target/reruns/radical-planning-integrated-v1/owned_selected_table",
+    "route_cache": "rust/target/reruns/radical-planning-integrated-v1/owned_route_cache",
+    "fused_direct": "rust/target/reruns/radical-planning-integrated-v1/owned_fused_direct"
+  }
+}

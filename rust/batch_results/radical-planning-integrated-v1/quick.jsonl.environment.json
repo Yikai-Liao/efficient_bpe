@@ -1,0 +1,62 @@
+{
+  "manifest": "rust/batch_results/quick-fixtures-262144-512.json",
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "binary_sha256": {
+    "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+    "table_hash": "5f60722e87ca5330cd7f93c74737dad49354a441bc4b8d7a64c77865e82e1a86",
+    "table_flat": "5f60722e87ca5330cd7f93c74737dad49354a441bc4b8d7a64c77865e82e1a86",
+    "cache_off": "4fea75e16ffe992ce305d7a09d9d6f509ce59535ed5f70a33923a45bced5194d",
+    "cache_4096": "4fea75e16ffe992ce305d7a09d9d6f509ce59535ed5f70a33923a45bced5194d",
+    "integrated_control": "507ed920a44c94b0b8b80e7bd45cdc992c1a4aa2a4b9ae5f84b73236d9b3d378",
+    "integrated_candidate": "507ed920a44c94b0b8b80e7bd45cdc992c1a4aa2a4b9ae5f84b73236d9b3d378"
+  },
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_fused_direct/Cargo.lock": "84a2dc896cbb1853767135a40fa239b9b646942d3263054cff1178d3c22d6311",
+    "rust/experiments/radical/owned_fused_direct/Cargo.toml": "c030503d49c74d4a3739b7b250c13b6363dc38455593e169a5f080dfb41e0b99",
+    "rust/experiments/radical/owned_fused_direct/DESIGN.md": "9b8cc38fb1eaa54ed900921d35c152722d9ded8f0d6f41b1f249441046cc4ca2",
+    "rust/experiments/radical/owned_fused_direct/src/lib.rs": "db5aacdad02719a6fa3540acbd5147bf84835cf91d2eb732f073399cc6563d84",
+    "rust/experiments/radical/owned_fused_direct/src/main.rs": "34853302e828b2bf4aa625e4aa241b987a62c7f02650fe2fbfe83d1a48fa2d39",
+    "rust/experiments/radical/owned_fused_direct/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/radical/owned_route_cache/Cargo.lock": "fb7b0ec6562e489d1c4f4940f4d265ec49dcc72e84918cab3914c92abb468c34",
+    "rust/experiments/radical/owned_route_cache/Cargo.toml": "32a3e5cf0f2506fd21843d8dda30992efebf7bcfd1eb44c4504d362e0d548099",
+    "rust/experiments/radical/owned_route_cache/DESIGN.md": "9df8ead39959003194952f97093772d4d82b183ac3fe265f336a92b0514762c1",
+    "rust/experiments/radical/owned_route_cache/src/lib.rs": "92aeac9c78ef812e8353512c61cb772484fbea952310b2dac8c3c762fa891745",
+    "rust/experiments/radical/owned_route_cache/src/main.rs": "a90192321aec78896a8d570b1c8d6e47070437dcaa4c41d2e88bfe993bddb951",
+    "rust/experiments/radical/owned_route_cache/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/radical/owned_selected_table/Cargo.lock": "ef6726bb50520e943d2bd9b2e81f15429148083dac4827aec45e86e8d8106338",
+    "rust/experiments/radical/owned_selected_table/Cargo.toml": "348e5464b6e3d4b8922d66655cea86607be9b1254aed2bfc13f6b6e04ac90b4e",
+    "rust/experiments/radical/owned_selected_table/DESIGN.md": "d9a7e73eaf4c49c79b6121e82879d0d812d29b19c6e4fc5a5c2d4aaf268b78c8",
+    "rust/experiments/radical/owned_selected_table/src/lib.rs": "46d2437c80e4802a8687318f9e244738a77ab39c9c409e7df69f2afa026d79a4",
+    "rust/experiments/radical/owned_selected_table/src/main.rs": "288c6cb7f07ba1030a98fa472fcf43b1d4f35772489b9a1c17541e16f385e752",
+    "rust/experiments/radical/owned_selected_table/src/selected_table.rs": "ebe6492fbc808ab77254e0d58cb9bbae6affaf84e6cef7b909c45306f0eec3cd",
+    "rust/experiments/radical/owned_selected_table/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+  },
+  "new_source_snapshot": "rust/batch_results/radical-planning-integrated-v1/new-source-snapshot.tar.gz",
+  "combo_source_snapshot": "rust/batch_results/radical-layout-combo-v1/new-source-snapshot.tar.gz",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "seed": 20260930,
+  "repeats": 1,
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds (CLOCK_PROCESS_CPUTIME_ID)",
+  "mean_occupied_cores": "call_cpu_seconds / call_seconds; not useful-computation utilization",
+  "fingerprint": "complete rule trace plus final token sequence"
+}
