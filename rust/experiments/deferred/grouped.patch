@@ -1,0 +1,384 @@
+--- a/rust/src/ablation/parallel.rs
++++ b/rust/src/ablation/parallel.rs
+@@ -156,6 +156,8 @@
+             | "occurrence_adaptive"
+             | "occurrence_adaptive_256"
+             | "occurrence_adaptive_4096"
++            | "occurrence_grouped"
++            | "occurrence_grouped_adaptive"
+     ) {
+         return Err(TrainError::InvalidInput("unknown parallel mode"));
+     }
+@@ -184,6 +186,10 @@
+         "occurrence_adaptive" => occurrence_snapshot::train_adaptive(input, options, 1024),
+         "occurrence_adaptive_256" => occurrence_snapshot::train_adaptive(input, options, 256),
+         "occurrence_adaptive_4096" => occurrence_snapshot::train_adaptive(input, options, 4096),
++        "occurrence_grouped" => occurrence_snapshot::train_grouped(input, options),
++        "occurrence_grouped_adaptive" => {
++            occurrence_snapshot::train_grouped_adaptive(input, options)
++        }
+         _ => Err(TrainError::InvalidInput("unknown parallel mode")),
+     }
+ }
+@@ -230,6 +236,8 @@
+             "occurrence_adaptive",
+             "occurrence_adaptive_256",
+             "occurrence_adaptive_4096",
++            "occurrence_grouped",
++            "occurrence_grouped_adaptive",
+         ] {
+             let options = Options {
+                 max_merges,
+@@ -247,7 +255,12 @@
+             );
+             assert_eq!(result.core.stale_visits, baseline.stale_visits, "{mode}");
+         }
+-        for mode in ["occurrence_snapshot", "occurrence_adaptive"] {
++        for mode in [
++            "occurrence_snapshot",
++            "occurrence_adaptive",
++            "occurrence_grouped",
++            "occurrence_grouped_adaptive",
++        ] {
+             let unchecked = train(
+                 input.clone(),
+                 Options {
+@@ -369,6 +382,8 @@
+             "occurrence_adaptive",
+             "occurrence_adaptive_256",
+             "occurrence_adaptive_4096",
++            "occurrence_grouped",
++            "occurrence_grouped_adaptive",
+         ] {
+             let result = train(
+                 input.clone(),
+@@ -510,4 +525,59 @@
+             }
+         }
+     }
++
++    #[test]
++    fn grouped_occurrences_keep_full_trace_in_local_and_parallel_rounds() {
++        let cases = [
++            prepared(&[(&vec![1; 61], 1)], 1),
++            prepared(&[(&vec![1; 4100], 1)], 1),
++            prepared(
++                &[(&(0..2100).flat_map(|_| [1, 2]).collect::<Vec<_>>(), 3)],
++                2,
++            ),
++        ];
++        for input in cases {
++            let baseline = crate::train(
++                input.clone(),
++                TrainOptions {
++                    max_merges: 3,
++                    min_frequency: 1,
++                    bounds: Bounds::Checked,
++                },
++            )
++            .unwrap();
++            for bounds in [Bounds::Checked, Bounds::Unchecked] {
++                for mode in ["occurrence_grouped", "occurrence_grouped_adaptive"] {
++                    let result = train(
++                        input.clone(),
++                        Options {
++                            max_merges: 3,
++                            min_frequency: 1,
++                            bounds,
++                            workers: 4,
++                        },
++                        mode,
++                    )
++                    .unwrap();
++                    assert_eq!(result.core.merges, baseline.merges, "{mode}");
++                    assert_eq!(result.core.final_tokens, baseline.final_tokens, "{mode}");
++                    assert_eq!(result.core.actual_merges, baseline.actual_merges, "{mode}");
++                    assert_eq!(
++                        result.core.position_visits, baseline.position_visits,
++                        "{mode}"
++                    );
++                    assert_eq!(result.core.stale_visits, baseline.stale_visits, "{mode}");
++                    assert_eq!(result.metrics["grouped_occurrences"], 1.0);
++                    assert!(
++                        result.metrics["global_occurrence_entry_calls"]
++                            <= result.metrics["new_occurrence_positions"]
++                    );
++                    assert_eq!(
++                        result.metrics["actualbarriers"],
++                        2.0 * result.metrics["parallel_rounds"]
++                    );
++                }
++            }
++        }
++    }
+ }
+--- a/rust/src/ablation/parallel_occurrence_snapshot.rs
++++ b/rust/src/ablation/parallel_occurrence_snapshot.rs
+@@ -12,6 +12,7 @@
+ };
+ use crate::ablation::{Options, Result};
+ use crate::{Bounds, Prepared, Rule, TrainError};
++use std::collections::hash_map::Entry;
+ use std::collections::{BTreeMap, HashMap, HashSet};
+ use std::sync::Arc;
+ use std::sync::atomic::{AtomicU32, Ordering};
+@@ -152,11 +153,42 @@
+ 
+ struct WorkResult {
+     deltas: HashMap<u64, i128>,
+-    new_occurrences: Vec<(u64, u32)>,
++    new_occurrences: OccurrenceOutput,
+     merged: usize,
+     work_seconds: f64,
+ }
+ 
++enum OccurrenceOutput {
++    Flat(Vec<(u64, u32)>),
++    Grouped(HashMap<u64, Vec<u32>>),
++}
++
++impl OccurrenceOutput {
++    #[inline]
++    fn new<const GROUPED: bool>() -> Self {
++        if GROUPED {
++            Self::Grouped(HashMap::new())
++        } else {
++            Self::Flat(Vec::new())
++        }
++    }
++
++    #[inline]
++    fn push<const GROUPED: bool>(&mut self, pair: u64, pos: u32) {
++        if GROUPED {
++            let Self::Grouped(grouped) = self else {
++                unreachable!("grouped occurrence output has flat storage")
++            };
++            grouped.entry(pair).or_default().push(pos);
++        } else {
++            let Self::Flat(flat) = self else {
++                unreachable!("flat occurrence output has grouped storage")
++            };
++            flat.push((pair, pos));
++        }
++    }
++}
++
+ struct ValidatedResult {
+     valid: Vec<Valid>,
+     ordered: bool,
+@@ -194,7 +226,7 @@
+     }
+ }
+ 
+-fn spawn_worker<const UNCHECKED: bool>(corpus: Arc<Vec<AtomicU32>>) -> Worker {
++fn spawn_worker<const UNCHECKED: bool, const GROUPED: bool>(corpus: Arc<Vec<AtomicU32>>) -> Worker {
+     let (commands, command_rx) = mpsc::channel();
+     let (reply_tx, replies) = mpsc::channel();
+     let handle = thread::spawn(move || {
+@@ -247,7 +279,7 @@
+                     let a = (task.key >> 32) as u32;
+                     let b = task.key as u32;
+                     let mut deltas = HashMap::new();
+-                    let mut new_occurrences = Vec::new();
++                    let mut new_occurrences = OccurrenceOutput::new::<GROUPED>();
+                     for plan in &task.plans[task.start..task.end] {
+                         let pos = plan.pos as usize;
+                         let right = pos + task.a_length;
+@@ -270,12 +302,12 @@
+                         if plan.left_id != 0 {
+                             let new_key = pair_key(plan.left_id, task.new_id);
+                             add_delta(&mut deltas, new_key, weight);
+-                            new_occurrences.push((new_key, plan.before));
++                            new_occurrences.push::<GROUPED>(new_key, plan.before);
+                         }
+                         if plan.right_id != 0 {
+                             let new_key = pair_key(task.new_id, plan.right_id);
+                             add_delta(&mut deltas, new_key, weight);
+-                            new_occurrences.push((new_key, plan.pos));
++                            new_occurrences.push::<GROUPED>(new_key, plan.pos);
+                         }
+                     }
+                     let result = WorkResult {
+@@ -303,7 +335,7 @@
+ /// A small rule can be completed by the coordinator in physical occurrence
+ /// order. Reading the already updated endpoints gives exactly the same AA
+ /// overlap and adjacent ABAB context as the serial reference implementation.
+-fn apply_local<const UNCHECKED: bool>(
++fn apply_local<const UNCHECKED: bool, const GROUPED: bool>(
+     corpus: &[AtomicU32],
+     lengths: &[u32],
+     pivots: &[u32],
+@@ -319,7 +351,7 @@
+     let b_length = lengths[b as usize] as usize;
+     let last = corpus.len() - 1;
+     let mut deltas = HashMap::new();
+-    let mut new_occurrences = Vec::new();
++    let mut new_occurrences = OccurrenceOutput::new::<GROUPED>();
+     let mut merged = 0;
+     let mut stale = 0;
+     let mut prior = 0;
+@@ -375,12 +407,12 @@
+         if left_id != 0 {
+             let new_key = pair_key(left_id, new_id);
+             add_delta(&mut deltas, new_key, weight);
+-            new_occurrences.push((new_key, before as u32));
++            new_occurrences.push::<GROUPED>(new_key, before as u32);
+         }
+         if right_id != 0 {
+             let new_key = pair_key(new_id, right_id);
+             add_delta(&mut deltas, new_key, weight);
+-            new_occurrences.push((new_key, raw_pos));
++            new_occurrences.push::<GROUPED>(new_key, raw_pos);
+         }
+         merged += 1;
+     }
+@@ -397,8 +429,8 @@
+ 
+ pub(super) fn train(input: Prepared, options: Options) -> std::result::Result<Result, TrainError> {
+     match options.bounds {
+-        Bounds::Checked => train_impl::<false>(input, options, None),
+-        Bounds::Unchecked => train_impl::<true>(input, options, None),
++        Bounds::Checked => train_impl::<false, false>(input, options, None),
++        Bounds::Unchecked => train_impl::<true, false>(input, options, None),
+     }
+ }
+ 
+@@ -408,12 +440,32 @@
+     grain: usize,
+ ) -> std::result::Result<Result, TrainError> {
+     match options.bounds {
+-        Bounds::Checked => train_impl::<false>(input, options, Some(grain)),
+-        Bounds::Unchecked => train_impl::<true>(input, options, Some(grain)),
++        Bounds::Checked => train_impl::<false, false>(input, options, Some(grain)),
++        Bounds::Unchecked => train_impl::<true, false>(input, options, Some(grain)),
++    }
++}
++
++pub(super) fn train_grouped(
++    input: Prepared,
++    options: Options,
++) -> std::result::Result<Result, TrainError> {
++    match options.bounds {
++        Bounds::Checked => train_impl::<false, true>(input, options, None),
++        Bounds::Unchecked => train_impl::<true, true>(input, options, None),
+     }
+ }
+ 
+-fn train_impl<const UNCHECKED: bool>(
++pub(super) fn train_grouped_adaptive(
++    input: Prepared,
++    options: Options,
++) -> std::result::Result<Result, TrainError> {
++    match options.bounds {
++        Bounds::Checked => train_impl::<false, true>(input, options, Some(1024)),
++        Bounds::Unchecked => train_impl::<true, true>(input, options, Some(1024)),
++    }
++}
++
++fn train_impl<const UNCHECKED: bool, const GROUPED: bool>(
+     input: Prepared,
+     options: Options,
+     adaptive_grain: Option<usize>,
+@@ -458,7 +510,7 @@
+         worker_count
+     };
+     let workers: Vec<Worker> = (0..worker_threads)
+-        .map(|_| spawn_worker::<UNCHECKED>(Arc::clone(&corpus)))
++        .map(|_| spawn_worker::<UNCHECKED, GROUPED>(Arc::clone(&corpus)))
+         .collect();
+     let init_seconds = started.elapsed().as_secs_f64();
+ 
+@@ -478,6 +530,8 @@
+     let mut serial_rounds = 0;
+     let mut serial_visits = 0;
+     let mut parallel_rounds = 0;
++    let mut global_occurrence_entry_calls = 0;
++    let mut new_occurrence_positions = 0;
+     let mut plan_items_peak = 0;
+     let mut plan_capacity_peak_bytes = 0;
+     let mut valid_items_peak = 0;
+@@ -526,7 +580,7 @@
+             worker_count == 1 || positions.len() < grain.saturating_mul(worker_count)
+         });
+         let results = if local_round {
+-            let (result, stale) = apply_local::<UNCHECKED>(
++            let (result, stale) = apply_local::<UNCHECKED, GROUPED>(
+                 &corpus, &lengths, &pivots, &weights, &positions, key, new_id,
+             )?;
+             serial_seconds += result.work_seconds;
+@@ -659,9 +713,30 @@
+             for (pair, delta) in result.deltas {
+                 apply_delta(&mut frequencies, pair, delta)?;
+             }
+-            for (pair, pos) in result.new_occurrences {
+-                pair_pos.entry(pair).or_default().push(pos);
+-                fresh.insert(pair);
++            match result.new_occurrences {
++                OccurrenceOutput::Flat(flat) => {
++                    new_occurrence_positions += flat.len();
++                    for (pair, pos) in flat {
++                        pair_pos.entry(pair).or_default().push(pos);
++                        fresh.insert(pair);
++                        global_occurrence_entry_calls += 1;
++                    }
++                }
++                OccurrenceOutput::Grouped(grouped) => {
++                    global_occurrence_entry_calls += grouped.len();
++                    for (pair, mut positions) in grouped {
++                        new_occurrence_positions += positions.len();
++                        match pair_pos.entry(pair) {
++                            Entry::Vacant(entry) => {
++                                entry.insert(positions);
++                            }
++                            Entry::Occupied(mut entry) => {
++                                entry.get_mut().append(&mut positions);
++                            }
++                        }
++                        fresh.insert(pair);
++                    }
++                }
+             }
+         }
+         for pair in fresh {
+@@ -769,6 +844,21 @@
+     metric(&mut metrics, "parallel_rounds", parallel_rounds as f64);
+     metric(
+         &mut metrics,
++        "grouped_occurrences",
++        if GROUPED { 1.0 } else { 0.0 },
++    );
++    metric(
++        &mut metrics,
++        "global_occurrence_entry_calls",
++        global_occurrence_entry_calls as f64,
++    );
++    metric(
++        &mut metrics,
++        "new_occurrence_positions",
++        new_occurrence_positions as f64,
++    );
++    metric(
++        &mut metrics,
+         "adaptive_grain",
+         adaptive_grain.unwrap_or(0) as f64,
+     );
+@@ -848,7 +938,7 @@
+                 .map(AtomicU32::new)
+                 .collect(),
+         );
+-        let worker = spawn_worker::<false>(corpus);
++        let worker = spawn_worker::<false, false>(corpus);
+         worker
+             .commands
+             .send(Command::Validate(ValidateTask {
+--- a/rust/src/ablation/trainer.rs
++++ b/rust/src/ablation/trainer.rs
+@@ -43,6 +43,8 @@
+         "parallel_occurrence_adaptive",
+         "parallel_occurrence_adaptive_256",
+         "parallel_occurrence_adaptive_4096",
++        "parallel_occurrence_grouped",
++        "parallel_occurrence_grouped_adaptive",
+         "parallel_serial",
+     ]
+ }

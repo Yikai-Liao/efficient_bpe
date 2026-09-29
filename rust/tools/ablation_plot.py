@@ -38,6 +38,11 @@ COLORS = {
 }
 
 
+LABELS = {"combined_filtered": "combined+filter",
+          "combined_filtered_halfword": "combined+filter+u16",
+          "arena_counted": "arena+filter"}
+
+
 def median(group, field):
     return (group.get("times", {}).get(field) or {}).get("median")
 
@@ -85,7 +90,14 @@ def plot_scalar(groups, pareto, output_dir):
             ax.errorbar(x, y, xerr=xerr, yerr=yerr, fmt="*" if is_pareto else "o",
                         color=COLORS[variant], markersize=9 if is_pareto else 6,
                         capsize=2, alpha=0.9, zorder=3)
-            ax.annotate(variant, (x, y), xytext=(5, 4), textcoords="offset points",
+            offset = (5, -12) if variant in ("halfword", "combined_filtered_halfword") else (5, 5)
+            if case == "zh-1m--regex" and variant == "arena_counted":
+                offset = (5, -14)
+            elif case == "zh-1m--regex" and variant == "combined_filtered_halfword":
+                offset = (5, -8)
+            elif case == "en-1m--regex" and variant == "combined_filtered":
+                offset = (5, -7)
+            ax.annotate(LABELS.get(variant, variant), (x, y), xytext=offset, textcoords="offset points",
                         fontsize=8, color=COLORS[variant])
             plotted += 1
         ax.set_title(title)
@@ -139,7 +151,8 @@ def plot_parallel(groups, output_dir):
                 low.append(max(0.0, value - (value if summary["min"] is None
                                              else summary["min"])))
             ax.errorbar(x, y, yerr=[low, high], marker="o", markersize=4,
-                        linewidth=1.5, capsize=2, color=COLORS[variant], label=variant)
+                        linewidth=1.5, capsize=2, color=COLORS[variant],
+                        label=variant.removeprefix("parallel_").replace("occurrence_", ""))
 
         packed = by_key.get((case, "packed", 1))
         packed_wall = median(packed, "call_seconds") if packed else None
@@ -162,9 +175,10 @@ def plot_parallel(groups, output_dir):
         if not available:
             ax.text(0.5, 0.5, "No matching parallel rows", ha="center", va="center",
                     transform=ax.transAxes, color="#666666")
-        else:
-            ax.legend(fontsize=7, loc="best", frameon=False)
-    fig.suptitle("Parallel scaling by workload", y=1.02, fontsize=15)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.99),
+               ncol=7, fontsize=9, frameon=False)
+    fig.suptitle("Parallel scaling by workload", y=1.05, fontsize=15)
     fig.text(0.5, -0.02,
              "Points are median call wall time; whiskers span min–max runs. Dashed references "
              "show direct packed and best scalar one-worker call times when available.",

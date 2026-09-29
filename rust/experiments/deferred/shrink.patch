@@ -1,0 +1,50 @@
+--- a/rust/src/ablation/backends.rs
++++ b/rust/src/ablation/backends.rs
+@@ -111,7 +111,8 @@
+ }
+ 
+ /// MODE=0 clears the whole interior, MODE=1 writes four endpoints, MODE=2
+-/// uses two or three writes. UNCHECKED specializes the same layout but keeps
++/// uses two or three writes, and MODE=3 uses MODE=2 writes after shrinking
++/// the incoming corpus Vec. UNCHECKED specializes the same layout but keeps
+ /// public-facing indexing checked; the fused hot path has proven bounds.
+ pub struct Endpoint<const MODE: u8, const UNCHECKED: bool> {
+     ids: Vec<u32>,
+@@ -128,10 +129,13 @@
+     }
+ }
+ impl<const MODE: u8, const UNCHECKED: bool> Corpus for Endpoint<MODE, UNCHECKED> {
+-    fn new(corpus: Vec<u32>, alphabet: usize) -> Result<Self, TrainError> {
++    fn new(mut corpus: Vec<u32>, alphabet: usize) -> Result<Self, TrainError> {
+         check_initial(&corpus, alphabet)?;
+-        if MODE > 2 {
++        if MODE > 3 {
+             return Err(TrainError::InvalidInput("unknown endpoint mode"));
++        }
++        if MODE == 3 {
++            corpus.shrink_to_fit();
+         }
+         let last = corpus.len() - 1;
+         Ok(Self { ids: corpus, last })
+--- a/rust/src/ablation/trainer.rs
++++ b/rust/src/ablation/trainer.rs
+@@ -19,6 +19,8 @@
+         "unfused_h3",
+         "lean",
+         "packed",
++        "packed_shrink",
++        "combined_filtered_shrink",
+         "linked12",
+         "linked16",
+         "bitmap_u32",
+@@ -110,6 +112,10 @@
+         "endpoints" => endpoint!(1, (u32, u32), Separate<(u32, u32)>, Init::OnePass, 0),
+         "lean" => endpoint!(2, (u32, u32), Separate<(u32, u32)>, Init::OnePass, 0),
+         "packed" => endpoint!(2, u64, Separate<u64>, Init::OnePass, 0),
++        "packed_shrink" => endpoint!(3, u64, Separate<u64>, Init::OnePass, 0),
++        "combined_filtered_shrink" => {
++            endpoint!(3, u64, Combined<u64>, Init::Counted, 0)
++        }
+         "unfused_endpoints" => layout!(
+             UnfusedEndpoint,
+             (u32, u32),

@@ -1,0 +1,92 @@
+{
+  "native_source_commit": "1c2fffc",
+  "kind": "semantic and batch-width diagnostic; no timing or parallel speedup claim",
+  "rust_tests": {
+    "command": "cargo test --all-targets",
+    "cwd": "rust",
+    "library_passed": 24,
+    "integration_passed": 6,
+    "failed": 0
+  },
+  "clippy": {
+    "command": "cargo clippy --all-targets -- -D warnings",
+    "cwd": "rust",
+    "exit_code": 0
+  },
+  "release_build": {
+    "command": "cargo build --manifest-path rust/Cargo.toml --release --bins --locked",
+    "exit_code": 0
+  },
+  "binary_sha256": "8d8e8d80061e1f9ada832f6b0d92e28a652d519c979d09024c7efd2e58db9ac4",
+  "sources_sha256": {
+    "rust/Cargo.lock": "f36b04b48a746ddef77cb191913920f72490f585f95c2a82b99cacb16f39cec8",
+    "rust/Cargo.toml": "1705706789a06d14adfbf9de51cc076b2b0dc78803867dc21c54787a56f5e58f",
+    "rust/src/ablation/backends.rs": "abaa40844e6b649a1fb655b6c53580967550274c98ab93263d4b2a1280c39826",
+    "rust/src/ablation/index.rs": "3f37f7963b4ff36f7ef98235930537b8f2f8becbf33e20ff28c0be957a108418",
+    "rust/src/ablation/micro.rs": "7cc588925985695434b59fa32399fd5b06e03743a8fa3853f62e3c2e0da3b957",
+    "rust/src/ablation/mod.rs": "296c7174193897482bb4497f30a93fd8dbc597c9ecb30e865f63c01052e2672b",
+    "rust/src/ablation/parallel.rs": "fb551ab879714f8c2148f7a6c5685c2e2a7e4bb2676f1e0b401c5a711ded546d",
+    "rust/src/ablation/parallel_occurrence.rs": "9c1d534b4618d1f083ebf7d6ece09a26cb173df08fabb5bb0cfffb395688ad26",
+    "rust/src/ablation/parallel_occurrence_snapshot.rs": "ef9366efc7722e01f49a791d8ed9f7daf630b4b39cde94320fa84c53a4880df4",
+    "rust/src/ablation/parallel_piece.rs": "8225968265762dd9b15f88c4d41e97d253e767d3e0a9be639b604be2f6075a54",
+    "rust/src/ablation/queue.rs": "413aceb20b5b7d59d0d615806ea366fa5dd1325c78c1be329a5eafbc9a8bf7be",
+    "rust/src/ablation/spans.rs": "99c5334c6b2d052b46c693426a8bb2e16dc20719692646214629997040c2bf31",
+    "rust/src/ablation/trainer.rs": "0d14a4a34ca80415ed685029f0d5c4ce226c92a44edd11cb3fd4dd361c0e551c",
+    "rust/src/backend.rs": "cabdf2dd0504a30d86605200a7aeb17f3f6eaa8b717c42c7ce9f40e7ea2ef8c2",
+    "rust/src/bin/ablation.rs": "1308aa046eec2a8dafaf6269d7fe517a1646c98ea0c15c41884a1c7b6b15530b",
+    "rust/src/bin/boundary_micro.rs": "c63105dcad74c6b22300a396926e8524667758c2734c969403d4e1ddc662d094",
+    "rust/src/lib.rs": "25db823d277f468f25aabe0e2558fb66532fd5bd13855aaddc933c7073678053",
+    "rust/src/main.rs": "224259a1f649ddc21758fb0e352f5653e1b211c6a8f2e2febf20417f7dbb8f85",
+    "rust/src/trainer.rs": "3d7e8c5d87bd3df9eeab26d0795a07337be000415e60029cc4a61a4ecaebae40"
+  },
+  "reference_test_sha256": "7f173cdff2368a6a7a0f315276e397d15bb6cb05934ae80d687db5567cd310c3",
+  "reference_test_scope": [
+    "exhaustive ternary strings through length 9: 29523 nonempty strings",
+    "separate through-length-7 test overlaps that set; counts are not additive",
+    "2000 weighted random multi-piece cases",
+    "complete rule key/count/new-ID trace and final token sequences",
+    "direct batch-end count deltas versus independent complete recount after every batch",
+    "targeted self-overlap, adjacent selected matches, weighted ties and fresh-key preemption"
+  ],
+  "differential": {
+    "archive": "certificate-differential.json",
+    "compared_runs": 448,
+    "cases": 112,
+    "random_cases": 100,
+    "all_complete_traces_match": true
+  },
+  "probe": {
+    "archive": "certificate-probe.jsonl",
+    "runs": 80,
+    "cases": 20,
+    "repetitions": 1,
+    "all_same_case_fingerprints_match": true,
+    "checked_unchecked_counters_match": true,
+    "applies_rules_serially": true
+  },
+  "protocol_smoke": {
+    "archive": "affinity-smoke.jsonl",
+    "runs": 2,
+    "one_worker_affinity": [
+      5
+    ],
+    "four_worker_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "purpose": "verify strict process-wide CPU budget including coordinator; not timing evidence"
+  },
+  "runner_provenance": "Native sources match 1c2fffc and the archived probe environment. Later edits to test and reporting/benchmark tools do not change the measured binary. Exact certificate-time differential helper preserved in runner_snapshots.",
+  "limitations": [
+    "No simultaneous multithread batch application is implemented in this probe.",
+    "Batch-end delta helper is a correctness reference and allocates temporary per-piece marks; it is not a measured low-memory production kernel.",
+    "No Miri, sanitizer, dual-socket NUMA or out-of-core validation."
+  ],
+  "raw_sha256": {
+    "certificate-probe.jsonl": "761da1ef67583aeeadaafb691a2374f9702a6e343487951837bfb892971b4ba1",
+    "certificate-differential.json": "c83b8dcce60d4f2c3ac9cf059b064815099f45a98d58d5af62418ebc675b40ea",
+    "affinity-smoke.jsonl": "268d64e904b143091102f5fc0f8b71b6b10a0b0bb41f75a9d660b91132261381"
+  }
+}

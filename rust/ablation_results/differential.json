@@ -1,0 +1,170 @@
+{
+  "cases": 42,
+  "random_cases": 30,
+  "compared_runs": 4772,
+  "explicit_compact_limit_skips": 16,
+  "variants": [
+    "archived",
+    "full_clear",
+    "endpoints",
+    "unfused_endpoints",
+    "unfused_halfword",
+    "unfused_h3",
+    "lean",
+    "packed",
+    "linked12",
+    "linked16",
+    "bitmap_u32",
+    "halfword",
+    "h3",
+    "h25",
+    "filtered",
+    "separate_counted",
+    "arena",
+    "arena_counted",
+    "filtered_h3",
+    "bucket",
+    "bucket_normalized",
+    "combined",
+    "combined_filtered",
+    "combined_filtered_h3",
+    "combined_filtered_halfword",
+    "parallel_broadcast",
+    "parallel_owner",
+    "parallel_occurrence",
+    "parallel_occurrence_snapshot",
+    "parallel_occurrence_adaptive",
+    "parallel_occurrence_adaptive_256",
+    "parallel_occurrence_adaptive_4096",
+    "parallel_serial"
+  ],
+  "workers_for_parallel": [
+    1,
+    2,
+    4,
+    6
+  ],
+  "bounds": [
+    "checked",
+    "unchecked"
+  ],
+  "oracle": "full-recount Python naive; complete merge trace and final tokens",
+  "all_compared_traces_match": true,
+  "all_compared_fingerprints_match": true,
+  "seed": 20260930,
+  "binary_sha256": "603301a5da1c307bfe994c510b8195398391c7231c24ff1852302c959ef01ed9",
+  "skips": [
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "unfused_halfword",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "unfused_halfword",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "unfused_h3",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "unfused_h3",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "halfword",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "halfword",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "h3",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "h3",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "h25",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "h25",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "filtered_h3",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "filtered_h3",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "combined_filtered_h3",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "combined_filtered_h3",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"hybrid initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "combined_filtered_halfword",
+      "workers": 1,
+      "bounds": "checked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")\n\n"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "variant": "combined_filtered_halfword",
+      "workers": 1,
+      "bounds": "unchecked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")\n\n"
+    }
+  ]
+}

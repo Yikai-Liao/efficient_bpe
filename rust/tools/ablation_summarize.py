@@ -14,7 +14,8 @@ TIME_FIELDS = (
 PARALLEL = {"parallel_broadcast", "parallel_owner", "parallel_occurrence",
             "parallel_occurrence_snapshot", "parallel_occurrence_adaptive",
             "parallel_occurrence_adaptive_256", "parallel_occurrence_adaptive_4096",
-            "parallel_serial"}
+            "parallel_serial", "parallel_occurrence_grouped",
+            "parallel_occurrence_grouped_adaptive"}
 
 
 def sha256(path):
@@ -136,6 +137,9 @@ def read_archives(paths, allow_pilot):
         for row in file_rows:
             row["_source_file"] = str(path)
         all_rows.extend(file_rows)
+    binaries = {entry["binary_sha256"] for entry in provenance}
+    if len(binaries) != 1:
+        raise ValueError("do not combine different binaries in one performance summary")
     return all_rows, provenance, expected_by_file
 
 
@@ -285,7 +289,7 @@ def add_comparisons(summaries):
 
 def markdown(report):
     lines = ["# Rust Ablation Summary", "",
-             f"Inputs: {len(report['provenance'])}; raw rows: {report['raw_row_count']}; ",
+             f"Inputs: {len(report['provenance'])}; raw rows: {report['raw_row_count']};",
              f"groups: {len(report['groups'])}.", "",
              "All times and memory below are per `(case, variant, bounds, workers)` group. "
              "Speedups compare medians; different cases are never pooled into a single mean.", "",

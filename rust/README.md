@@ -1,15 +1,33 @@
-# Rust BPE 训练基线
+# Rust BPE 训练实验
 
-这是原项目后续研究的第一个原生基线：将已经验证的 Python `packed + lean endpoints` 核心迁到 Rust，固定规则语义、输入和统计口径，为紧凑布局及原生多线程实验提供起点。
+这里保留第一个原生基线，并继续移植 Python 消融、探索原生索引布局和精确多线程训练。旧 `train` 接口及其结果仍可复现；新实验由 `ablation` CLI 选择具体版本。
 
-结果见 [REPORT.md](REPORT.md)，接口契约、复杂度和下一轮实验见 [DESIGN.md](DESIGN.md)，hotpath 使用方法见 [HOTPATH.md](HOTPATH.md)。原始 Python 文件保持原样。这里实现的是 **BPE 训练核心**；预切分、文本解码、推理编码和完整 tokenizer API 不在这个基线内。
+本轮入口是 [Rust 全消融报告](ABLATION_REPORT.md)、[版本覆盖表](ABLATION_COVERAGE.md) 和 [演进设计](EVOLUTION_DESIGN.md)。连续文本并行的匹配顺序、共享写入与屏障不变量见 [PARALLEL_DESIGN.md](PARALLEL_DESIGN.md)。原始数据、环境哈希和复现矩阵见 [ablation_results](ablation_results/README.md)。
 
-## 实现范围
+多线程扩展不足后的跨领域研究、精确候选前缀证明和原生批宽结果见 [并行重设计](PARALLEL_RETHINK.md)。当前探针不含并行批量应用，不能把批宽解释成加速比。
+
+早期基线结果见 [REPORT.md](REPORT.md)，其接口契约见 [DESIGN.md](DESIGN.md)，hotpath 使用方法见 [HOTPATH.md](HOTPATH.md)。原始 Python 文件保持原样。这里实现的是 **BPE 训练核心**；文本解码、推理编码和完整 tokenizer API 不在计时核心内。
+
+```sh
+cargo build --manifest-path rust/Cargo.toml --release --bins --locked
+python rust/tools/ablation_fixtures.py
+rust/target/release/ablation --list-variants
+rust/target/release/ablation --input rust/fixtures/zh-1m-regex.json \
+  --variant combined_filtered --bounds unchecked --rules 3000
+rust/target/release/ablation --input rust/fixtures/ablation/en-4m-continuous.json \
+  --variant parallel_occurrence_adaptive --workers 4 --bounds unchecked
+python rust/tools/run_ablation_matrix.py \
+  --output-dir rust/ablation_results/reruns/example --repeats 5
+```
+
+每次复现用新的输出目录。初始紧凑 alphabet、u32 position/ID/length 和 u64 count 范围均有显式限制；当前连续并行采用 4U 端点，尚未将所有紧凑后端并行化。外存训练器仍是设计方向。
+
+## 早期基线的实现范围
 
 - 加权相邻 pair 计数；最大频率优先，同频按 `(left_id, right_id)` 字典序选取；重叠计数，词内从左到右替换。每轮分配一个全新 ID。
 - `u32` 端点语料、token ID 和长度；`u64` pair key 和频率；历史 occurrence 列表及惰性二叉堆。相邻 token 合并只写 2 或 3 个位置。
 - checked 与 unchecked 两个单态化版本，算法相同。后者只在私有端点组件中省略部分数组边界检查；所有公开输入先验证，保留长度表检查及必要的不变量检查。
-- 当前单线程。Rust 拥有可变语料，未来可以按完整 piece 移交给工作线程；本次尚未实现原生并行。
+- `train` 基线保持单线程；新 `ablation` 模块另有完整 piece 和连续 occurrence 两类原生并行实验。
 - 可选 hotpath 0.27.0 插桩；默认构建完全不引入该依赖。正式计时结果来自默认 release 构建。
 
 ## 运行和复现

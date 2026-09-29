@@ -1,0 +1,76 @@
+{
+  "binary": "/root/code/efficient_bpe/rust/target/release/boundary_micro",
+  "binary_sha256": "90420faa059cd62be821bd433d62fac3ceec3569040bfeedb1af27115c68785e",
+  "sources_sha256": {
+    "rust/src/ablation/backends.rs": "abaa40844e6b649a1fb655b6c53580967550274c98ab93263d4b2a1280c39826",
+    "rust/src/ablation/index.rs": "3f37f7963b4ff36f7ef98235930537b8f2f8becbf33e20ff28c0be957a108418",
+    "rust/src/ablation/micro.rs": "7cc588925985695434b59fa32399fd5b06e03743a8fa3853f62e3c2e0da3b957",
+    "rust/src/ablation/mod.rs": "296c7174193897482bb4497f30a93fd8dbc597c9ecb30e865f63c01052e2672b",
+    "rust/src/ablation/parallel.rs": "fb551ab879714f8c2148f7a6c5685c2e2a7e4bb2676f1e0b401c5a711ded546d",
+    "rust/src/ablation/parallel_occurrence.rs": "9c1d534b4618d1f083ebf7d6ece09a26cb173df08fabb5bb0cfffb395688ad26",
+    "rust/src/ablation/parallel_occurrence_snapshot.rs": "ef9366efc7722e01f49a791d8ed9f7daf630b4b39cde94320fa84c53a4880df4",
+    "rust/src/ablation/parallel_piece.rs": "8225968265762dd9b15f88c4d41e97d253e767d3e0a9be639b604be2f6075a54",
+    "rust/src/ablation/queue.rs": "413aceb20b5b7d59d0d615806ea366fa5dd1325c78c1be329a5eafbc9a8bf7be",
+    "rust/src/ablation/spans.rs": "99c5334c6b2d052b46c693426a8bb2e16dc20719692646214629997040c2bf31",
+    "rust/src/ablation/trainer.rs": "2714dba77d6e3c844c79b95d75f65a1d6c1fad272bc1d82d531c7adb842dc385",
+    "rust/src/backend.rs": "cabdf2dd0504a30d86605200a7aeb17f3f6eaa8b717c42c7ce9f40e7ea2ef8c2",
+    "rust/src/bin/ablation.rs": "1308aa046eec2a8dafaf6269d7fe517a1646c98ea0c15c41884a1c7b6b15530b",
+    "rust/src/bin/boundary_micro.rs": "c63105dcad74c6b22300a396926e8524667758c2734c969403d4e1ddc662d094",
+    "rust/src/lib.rs": "25db823d277f468f25aabe0e2558fb66532fd5bd13855aaddc933c7073678053",
+    "rust/src/main.rs": "224259a1f649ddc21758fb0e352f5653e1b211c6a8f2e2febf20417f7dbb8f85",
+    "rust/src/trainer.rs": "3d7e8c5d87bd3df9eeab26d0795a07337be000415e60029cc4a61a4ecaebae40",
+    "rust/tools/ablation_micro.py": "b97f8ece663042781d43fa22b9b494be27a62cb57e611048d3d616d562b0e150"
+  },
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+  "cpu_model": "",
+  "logical_cpu_count": 6,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "scalar_cpu": 5,
+  "lengths": [
+    32,
+    63,
+    64,
+    128,
+    255,
+    256,
+    1024,
+    8192,
+    65535,
+    65536
+  ],
+  "positions": [
+    131072
+  ],
+  "patterns": [
+    "random",
+    "balanced",
+    "chain"
+  ],
+  "variants": [
+    "u8_only",
+    "bytespans",
+    "full_clear",
+    "endpoints",
+    "lean",
+    "linked12",
+    "linked16",
+    "bitmap_u32",
+    "halfword",
+    "h3",
+    "h25"
+  ],
+  "bounds": [
+    "both"
+  ],
+  "repeats": 5,
+  "expected_explicit_skips": 150,
+  "seed": 20260930,
+  "measurement_scope": "boundary topology only; not complete BPE training"
+}

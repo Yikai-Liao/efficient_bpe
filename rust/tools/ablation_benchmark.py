@@ -18,7 +18,8 @@ MANIFEST = RUST / "ablation_results/fixtures.json"
 PARALLEL = {"parallel_broadcast", "parallel_owner", "parallel_occurrence",
             "parallel_occurrence_snapshot", "parallel_occurrence_adaptive",
             "parallel_occurrence_adaptive_256", "parallel_occurrence_adaptive_4096",
-            "parallel_serial"}
+            "parallel_serial", "parallel_occurrence_grouped",
+            "parallel_occurrence_grouped_adaptive"}
 BASE_VARIANTS = (
     "full_clear", "endpoints", "lean", "packed", "unfused_endpoints",
     "unfused_halfword", "unfused_h3", "separate_counted", "linked12", "linked16",
@@ -135,6 +136,8 @@ def main():
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--seed", type=int, default=20260930)
     parser.add_argument("--scalar-cpu", type=int, default=5)
+    parser.add_argument("--parallel-core-budget", choices=("all", "workers"), default="all",
+                        help="all preserves the original affinity; workers limits the entire process, including its coordinator, to p CPUs")
     parser.add_argument("--rules", type=int, default=None,
                         help="override rules for every fixture")
     parser.add_argument("--min-frequency", type=int, default=None,
@@ -158,6 +161,9 @@ def main():
     bounds = parse_csv(args.bounds, str)
     if not variants or not workers or any(w < 1 for w in workers):
         parser.error("variants and positive worker counts are required")
+    if args.parallel_core_budget == "workers" and max(workers) > len(original_affinity):
+        parser.error("worker-count CPU budget exceeds available CPU affinity")
+    cpu_order = [scalar_cpu] + sorted(original_affinity - {scalar_cpu})
     if not bounds or any(value not in ("checked", "unchecked", "both") for value in bounds):
         parser.error("bounds must be checked, unchecked, or both")
     if not args.binary.is_file():
@@ -213,6 +219,7 @@ def main():
         "cpu_name": cpu_name(), "logical_cpu_count": os.cpu_count(),
         "initial_affinity": sorted(original_affinity), "numa_nodes_online": numa_nodes(),
         "scalar_cpu": scalar_cpu, "parallel_affinity": sorted(original_affinity),
+        "parallel_core_budget_policy": args.parallel_core_budget,
         "profiling_enabled": False,
         "sources_sha256": rust_sources(),
         "fixture_sha256": {row["case_id"]: row["fixture_sha256"] for row in cases},
@@ -229,6 +236,8 @@ def main():
                         rules, minimum) in enumerate(jobs, 1):
                 is_parallel = variant in PARALLEL
                 affinity = original_affinity if is_parallel else {scalar_cpu}
+                if is_parallel and args.parallel_core_budget == "workers":
+                    affinity = set(cpu_order[:worker_count])
                 os.sched_setaffinity(0, affinity)
                 fixture = RUST / case["file"]
                 cmd = [str(args.binary.resolve()), "--input", str(fixture),
@@ -263,6 +272,7 @@ def main():
                     "fixture_sha256": case["fixture_sha256"],
                     "outer_call_seconds": outer_seconds,
                     "cpu_affinity": sorted(affinity), "command": cmd,
+                    "cpu_budget": len(affinity),
                 })
                 output.write(json.dumps(result, ensure_ascii=False) + "\n")
                 print(json.dumps({"completed": index, "total": len(jobs),

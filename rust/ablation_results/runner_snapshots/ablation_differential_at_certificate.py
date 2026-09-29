@@ -29,8 +29,7 @@ DEFAULT_VARIANTS = (
 PARALLEL_VARIANTS = {"parallel_broadcast", "parallel_owner", "parallel_occurrence",
                      "parallel_occurrence_snapshot", "parallel_occurrence_adaptive",
                      "parallel_occurrence_adaptive_256",
-                     "parallel_occurrence_adaptive_4096", "parallel_serial", "parallel_occurrence_grouped",
-                     "parallel_occurrence_grouped_adaptive"}
+                     "parallel_occurrence_adaptive_4096", "parallel_serial"}
 COMPACT_VARIANTS = {"halfword", "h3", "h25", "filtered_h3", "unfused_halfword", "unfused_h3",
                     "combined_filtered_h3",
                     "combined_filtered_halfword"}

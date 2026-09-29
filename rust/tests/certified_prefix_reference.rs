@@ -137,6 +137,94 @@ fn replace_batch(pieces: &mut [Piece], batch: &[(Pair, u64)], first_id: u32) {
     }
 }
 
+// Independently compute final pair counts from a stable pre-batch snapshot.
+// Selected matches are found left-to-right and marked before any deltas are
+// emitted, so adjacent matches can refer to each other's fresh IDs.
+fn direct_batch_end_counts(
+    pieces: &[Piece],
+    batch: &[(Pair, u64)],
+    first_id: u32,
+) -> BTreeMap<Pair, u64> {
+    let fresh_ids: BTreeMap<Pair, u32> = batch
+        .iter()
+        .enumerate()
+        .map(|(i, (pair, _))| (*pair, first_id + i as u32))
+        .collect();
+    let mut deltas = BTreeMap::<Pair, i128>::new();
+    let mut add = |pair: Pair, amount: i128| {
+        *deltas.entry(pair).or_default() += amount;
+    };
+
+    for piece in pieces {
+        let n = piece.ids.len();
+        let mut starts = vec![None::<(Pair, u32)>; n];
+        let mut covered = vec![false; n];
+        let mut i = 0;
+        while i + 1 < n {
+            let pair = (piece.ids[i], piece.ids[i + 1]);
+            if let Some(&fresh) = fresh_ids.get(&pair) {
+                starts[i] = Some((pair, fresh));
+                covered[i] = true;
+                covered[i + 1] = true;
+                i += 2;
+            } else {
+                i += 1;
+            }
+        }
+
+        for i in 0..n {
+            let Some((pair, fresh)) = starts[i] else {
+                continue;
+            };
+            let weight = i128::from(piece.weight);
+            // Remove the matched edge itself.
+            add(pair, -weight);
+
+            // The old left edge was already removed as the previous match's
+            // right edge when these matches are adjacent.
+            if i > 0 && !covered[i - 1] {
+                add((piece.ids[i - 1], pair.0), -weight);
+                add((piece.ids[i - 1], fresh), weight);
+            }
+
+            // The right boundary is owned by this match. Its final right token
+            // may itself be replaced by the next adjacent selected match.
+            if i + 2 < n {
+                add((pair.1, piece.ids[i + 2]), -weight);
+                let right = starts[i + 2]
+                    .map(|(_, right_fresh)| right_fresh)
+                    .unwrap_or(piece.ids[i + 2]);
+                add((fresh, right), weight);
+            }
+        }
+    }
+
+    let mut result = recount(pieces);
+    for (pair, delta) in deltas {
+        let current = i128::from(result.get(&pair).copied().unwrap_or(0));
+        let updated = current + delta;
+        assert!(updated >= 0, "batch delta made pair frequency negative");
+        if updated == 0 {
+            result.remove(&pair);
+        } else {
+            result.insert(pair, updated as u64);
+        }
+    }
+    result
+}
+
+fn check_batch_delta(pieces: &[Piece], batch: &[(Pair, u64)]) {
+    let first_id = next_id(pieces);
+    let computed = direct_batch_end_counts(pieces, batch, first_id);
+    let mut replaced = pieces.to_vec();
+    replace_batch(&mut replaced, batch, first_id);
+    assert_eq!(
+        computed,
+        recount(&replaced),
+        "direct batch-end deltas differ from snapshot replacement"
+    );
+}
+
 fn certified(
     mut pieces: Vec<Piece>,
     min_frequency: u64,
@@ -166,6 +254,17 @@ fn certified(
 }
 
 fn check_case(pieces: Vec<Piece>, min_frequency: u64) -> Vec<usize> {
+    let mut delta_state = pieces.clone();
+    loop {
+        let current = recount(&delta_state);
+        let batch = choose_batch(&current, min_frequency);
+        if batch.is_empty() {
+            break;
+        }
+        check_batch_delta(&delta_state, &batch);
+        let id = next_id(&delta_state);
+        replace_batch(&mut delta_state, &batch, id);
+    }
     let (sr, sf) = serial(pieces.clone(), min_frequency, 1000);
     let (br, bf, widths) = certified(pieces, min_frequency, 1000);
     assert_eq!(br, sr, "rule trace mismatch");
@@ -265,6 +364,39 @@ fn targeted_overlap_adjacency_weights_and_piece_boundaries() {
         },
     ];
     check_case(pieces, 2);
+}
+
+#[test]
+fn delta_handles_abab_and_two_different_adjacent_rules() {
+    // Same-rule adjacent matches: ABAB -> Z Z. The final (Z,Z) edge comes
+    // from the old B,A boundary and must be counted exactly once.
+    let abab = vec![Piece {
+        ids: vec![0, 1, 0, 1, 0, 1],
+        weight: 5,
+    }];
+    let ab_batch = choose_batch(&recount(&abab), 2);
+    assert_eq!(ab_batch.first().map(|x| x.0), Some((0, 1)));
+    check_batch_delta(&abab, &ab_batch);
+
+    // Two distinct selected rules occupy adjacent spans in ABCD-like text.
+    // IDs are arranged so (0,3) and (1,2) precede their cross-boundary edge
+    // (3,1), letting both enter the exact prefix: [0,3,1,2] -> [Z0,Z1].
+    let adjacent = vec![
+        Piece {
+            ids: vec![0, 3, 1, 2],
+            weight: 7,
+        },
+        Piece {
+            ids: vec![0, 3, 1, 2],
+            weight: 3,
+        },
+    ];
+    let batch = choose_batch(&recount(&adjacent), 2);
+    assert_eq!(
+        batch.iter().map(|x| x.0).collect::<Vec<_>>(),
+        vec![(0, 3), (1, 2)]
+    );
+    check_batch_delta(&adjacent, &batch);
 }
 
 #[test]
