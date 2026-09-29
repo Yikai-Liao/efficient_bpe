@@ -1,0 +1,35 @@
+{
+  "manifest": "rust/ablation_results/fixtures.json",
+  "manifest_sha256": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b",
+  "binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "shards_s4": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_s8": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_s16": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132"
+  },
+  "source_snapshots": [
+    "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owned-extensions-v1/new-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owner-routing-v1/new-source-snapshot.tar.gz"
+  ],
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": [
+    0,
+    1,
+    2,
+    5
+  ],
+  "seed": 20260930,
+  "repeats": 1,
+  "training_memory_metric": "train_vm_hwm_mib",
+  "semantic_check": "SHA-256 of every rule and the final token sequence"
+}

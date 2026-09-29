@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "variants": [
+    "grouped_lazy",
+    "grouped_eager",
+    "shards_w",
+    "shards_2w",
+    "shards_4w"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "bounds": "checked (CLI fixed)",
+  "compared_runs": 200,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "grouped_eager": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "shards_w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_2w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_4w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132"
+  },
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

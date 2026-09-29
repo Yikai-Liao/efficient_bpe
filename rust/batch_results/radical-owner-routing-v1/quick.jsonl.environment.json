@@ -1,0 +1,53 @@
+{
+  "manifest": "rust/batch_results/quick-fixtures-262144-512.json",
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "radical_binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "shards_w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_2w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_4w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132"
+  },
+  "source_snapshot": "rust/batch_results/radical-owner-routing-v1/new-source-snapshot.tar.gz",
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_grouped/Cargo.lock": "76ac076634adf478da34de8538fb64b538dca2afd4433f549e4692642da151a2",
+    "rust/experiments/radical/owned_grouped/Cargo.toml": "c82d8016f4b48fe8eb9c1e242bf8e815efbf7ae80063a7029993ae2befb2cec2",
+    "rust/experiments/radical/owned_grouped/DESIGN.md": "99a445278e5d7962751840d46bf07f9d9c9da6b958cf9fe20bc6f229dff31e6b",
+    "rust/experiments/radical/owned_grouped/src/lib.rs": "8a7f91d806f6cb46e87357d96d082b3d33e5404ef57b248b48db6cdab77c2d48",
+    "rust/experiments/radical/owned_grouped/src/main.rs": "093e180a253f2e2ce801526453ad0d41d81371b7dd23b7a3e7834edfc3499eb5",
+    "rust/experiments/radical/owned_shards/Cargo.lock": "5e4dc1460fa8f12dea463c3c0605c74a6d3ee9525b556f9f635549164c61b32d",
+    "rust/experiments/radical/owned_shards/Cargo.toml": "057246d0bcadb11a40670b9cb7bd354f815ca3fb43d1a0d54798357a150cd827",
+    "rust/experiments/radical/owned_shards/DESIGN.md": "f3cbdace28a9406070adadf873c1882c0fdd6345eb247192ea3bf835ff209020",
+    "rust/experiments/radical/owned_shards/src/lib.rs": "4f9b02a84b5124638f179e32d17773c18b40577eab63e43359c9a1452f1c4cc1",
+    "rust/experiments/radical/owned_shards/src/main.rs": "3b7e2c4ccb8f9d5a117833093c9b1d8dc8d0fa980b73236c2aabfe38dcbada6a"
+  },
+  "baseline_source_snapshots": [
+    "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owned-extensions-v1/new-source-snapshot.tar.gz"
+  ],
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      5,
+      0,
+      1,
+      2
+    ]
+  },
+  "seed": 20260930,
+  "repeats": 1,
+  "fingerprint": "complete rule trace plus final token sequence",
+  "training_memory_metric": "train_vm_hwm_mib"
+}

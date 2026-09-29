@@ -1,0 +1,104 @@
+{
+  "status": "passed",
+  "new_source_snapshot": "new-source-snapshot.tar.gz",
+  "new_source_snapshot_sha256": "46990c648f811f4def9738270a92feaed4630bcdc9a9b6df31e68275e424422a",
+  "new_source_hashes": "new-source-hashes.json",
+  "post_build_documentation_only_change": {
+    "path": "rust/experiments/radical/owned_shards/DESIGN.md",
+    "snapshot_sha256": "f3cbdace28a9406070adadf873c1882c0fdd6345eb247192ea3bf835ff209020",
+    "current_sha256": "8b6d71cdd55fb34cc4f0fa18ec5c3d6ffd94b64e984f0534202d965949e753a2"
+  },
+  "baseline_source_snapshots": [
+    "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owned-extensions-v1/new-source-snapshot.tar.gz"
+  ],
+  "binary_paths": {
+    "native": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "owned": "rust/target/reruns/radical-owner-boxed-v1/owned",
+    "counts": "rust/target/reruns/radical-owned-extensions-v1/owned_counts",
+    "grouped": "rust/target/reruns/radical-owner-routing-v1/grouped",
+    "shards": "rust/target/reruns/radical-owner-routing-v1/shards"
+  },
+  "binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "shards_w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_2w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "shards_4w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+    "native": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250"
+  },
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "shared_target_dir": "rust/target",
+  "validation": {
+    "grouped_lib_tests": "passed 5/5 final source with debug key/chain assertions",
+    "grouped_strict_clippy": "passed",
+    "grouped_release_build": "passed",
+    "shards_lib_tests": "passed 7/7",
+    "shards_strict_clippy": "passed",
+    "shards_release_build": "passed",
+    "oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "variants": [
+        "grouped_lazy",
+        "grouped_eager",
+        "shards_w",
+        "shards_2w",
+        "shards_4w"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "bounds": "checked (CLI fixed)",
+      "compared_runs": 200,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+        "grouped_eager": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+        "shards_w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+        "shards_2w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132",
+        "shards_4w": "35a46acc5cb25946b4bebe0ccc4728a8885b90198f3e3e80a09e900273536132"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "native_rows": 4,
+    "experiment_rows": 24,
+    "repeats": 1,
+    "full_trace_and_fingerprint_match": true,
+    "all_deterministic_work_equal": true,
+    "cpu_budget_policy": "workers",
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  },
+  "smoke_4m": {
+    "rows": 12,
+    "repeats": 1,
+    "fingerprints_match_by_case": true,
+    "all_deterministic_work_equal": true,
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  }
+}
