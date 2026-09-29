@@ -13,6 +13,8 @@ mod occurrence;
 mod occurrence_snapshot;
 #[path = "parallel_piece.rs"]
 mod piece;
+#[path = "parallel_sharded.rs"]
+mod sharded;
 
 use super::{Options, Result, validate};
 use crate::{Prepared, Rule, TrainError, TrainOptions, TrainResult};
@@ -161,6 +163,7 @@ pub fn train(
             | "certified"
             | "certified_single"
             | "batch_relaxed"
+            | "pair_owned"
     ) {
         return Err(TrainError::InvalidInput("unknown parallel mode"));
     }
@@ -180,6 +183,13 @@ pub fn train(
         return Ok(Result { core, metrics });
     }
     match mode {
+        "pair_owned" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                sharded::train::<true>(input, options, 256)
+            } else {
+                sharded::train::<false>(input, options, 256)
+            }
+        }
         "batch_relaxed" => {
             if options.bounds == crate::Bounds::Unchecked {
                 certified::train_relaxed::<true>(input, options, 256)

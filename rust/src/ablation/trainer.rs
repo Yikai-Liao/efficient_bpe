@@ -38,6 +38,7 @@ pub fn variant_names() -> &'static [&'static str] {
         "parallel_certified",
         "parallel_certified_single",
         "parallel_batch_relaxed",
+        "parallel_pair_owned",
         "combined_filtered_h3",
         "combined_filtered_halfword",
         "parallel_broadcast",

@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from statistics import median
 
 ROOT = Path(__file__).resolve().parents[2]
 RUST = ROOT / "rust"
@@ -58,6 +59,8 @@ def main():
     parser.add_argument("--quick-bytes", type=int, default=262144)
     parser.add_argument("--quick-rules", type=int, default=512)
     parser.add_argument("--variants", help="comma-separated variants for a focused quick screen")
+    parser.add_argument("--bounds", choices=("checked", "unchecked", "both"), default="checked",
+                        help="access mode; use unchecked for a focused bounds-check ablation")
     args = parser.parse_args()
     quick = not (args.pilot or args.full or args.smoke)
     if args.repeats is None:
@@ -88,7 +91,7 @@ def main():
     ]
     if quick:
         manifest, cases = quick_manifest(args.quick_bytes, args.quick_rules)
-        variants = args.variants.split(",") if args.variants else [
+        variants = [v.strip() for v in args.variants.split(",")] if args.variants else [
             "combined_filtered", "parallel_certified", "parallel_batch_relaxed"]
         exact = [v for v in variants if v != "parallel_batch_relaxed"]
         relaxed = [v for v in variants if v == "parallel_batch_relaxed"]
@@ -98,7 +101,7 @@ def main():
         if relaxed:
             stages.append(("quick-relaxed", manifest, cases, relaxed, "1,4"))
     elif args.smoke:
-        variants = args.variants.split(",") if args.variants else ["combined_filtered", "parallel_certified"]
+        variants = [v.strip() for v in args.variants.split(",")] if args.variants else ["combined_filtered", "parallel_certified"]
         stages = []
         for name, chosen in [("smoke-exact", [v for v in variants if v != "parallel_batch_relaxed"]),
                              ("smoke-relaxed", [v for v in variants if v == "parallel_batch_relaxed"])]:
@@ -121,7 +124,7 @@ def main():
         command = [sys.executable, str(RUST / "tools/ablation_benchmark.py"),
                    "--profile", "all", "--manifest", str(manifest),
                    "--cases", ",".join(cases), "--variants", ",".join(variants),
-                   "--workers", workers, "--bounds", "checked",
+                   "--workers", workers, "--bounds", args.bounds,
                    "--parallel-core-budget", "workers", "--repeats", str(args.repeats),
                    "--output", str(out / f"{name}.jsonl")]
         commands.append({"name": name, "command": command})
@@ -134,6 +137,7 @@ def main():
     }, indent=2) + "\n")
     started = time.perf_counter()
     total_rows = 0
+    summary = []
     for stage in commands:
         print(f"Starting {stage['name']}", flush=True)
         with (out / f"{stage['name']}.progress.log").open("x") as log:
@@ -145,9 +149,22 @@ def main():
             by_case.setdefault(row["case_id"], set()).add(row["fingerprint"])
         if any(len(fps) != 1 for fps in by_case.values()):
             raise RuntimeError(f"output mismatch within {stage['name']}")
+        groups = {}
+        for row in rows:
+            key = (row["case_id"], row["variant"], row["workers"], row["bounds"])
+            groups.setdefault(key, []).append(row)
+        for (case, variant, workers, bounds), samples in sorted(groups.items()):
+            seconds = median(row["call_seconds"] for row in samples)
+            rss = median(row["vm_hwm_mib"] for row in samples)
+            summary.append({"case_id": case, "variant": variant, "workers": workers,
+                            "bounds": bounds, "samples": len(samples),
+                            "median_call_seconds": seconds, "median_vm_hwm_mib": rss})
+            print(f"  {case} {variant}/{workers}/{bounds}: {seconds:.4f}s, "
+                  f"{rss:.1f} MiB (n={len(samples)})", flush=True)
         print(f"Completed {stage['name']}", flush=True)
     elapsed = time.perf_counter() - started
     completion = {"runs": total_rows, "matrix_seconds": elapsed, "semantic_checks_passed": True}
+    (out / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     (out / "completion.json").write_text(json.dumps(completion, indent=2) + "\n")
     print(json.dumps(completion), flush=True)
 
