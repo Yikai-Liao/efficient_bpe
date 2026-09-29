@@ -1,0 +1,26 @@
+{
+  "oracle": {
+    "narrow_u32": {"binary": "owned_narrow", "args": ["--corpus-width", "u32"]},
+    "narrow_u16": {"binary": "owned_narrow", "args": ["--corpus-width", "u16"]},
+    "narrow_auto": {"binary": "owned_narrow", "args": ["--corpus-width", "auto"]},
+    "cache_off_batch": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "0", "--cache-lifetime", "batch"]},
+    "cache_off_reuse": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "0", "--cache-lifetime", "reuse"]},
+    "cache_4096_batch": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "batch"]},
+    "cache_4096_reuse": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "reuse"]},
+    "context_default": {"binary": "owned_context", "args": []},
+    "context_hash": {"binary": "owned_context", "args": ["--planner", "hash"]},
+    "context_context": {"binary": "owned_context", "args": ["--planner", "context"]},
+    "context_fallback": {"binary": "owned_context", "args": ["--planner", "context", "--context-index-bytes", "0"]}
+  },
+  "quick": {
+    "combo_lazy": {"binary": "../radical-layout-combo-v1/combo", "args": []},
+    "narrow_u32": {"binary": "owned_narrow", "args": ["--corpus-width", "u32"]},
+    "narrow_u16": {"binary": "owned_narrow", "args": ["--corpus-width", "u16"]},
+    "narrow_auto": {"binary": "owned_narrow", "args": ["--corpus-width", "auto"]},
+    "cache_off_batch": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "0", "--cache-lifetime", "batch"]},
+    "cache_4096_batch": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "batch"]},
+    "cache_4096_reuse": {"binary": "owned_route_cache_reuse", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "reuse"]},
+    "context_hash": {"binary": "owned_context", "args": ["--planner", "hash"]},
+    "context_context": {"binary": "owned_context", "args": ["--planner", "context"]}
+  }
+}

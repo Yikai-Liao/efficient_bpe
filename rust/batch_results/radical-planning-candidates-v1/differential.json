@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "narrow_u32",
+    "narrow_u16",
+    "narrow_auto",
+    "cache_off_batch",
+    "cache_off_reuse",
+    "cache_4096_batch",
+    "cache_4096_reuse",
+    "context_default",
+    "context_hash",
+    "context_context",
+    "context_fallback"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 438,
+  "full_rule_trace_and_final_tokens_match": true,
+  "documented_u16_limit_rejections": [
+    {
+      "case_id": "initial-alphabet-65536",
+      "version": "narrow_u16",
+      "workers": 1,
+      "reason": "Error: InvalidInput(\"u16 corpus width requires initial IDs plus max_merges <= 65536\")"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "version": "narrow_u16",
+      "workers": 4,
+      "reason": "Error: InvalidInput(\"u16 corpus width requires initial IDs plus max_merges <= 65536\")"
+    }
+  ],
+  "binary_sha256": {
+    "owned_context": "85eb7fe23e5d699f076b690bfd43a44866ff7ea232618ce489396915c0b6df55",
+    "owned_route_cache_reuse": "dd3638003f5ac44ac5f4d0316a371f4bc59b3be883bc9192284be9fffb6fa957",
+    "owned_narrow": "5b844a1d7644aa0e47258b14a30c424e9a9d146659af363c6c6c6f30cd2ef862"
+  },
+  "modes_sha256": "630fbf6673f5b4ffaeb33d1722d3b03d62ff3ec2d2dade79e1f563c44342aae7",
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

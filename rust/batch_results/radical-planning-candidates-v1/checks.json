@@ -1,0 +1,115 @@
+{
+  "status": "passed",
+  "validation": {
+    "narrow_debug_lib_tests": "11/11 passed after final hot-path cast change",
+    "cache_reuse_debug_lib_tests": "11/11 passed",
+    "context_debug_lib_tests": "11/11 passed",
+    "strict_clippy_all_targets": "all three crates passed -D warnings",
+    "release_builds": "all three passed",
+    "complete_python_oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "versions": [
+        "narrow_u32",
+        "narrow_u16",
+        "narrow_auto",
+        "cache_off_batch",
+        "cache_off_reuse",
+        "cache_4096_batch",
+        "cache_4096_reuse",
+        "context_default",
+        "context_hash",
+        "context_context",
+        "context_fallback"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "compared_runs": 438,
+      "full_rule_trace_and_final_tokens_match": true,
+      "documented_u16_limit_rejections": [
+        {
+          "case_id": "initial-alphabet-65536",
+          "version": "narrow_u16",
+          "workers": 1,
+          "reason": "Error: InvalidInput(\"u16 corpus width requires initial IDs plus max_merges <= 65536\")"
+        },
+        {
+          "case_id": "initial-alphabet-65536",
+          "version": "narrow_u16",
+          "workers": 4,
+          "reason": "Error: InvalidInput(\"u16 corpus width requires initial IDs plus max_merges <= 65536\")"
+        }
+      ],
+      "binary_sha256": {
+        "owned_context": "85eb7fe23e5d699f076b690bfd43a44866ff7ea232618ce489396915c0b6df55",
+        "owned_route_cache_reuse": "dd3638003f5ac44ac5f4d0316a371f4bc59b3be883bc9192284be9fffb6fa957",
+        "owned_narrow": "5b844a1d7644aa0e47258b14a30c424e9a9d146659af363c6c6c6f30cd2ef862"
+      },
+      "modes_sha256": "630fbf6673f5b4ffaeb33d1722d3b03d62ff3ec2d2dade79e1f563c44342aae7",
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "rows": 36,
+    "versions": 9,
+    "cases": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_match": true,
+    "same_deterministic_work_as_combo": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "process_cpu_metric": "call_cpu_seconds"
+  },
+  "limitations": [
+    "In the measured cache modes, batch resets victim_way each batch and reuse carries it across batches; the timing does not isolate allocation/scan savings from replacement-phase changes.",
+    "The u16 endpoint corpus is exact-allocated while the u32 control retains the input Vec capacity, so width and capacity both change.",
+    "The quick screen has one run per cell and does not establish a stable speed ordering."
+  ],
+  "shared_source_provenance": "shared-source-provenance.json",
+  "new_source_snapshot_sha256": "acfa8193fff3eb913e571dc0da5dce83b4f73e714ca2f955465127518eae3afe",
+  "new_source_hashes": "new-source-hashes.json",
+  "binary_sha256": {
+    "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+    "narrow_u32": "5b844a1d7644aa0e47258b14a30c424e9a9d146659af363c6c6c6f30cd2ef862",
+    "narrow_u16": "5b844a1d7644aa0e47258b14a30c424e9a9d146659af363c6c6c6f30cd2ef862",
+    "narrow_auto": "5b844a1d7644aa0e47258b14a30c424e9a9d146659af363c6c6c6f30cd2ef862",
+    "cache_off_batch": "dd3638003f5ac44ac5f4d0316a371f4bc59b3be883bc9192284be9fffb6fa957",
+    "cache_4096_batch": "dd3638003f5ac44ac5f4d0316a371f4bc59b3be883bc9192284be9fffb6fa957",
+    "cache_4096_reuse": "dd3638003f5ac44ac5f4d0316a371f4bc59b3be883bc9192284be9fffb6fa957",
+    "context_hash": "85eb7fe23e5d699f076b690bfd43a44866ff7ea232618ce489396915c0b6df55",
+    "context_context": "85eb7fe23e5d699f076b690bfd43a44866ff7ea232618ce489396915c0b6df55"
+  },
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "binary_paths": {
+    "combo_lazy": "rust/target/reruns/radical-planning-candidates-v1/../radical-layout-combo-v1/combo",
+    "narrow_u32": "rust/target/reruns/radical-planning-candidates-v1/owned_narrow",
+    "narrow_u16": "rust/target/reruns/radical-planning-candidates-v1/owned_narrow",
+    "narrow_auto": "rust/target/reruns/radical-planning-candidates-v1/owned_narrow",
+    "cache_off_batch": "rust/target/reruns/radical-planning-candidates-v1/owned_route_cache_reuse",
+    "cache_4096_batch": "rust/target/reruns/radical-planning-candidates-v1/owned_route_cache_reuse",
+    "cache_4096_reuse": "rust/target/reruns/radical-planning-candidates-v1/owned_route_cache_reuse",
+    "context_hash": "rust/target/reruns/radical-planning-candidates-v1/owned_context",
+    "context_context": "rust/target/reruns/radical-planning-candidates-v1/owned_context"
+  }
+}
