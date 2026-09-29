@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "rows": 16,
+  "repetitions": 1,
+  "seed": 20260930,
+  "manifest_sha256": {
+    "rust/ablation_results/fixtures.json": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b",
+    "rust/batch_results/quick-fixtures-262144-512.json": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c"
+  },
+  "binary_sha256": "b2933bf7ab7cbeb1e93ea56dfe0a7a8774d1aa04bc26b45244fb7704f71dce81",
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/Cargo.lock": "ada9ba20866ad15d9c63f4d703484b2b84203cd3055496c32bcf0690fe06e777",
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/Cargo.toml": "d934f2f10ab9fe9d1de82335fa5e0b784b9687263ca1b599a70c0c513e1ca5cb",
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/DESIGN.md": "c1801e0a190f627add3f62ea47f180aeb398def96a74c03cd8d468e622b396a3",
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/src/aa_bitmap.rs": "44afbc0a1c0fa06172550be0e1b881261672f28f57f19a96e16ff93e474eaa15",
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/src/lib.rs": "d3b62dfc3dd7d1e283dbf15092b517feea791658781cc28e7d6f55e2c8fe8ba0",
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/src/main.rs": "d095b856f3be3cf8436130051bc5cbf0ba271fefe2107ca049c1b72d288ceca7",
+    "rust/experiments/radical/owned_endpoint_bitmap_combo/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+  },
+  "new_source_snapshot_sha256": "a42507b495e03922eefd1ae90784785881c01c8685ace395ce724166d1431ff9",
+  "shared_source_provenance_sha256": "7e64bb01685b6ccecd7f0276522686ef8791cd8c3bc5266f341454b150b64af7",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "semantic_check": "full merge-rule and final-token trace plus SHA-256 fingerprint"
+}

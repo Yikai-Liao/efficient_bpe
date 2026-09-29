@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "standard_fulltrace_matches": 160,
+  "directed_fulltrace_matches": 8,
+  "directed": [
+    {
+      "case": "long-cross-cut",
+      "mode": "dynamic",
+      "workers": 4,
+      "max_token_length": 256,
+      "region_cross_births": 0,
+      "effective_region_mode": "dynamic",
+      "effective_endpoint_plan": "tagged-fused",
+      "domain_fallback": false
+    },
+    {
+      "case": "long-cross-cut",
+      "mode": "region",
+      "workers": 4,
+      "max_token_length": 256,
+      "region_cross_births": 1,
+      "effective_region_mode": "region",
+      "effective_endpoint_plan": "tagged-fused",
+      "domain_fallback": false
+    },
+    {
+      "case": "weighted-empty-cuts",
+      "mode": "dynamic",
+      "workers": 16,
+      "max_token_length": 9,
+      "region_cross_births": 0,
+      "effective_region_mode": "dynamic",
+      "effective_endpoint_plan": "tagged-fused",
+      "domain_fallback": false
+    },
+    {
+      "case": "weighted-empty-cuts",
+      "mode": "region",
+      "workers": 16,
+      "max_token_length": 9,
+      "region_cross_births": 1,
+      "effective_region_mode": "region",
+      "effective_endpoint_plan": "tagged-fused",
+      "domain_fallback": false
+    },
+    {
+      "case": "empty-all-cuts",
+      "mode": "dynamic",
+      "workers": 16,
+      "max_token_length": 1,
+      "region_cross_births": 0,
+      "effective_region_mode": "dynamic",
+      "effective_endpoint_plan": "tagged-fused",
+      "domain_fallback": false
+    },
+    {
+      "case": "empty-all-cuts",
+      "mode": "region",
+      "workers": 16,
+      "max_token_length": 1,
+      "region_cross_births": 0,
+      "effective_region_mode": "region",
+      "effective_endpoint_plan": "tagged-fused",
+      "domain_fallback": false
+    },
+    {
+      "case": "domain-fallback",
+      "mode": "dynamic",
+      "workers": 4,
+      "max_token_length": 64,
+      "region_cross_births": 0,
+      "effective_region_mode": "dynamic",
+      "effective_endpoint_plan": "two-pass",
+      "domain_fallback": true
+    },
+    {
+      "case": "domain-fallback",
+      "mode": "region",
+      "workers": 4,
+      "max_token_length": 64,
+      "region_cross_births": 0,
+      "effective_region_mode": "dynamic",
+      "effective_endpoint_plan": "two-pass",
+      "domain_fallback": true
+    }
+  ],
+  "binary_sha256": "3909b16c10559826be3fe829d2133df1be0fbffa3af5e07ba182441219b37776",
+  "oracle": "Python naive full recount; complete merge trace and final tokens"
+}

@@ -104,8 +104,42 @@ unary/AB 四核的原子 OR 次数分别从 122,876/57,341 降到 4,121/3,081，
 AB 四核从 0.00780 变为 0.01112 秒，不能用 unary 的 0.01586→0.00823 秒
 宣布普遍提速。这是工作量减少的证据，不是稳定端到端排名。
 
-[复用 producer 表做归约](OWNER_ACCUMULATOR_NEXT.md)已通过正确性门控，
-小测用于区分连续提交与复用哈希表的效果。另有两个独立原型正在实现：融合
-端点加 word-cache 位图，用于验证两类临时数组能否同时消除；以及
-[region 投影有序 posting](REGION_ORDERED_FUSION_NEXT.md)，使相邻物理位置
-归同一任务而不复制每 key 的索引或把切点当成 token 边界。均未计入已获收益。
+[复用 producer 表做归约](OWNER_ACCUMULATOR_NEXT.md)已完成 12 次小测，
+插入入口减少但完整调用无一致收益，暂不组合。
+
+融合端点加 word-cache 位图的[组合原型](experiments/radical/owned_endpoint_bitmap_combo/DESIGN.md)
+已通过 23 项 Rust 测试、strict Clippy 和 485 次完整 oracle，包含同次训练
+非 AA 融合、dense AA、稀疏回退和长度 >255 的切换。
+[16 次小测](batch_results/radical-endpoint-bitmap-combo-quick-v1/README.md)
+证明两类临时数组的节省可以共存。AB 64 KiB 的 W4 原/组合调用为
+0.00862/0.00634 秒，非 AA 起点载荷代理 131,072→0 字节，AA Plan
+容量峰值 524,288→65,536 字节，额外 bitmap 峰值 8,200 字节；剩余
+Plan 来自 12 批稀疏回退。组合自身 W1/W4 为 0.00863/0.00634 秒，
+仍只有约 1.36×，不能拿同核模式切换当多核扩展。EN/ZH 均未启用 dense AA，
+其 bitmap 开关差值不构成算法收益。这是保留组合选项的机制证据，n=1
+不支持将其推为通用速度默认。
+
+[region 投影有序 posting](REGION_ORDERED_FUSION_NEXT.md)已完成独立验证：
+16 项 Rust 测试、strict Clippy、168 次完整 oracle、8 次轻量调用均通过。
+它使相邻物理位置归同一任务，不复制每 key 的索引，也不把切点当成 token
+边界。但首轮自然语料没有净速度收益，暂不与 bitmap 组合。
+
+| 256 KiB / 512 规则 / n=1 | dynamic W1 / W4 | region W1 / W4 | region 自身 1→4 |
+|---|---:|---:|---:|
+| EN | .06327 / .03824 s | .06336 / .04004 s | 1.58× |
+| ZH | .02910 / .02187 s | .03024 / .02540 s | 1.19× |
+
+两模式均是同 binary tagged-fused，只有任务归属、posting 投影与 AA 重分组
+等 region 结构不同。W4 region 的进程 CPU 时间亦较高，英文 .12972 对
+dynamic .10314 秒、中文 .07634 对 .07176 秒；HWM 基本相近。
+按 `total_visits / sum_each_batch_max_region_visits` 计算，英文 3.69、
+中文 2.59；这是每条记录等成本时的静态负载上界，绝不是实际加速比。
+英文较均衡仍未变快，中文则另有倾斜，不能只用「减少远端访问」解释结果。
+二分 worker 时间之和 .00116/.00058 秒不是 wall time。详情见
+[region 小测](batch_results/radical-region-fused-quick-v1/README.md)。
+
+下一步保留[区域边界快照](REGION_BOUNDARY_SNAPSHOT_REVIEW.md)这一更明确
+的所有权方向：跨区读使用批前数值快照、跨区写 join 后回放，而不只是更换
+任务排序。目前只有证明与[实现计划](REGION_BOUNDARY_SNAPSHOT_NEXT.md)，
+尚无 Rust 训练器或计时；所有跨区写完成前建立下一批快照会错误复活旧 pair，
+这个反例已经纳入设计边界。

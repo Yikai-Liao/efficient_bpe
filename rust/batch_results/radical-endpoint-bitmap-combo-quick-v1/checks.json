@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "quick_rows": 16,
+  "full_trace_matches": 16,
+  "oracle_matches": 485,
+  "natural_adaptive_dense_rounds": 0,
+  "ab_combo_non_aa_and_bitmap_both_executed": true,
+  "git_base_commit": "705bea3f8544850efd45cf95412f65d33eab6399",
+  "source_snapshot_sha256": "a42507b495e03922eefd1ae90784785881c01c8685ace395ce724166d1431ff9",
+  "binary_sha256": "b2933bf7ab7cbeb1e93ea56dfe0a7a8774d1aa04bc26b45244fb7704f71dce81"
+}

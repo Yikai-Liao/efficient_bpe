@@ -17,7 +17,9 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 - **消除一次整批屏障**：[方向标记端点与批前邻居恢复](FUSED_ENDPOINT_SNAPSHOT_NEXT.md)已实现，14 项 Rust 测试、258 次完整 oracle 通过；同 binary 保留原/tagged 两阶段控制。[30 次小测及 20 次有限复核](ENDPOINT_BITMAP_REPORT.md)均保持精确，但 4 MiB n=2 未确认通用速度收益：融合 W1/W4 英文 1.245/0.549、中文 0.553/0.311 秒，自身扩展 2.27×/1.78×，四核结果波动大。临时起点数组消除成立，不默认切换。
 - **密集 AA 不排序、不留 Plan Vec**：[位图方案](AA_DENSE_PARITY_NEXT.md)已实现并经交叉审查，13 项 Rust 测试、166 次 oracle 通过；只有 H≥ceil(N/16) 且容量守卫通过时建立一份 N 位 bitmap。unary 小测四核 HWM 4.71→3.56 MiB，速度方向仍分化；自然 EN 未启用 bitmap，不能将其同路径耗时波动算成收益。[word-cache 后续小测](batch_results/radical-aa-bitmap-cache-quick-v1/README.md)已将原子 OR 次数减少约 19–30 倍，四格 scatter 均下降，完整调用仍方向不一。
 - **复用已存在的表**：[owner accumulator](OWNER_ACCUMULATOR_NEXT.md)已实现，12 项 Rust 测试及 240 次完整 oracle 通过。staged/fused-fresh/fused-reuse 三种同 binary 控制隔离连续提交与少一次汇总插入的效果；[12 次小测](batch_results/radical-reuse-accumulator-quick-v1/README.md)中 W4 英文/中文各跳过约 2.3 万/1.6 万入口，完整调用却无一致收益，暂不默认整合。
-- **新的并行调度与有条件组合**：[region 投影有序 posting](REGION_ORDERED_FUSION_NEXT.md)及 endpoint/bitmap 组合正在独立实现。前者只用每 key 唯一 posting，按已知 region 边界二分，使相邻位置由同一逻辑任务处理；后者验证两类临时数组能否同时消除。均保留控制，不将预期当作实测收益。
+- **有条件组合**：[endpoint/bitmap 组合](experiments/radical/owned_endpoint_bitmap_combo/DESIGN.md)已通过 23 项 Rust 测试、485 次完整 oracle 和 16 次小测。AB 64 KiB 中非 AA 起点载荷归零、AA Plan 容量峰值从 524288 降至 65536 字节，两类节省可共存；组合 W1/W4 .00863/.00634 秒，仅 1.36×，n=1 不推为速度默认。EN/ZH 的 dense AA 为零，其 AA 开关是负控制。
+- **新的并行调度**：[region 投影有序 posting](REGION_ORDERED_FUSION_NEXT.md)已通过 16 项 Rust 测试和 168 次完整 oracle；[8 次小测](batch_results/radical-region-fused-quick-v1/README.md)中 W4 英文 dynamic/region .03824/.04004 秒、中文 .02187/.02540 秒，没有净速度收益。region 自身 1→4 仅约 1.58×/1.19×。按访问次数等成本计算的静态负载上界为 3.69/2.59，说明中文还有明显分区倾斜；这个比值不是实测加速比。保持独立原型，不组合为默认。
+- **下一条实质方向**：[O(T) 边界快照与区域独占访问](REGION_BOUNDARY_SNAPSHOT_REVIEW.md)经两个 Sol 和 root 交叉审查，尚未实现。目标是每个 region 只读写自己的切片，远端读来自批前常数个 token 描述符，至多 2(T−1) 次越界端点写在 join 后回放；不把 cut 当作 token 边界。[最小实现方案](REGION_BOUNDARY_SNAPSHOT_NEXT.md)先只替换非 AA 访问协议，不叠加 owner 或 AA 改动，不承诺去掉 Atomic 就提速。
 
 ## 已筛过，避免无证据重做
 

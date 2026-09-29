@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "quick_rows": 8,
+  "full_trace_matches": 8,
+  "oracle_matches": 168,
+  "git_base_commit": "705bea3f8544850efd45cf95412f65d33eab6399",
+  "source_snapshot_sha256": "940815c2e35433f217067126818b50dd17b051f564001532863948d96d6702ea",
+  "binary_sha256": "3909b16c10559826be3fe829d2133df1be0fbffa3af5e07ba182441219b37776",
+  "source_hashes_match": true,
+  "cpu_affinity": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "n1_not_stable_ranking": true
+}

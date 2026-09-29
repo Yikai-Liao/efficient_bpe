@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "standard_fulltrace_matches": 480,
+  "directed_fulltrace_matches": 5,
+  "directed": [
+    {
+      "case": "mixed-epochs",
+      "endpoint": "tagged-fused",
+      "aa": "bitmap-adaptive",
+      "workers": 1,
+      "max_token_length": 4096,
+      "fused_non_aa_batches": 2,
+      "aa_bitmap_rounds": 4,
+      "aa_bitmap_fallback_rounds": 14
+    },
+    {
+      "case": "mixed-epochs",
+      "endpoint": "tagged-fused",
+      "aa": "bitmap-adaptive",
+      "workers": 4,
+      "max_token_length": 4096,
+      "fused_non_aa_batches": 2,
+      "aa_bitmap_rounds": 4,
+      "aa_bitmap_fallback_rounds": 14
+    },
+    {
+      "case": "mixed-epochs",
+      "endpoint": "tagged-fused",
+      "aa": "sort",
+      "workers": 4,
+      "max_token_length": 4096,
+      "fused_non_aa_batches": 2,
+      "aa_bitmap_rounds": 0,
+      "aa_bitmap_fallback_rounds": 0
+    },
+    {
+      "case": "mixed-epochs",
+      "endpoint": "two-pass",
+      "aa": "sort",
+      "workers": 4,
+      "max_token_length": 4096,
+      "fused_non_aa_batches": 0,
+      "aa_bitmap_rounds": 0,
+      "aa_bitmap_fallback_rounds": 0
+    },
+    {
+      "case": "domain-fallback",
+      "effective": "two-pass",
+      "aa_bitmap_rounds": 4
+    }
+  ],
+  "binary_sha256": "b2933bf7ab7cbeb1e93ea56dfe0a7a8774d1aa04bc26b45244fb7704f71dce81",
+  "oracle": "Python naive full recount; complete merge trace and final tokens"
+}

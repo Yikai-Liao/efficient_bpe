@@ -1,6 +1,6 @@
 # 按物理 region 投影排列唯一 posting，执行融合端点规划
 
-状态：**未实现、未计时的设计**。目标是在已验证的 key-owner、唯一 `SmallPosting` 与非 AA tagged-fused 规划器上，使同一段物理语料的邻居读写尽量由同一个逻辑任务处理，同时不复制语料或把每个 key 的索引拆成 T 份。减少跨核通信只是待测假说；现有数据没有证明 false sharing 或远端邻居读是瓶颈。
+状态：已在独立 [owned_region_fused](experiments/radical/owned_region_fused/DESIGN.md) 实现，16 项 Rust 测试、168 次完整 oracle 通过；[8 次轻量小测](batch_results/radical-region-fused-quick-v1/README.md)未见自然语料净速度收益，暂不默认采用。目标是在已验证的 key-owner、唯一 `SmallPosting` 与非 AA tagged-fused 规划器上，使同一段物理语料的邻居读写尽量由同一个逻辑任务处理，同时不复制语料或把每个 key 的索引拆成 T 份。减少跨核通信只是待测假说；现有数据没有证明 false sharing 或远端邻居读是瓶颈。下文保留原设计推导，实际实现允许 W>N 时重复 cut，并报告 AA 重分组额外空间，见[代码审查](REGION_ORDERED_FUSION_REVIEW.md)。
 
 这里复用 [BATCH_OWNERSHIP_DESIGN.md](BATCH_OWNERSHIP_DESIGN.md) 的物理起点分区和「每条 cut 至多一条跨区活边」观察，也借鉴 [ORDERED_BIRTH_SCATTER.md](ORDERED_BIRTH_SCATTER.md) 的按物理顺序建立 posting。**新点较窄**：持久表仍按 pair key 唯一归属，不保留每 key 的 W 份片段或分区目录；posting 只按固定 region 编号排列，region 内任意顺序。这样在已知 region cut 上可直接二分到该 key 的本区间，并把 tagged-fused 执行限制到物理 region。它不是全局有序 posting，也不重复宣称跨 cut 的 O(T) 界是新发现。
 
@@ -32,4 +32,4 @@ AA 仍单独一轮，候选频率包括全部重叠边，实际替换由全局�
 
 若某 region 含大部分热匹配，静态 region 任务会限制并行；增大 T 又放大 `BT log H`、路由头和 owner 填充中的空 region 扫描。长 token 和大量 stale posting 仍可能造成跨 region/NUMA 读取；cut 不提供预分词，也不承诺缓存行隔离。比较时固定 exact certificate、hash、heap、fixture、CPU 配额和 W1/W4，量出每 region 有效/stale 访问、最大/中位任务耗时、跨区例外、二分时间、route capacity、owner fill 和完整调用/HWM。若假设的 locality 收益小于二分与碎片化成本，应保留原动态 chunk 路线，不把较少远端读当作已测事实。
 
-最小实验只需独立克隆现有 tagged-fused crate：先改初始化和出生填充以建立 region 投影，给每个 region 固定 output 槽和跨区左出生修复，再让非 AA 规划按二分的切片执行。每步都核对完整 `(pair,frequency,fresh ID)` 轨迹与 final tokens；定向覆盖长 L 跳过多个 cut、cut 恰在 token 起点、sentinel 两侧、多 piece、ABAB、AA 跨空 region、权重不同的 piece，以及错误后的整体退出。此文件不代表该实验已实现或已经加速。
+原定最小实验现已完成：独立克隆 tagged-fused crate，改初始化和出生填充以建立 region 投影，给每个 region 固定 output 槽和跨区左出生修复，再让非 AA 规划按二分的切片执行。完整 `(pair,frequency,fresh ID)` 轨迹与 final tokens 对照通过，定向用例覆盖长 token 跨多 cut、空 region、多 piece、weighted AA 和域回退。实现完成不代表已经提速，首轮数据见开头链接。
