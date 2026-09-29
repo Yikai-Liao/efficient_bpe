@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "combo_lazy",
+    "combo_eager"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "bounds": "checked (CLI fixed)",
+  "compared_runs": 80,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+    "combo_eager": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250"
+  },
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

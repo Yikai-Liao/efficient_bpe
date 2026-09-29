@@ -1,0 +1,8 @@
+{
+  "rust/experiments/radical/owned_inline/Cargo.lock": "da3490d4c2c1b40f046cba647f9b5bd499855aac23ecf0222381b5cdbd6f9d0e",
+  "rust/experiments/radical/owned_inline/Cargo.toml": "f2122cb836521e93508ad0be9afbc16ea4925e4189f4253923249a636d56dfde",
+  "rust/experiments/radical/owned_inline/DESIGN.md": "13d46eb99023b321ee8020f726bfcbb5d06831941a9e7e2c77591b66bf24ed1a",
+  "rust/experiments/radical/owned_inline/src/lib.rs": "3e849ada9f0e303b17419cf74e724aead05a47c70258cc4d09807b1e39636e3b",
+  "rust/experiments/radical/owned_inline/src/main.rs": "5fcd7e6c2dc08e1e8ae8dc6c2ba91b6920b9f8284a1c9996c33491450f6a9502",
+  "rust/experiments/radical/owned_inline/src/small_posting.rs": "cb43e85caf6a1132df781e685a898c5b97bd6e9a3864b54426764ae9d70b3a8f"
+}

@@ -4,7 +4,9 @@
 
 本轮入口是 [Rust 全消融报告](ABLATION_REPORT.md)、[版本覆盖表](ABLATION_COVERAGE.md) 和 [演进设计](EVOLUTION_DESIGN.md)。连续文本并行的匹配顺序、共享写入与屏障不变量见 [PARALLEL_DESIGN.md](PARALLEL_DESIGN.md)。原始数据、环境哈希和复现矩阵见 [ablation_results](ablation_results/README.md)。
 
-最新算法演进见 [频率分片与稀疏调度报告](OWNER_PARALLEL_REPORT.md)：pair 频率/堆分片、Plan4 消融、流水线、实际空间证书，以及位置与频率共用 owner 的独立原型。此前 worker 局部位置索引与精确批次的基础见 [连续语料批量并行报告](BATCH_PARALLEL_REPORT.md)。日常使用 256 KiB 轻量筛选，仅对有判别价值的候选做有限 4 MiB 测量，完整矩阵留到变体收敛后运行。原始结果见 [batch_results](batch_results/README.md)。[POSTING_OWNER_DESIGN.md](POSTING_OWNER_DESIGN.md) 已实现为 [owned](experiments/radical/owned/DESIGN.md)：严格四核的首轮 4 MiB 筛查比最佳直接串行快 1.87×（英文）/1.49×（中文），自身 1→4 为 2.63×/1.88×，仍未达目标。后续 probe/counts 已通过完整轨迹，但短测尚无稳定速度收益，见 [独立消融](batch_results/radical-owned-extensions-v1/README.md)。
+最新算法演进见 [频率分片与稀疏调度报告](OWNER_PARALLEL_REPORT.md)：pair 频率/堆分片、Plan4、流水线、空间证书，以及位置与频率共用 owner 的原型。当前候选是 [grouped + inline](experiments/radical/owned_grouped_inline/DESIGN.md)：按 key 分组传递出生位置，并在 16 字节容器中内联前两个位置。[有限 4 MiB 两次重复对照](batch_results/radical-layout-combo-v1/README.md)中，其四核耗时约为英文 0.680 秒、中文 0.404 秒，比同轮旧 owner 各下降约 20%；训练进程高水位为 94.32/100.20 MiB。相对直接串行参考为 2.47×/2.57×，自身 1→4 为 2.71×/2.10×，扩展性目标仍未达成。中文单独 inline 更省约 2 MiB，保留为内存候选。
+
+此前 worker 局部位置索引与精确批次基础见 [连续语料批量并行报告](BATCH_PARALLEL_REPORT.md)，唯一 owner 的推导见 [POSTING_OWNER_DESIGN.md](POSTING_OWNER_DESIGN.md)。日常使用 256 KiB 轻量筛选，仅对有判别价值的候选做有限 4 MiB 测量，完整矩阵留到变体收敛后运行。原始结果见 [batch_results](batch_results/README.md)。probe 与更多逻辑分片暂不合入；counts 的物理计数和预分配由分组路线继承，单独版本的结果仍保留供对照。
 
 此前多线程扩展不足后的跨领域研究、精确候选前缀证明和串行批宽探针见 [并行重设计](PARALLEL_RETHINK.md)。公开实现的线程曲线见 [扩展性证据](PARALLEL_SCALING_EVIDENCE.md)，下一步状态分片方案见 [双层归属设计](BATCH_OWNERSHIP_DESIGN.md)。
 

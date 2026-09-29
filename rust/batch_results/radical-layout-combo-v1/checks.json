@@ -1,0 +1,95 @@
+{
+  "status": "passed",
+  "new_source_snapshot": "new-source-snapshot.tar.gz",
+  "new_source_snapshot_sha256": "e1d646a0352f4bf1c5d26f46d059e24dd0f2122b8d3e0751d56e96d49f02084f",
+  "new_source_hashes": "new-source-hashes.json",
+  "baseline_source_snapshots": [
+    "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owned-extensions-v1/new-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owner-routing-v1/new-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owned-inline-v1/new-source-snapshot.tar.gz"
+  ],
+  "binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "inline_lazy": "6a298a84ffdd64c6297dbb20bd599abb5a4a96cbf7bc38209e7955c90397f440",
+    "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+    "native": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250"
+  },
+  "binary_paths": {
+    "native": "rust/target/reruns/radical-fixed-budget-v1/ablation",
+    "owned": "rust/target/reruns/radical-owner-boxed-v1/owned",
+    "grouped": "rust/target/reruns/radical-owner-routing-v1/grouped",
+    "inline": "rust/target/reruns/radical-owned-inline-v1/owned_inline",
+    "combo": "rust/target/reruns/radical-layout-combo-v1/combo"
+  },
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  },
+  "shared_target_dir": "rust/target",
+  "validation": {
+    "combo_lib_tests": "passed 9/9, including unsafe empty-heap/growth/take/drop and exact weighted/AA oracle",
+    "combo_strict_clippy": "passed",
+    "combo_release_build": "passed",
+    "two_independent_read_only_reviews": "no blocking issue found",
+    "oracle": {
+      "status": "passed",
+      "cases": 20,
+      "random_cases": 8,
+      "versions": [
+        "combo_lazy",
+        "combo_eager"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "bounds": "checked (CLI fixed)",
+      "compared_runs": 80,
+      "full_rule_trace_and_final_tokens_match": true,
+      "binary_sha256": {
+        "combo_lazy": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250",
+        "combo_eager": "83f8fe2408f885c1b1ae297d4881c4261d25aa47a33007838e9a1f335b622250"
+      },
+      "oracle": "Python naive full recount",
+      "seed": 20260930
+    }
+  },
+  "quick": {
+    "native_rows": 4,
+    "experiment_rows": 16,
+    "repeats": 1,
+    "full_trace_and_fingerprint_match": true,
+    "all_deterministic_work_equal": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  },
+  "final_screen": {
+    "rows": 36,
+    "configurations": 18,
+    "repeats": 2,
+    "schedule": "first seeded shuffle, second round exact reverse",
+    "fingerprints_match_by_case": true,
+    "all_deterministic_work_equal": true,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib"
+  }
+}

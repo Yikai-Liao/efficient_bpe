@@ -1,0 +1,49 @@
+{
+  "manifest": "rust/batch_results/quick-fixtures-262144-512.json",
+  "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "radical_binary_sha256": {
+    "owned_lazy": "c414cf2a13cc79eac469fe56c88bb068b6d59ef944057940e7d79a773a1c50d1",
+    "counts_lazy": "88170c625a230fb7850b9a2e02c6a1ffc0362ed2d6fa85eff052339e4e3796d4",
+    "grouped_lazy": "82d6f4d133627dcfee0cb43d59e17c0903ffb6a684b8784cbbce024e958862d5",
+    "inline_lazy": "6a298a84ffdd64c6297dbb20bd599abb5a4a96cbf7bc38209e7955c90397f440",
+    "inline_eager": "6a298a84ffdd64c6297dbb20bd599abb5a4a96cbf7bc38209e7955c90397f440"
+  },
+  "source_snapshot": "rust/batch_results/radical-owned-inline-v1/new-source-snapshot.tar.gz",
+  "new_source_sha256": {
+    "rust/experiments/radical/owned_inline/Cargo.lock": "da3490d4c2c1b40f046cba647f9b5bd499855aac23ecf0222381b5cdbd6f9d0e",
+    "rust/experiments/radical/owned_inline/Cargo.toml": "f2122cb836521e93508ad0be9afbc16ea4925e4189f4253923249a636d56dfde",
+    "rust/experiments/radical/owned_inline/DESIGN.md": "13d46eb99023b321ee8020f726bfcbb5d06831941a9e7e2c77591b66bf24ed1a",
+    "rust/experiments/radical/owned_inline/src/lib.rs": "3e849ada9f0e303b17419cf74e724aead05a47c70258cc4d09807b1e39636e3b",
+    "rust/experiments/radical/owned_inline/src/main.rs": "5fcd7e6c2dc08e1e8ae8dc6c2ba91b6920b9f8284a1c9996c33491450f6a9502",
+    "rust/experiments/radical/owned_inline/src/small_posting.rs": "cb43e85caf6a1132df781e685a898c5b97bd6e9a3864b54426764ae9d70b3a8f"
+  },
+  "baseline_source_snapshots": [
+    "rust/batch_results/radical-owner-boxed-v1/native-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owned-extensions-v1/new-source-snapshot.tar.gz",
+    "rust/batch_results/radical-owner-routing-v1/new-source-snapshot.tar.gz"
+  ],
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      5,
+      0,
+      1,
+      2
+    ]
+  },
+  "seed": 20260930,
+  "repeats": 1,
+  "fingerprint": "complete rule trace plus final token sequence",
+  "training_memory_metric": "train_vm_hwm_mib"
+}

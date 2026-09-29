@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "inline_lazy",
+    "inline_eager"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "bounds": "checked (CLI fixed)",
+  "compared_runs": 80,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "inline_lazy": "6a298a84ffdd64c6297dbb20bd599abb5a4a96cbf7bc38209e7955c90397f440",
+    "inline_eager": "6a298a84ffdd64c6297dbb20bd599abb5a4a96cbf7bc38209e7955c90397f440"
+  },
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}
