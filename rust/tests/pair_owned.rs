@@ -30,7 +30,11 @@ fn compare(input: Prepared, limit: usize, minimum: u64, workers: &[usize]) {
     )
     .unwrap();
     for &workers in workers {
-        for variant in ["parallel_pair_owned", "parallel_pair_owned_compact"] {
+        for variant in [
+            "parallel_pair_owned",
+            "parallel_pair_owned_compact",
+            "parallel_pair_owned_pipeline",
+        ] {
             for bounds in [Bounds::Checked, Bounds::Unchecked] {
                 let actual = train_variant(
                     input.clone(),
@@ -44,10 +48,22 @@ fn compare(input: Prepared, limit: usize, minimum: u64, workers: &[usize]) {
                 )
                 .unwrap_or_else(|e| panic!("{variant}, {workers} workers, {bounds:?}: {e}"))
                 .core;
-                assert_eq!(actual.merges, expected.merges, "{variant}/{workers}/{bounds:?}");
-                assert_eq!(actual.final_tokens, expected.final_tokens, "{variant}/{workers}/{bounds:?}");
-                assert_eq!(actual.actual_merges, expected.actual_merges, "{variant}/{workers}/{bounds:?}");
-                assert_eq!(actual.max_token_length, expected.max_token_length, "{variant}/{workers}/{bounds:?}");
+                assert_eq!(
+                    actual.merges, expected.merges,
+                    "{variant}/{workers}/{bounds:?}"
+                );
+                assert_eq!(
+                    actual.final_tokens, expected.final_tokens,
+                    "{variant}/{workers}/{bounds:?}"
+                );
+                assert_eq!(
+                    actual.actual_merges, expected.actual_merges,
+                    "{variant}/{workers}/{bounds:?}"
+                );
+                assert_eq!(
+                    actual.max_token_length, expected.max_token_length,
+                    "{variant}/{workers}/{bounds:?}"
+                );
             }
         }
     }

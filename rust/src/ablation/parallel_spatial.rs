@@ -1,4 +1,4 @@
-//! Certified batch training with worker-owned occurrence fragments and pair scalars.
+//! Spatially certified batch training with worker-owned occurrence fragments and pair scalars.
 //!
 //! The same persistent workers alternate between position and pair-owner
 //! phases. The coordinator merges only small, sorted candidate frontiers.
@@ -161,21 +161,33 @@ struct GatheredReply {
     work_seconds: f64,
 }
 
-struct AppliedReply {
-    merges: usize,
+struct ProbeReply {
+    cutoff: usize,
+    visited: usize,
+    stale: usize,
     work_seconds: f64,
 }
 
-struct CommittedReply {
-    delta_keys: usize,
-    scalar_keys: usize,
-    scalar_capacity: usize,
-    heap_capacity: usize,
-    dropped: usize,
-    reduce_seconds: f64,
+#[derive(Default)]
+struct SpatialStats {
+    base_width_sum: usize,
+    final_width_sum: usize,
+    widened_epochs: usize,
+    conflict_epochs: usize,
+    budget_epochs: usize,
+    metadata_seconds: f64,
+    probe_seconds: f64,
+    probe_worker_seconds_sum: f64,
+    base_history_sum: usize,
+    probe_visits: usize,
+    probe_stale: usize,
+    metadata_messages: usize,
+    probe_messages: usize,
+}
+
+struct AppliedReply {
     merges: usize,
-    write_seconds: f64,
-    staged_edges: usize,
+    work_seconds: f64,
 }
 
 struct FinalReply {
@@ -189,14 +201,14 @@ struct FinalReply {
     heap_capacity: usize,
     worker_plan_seconds: f64,
     worker_apply_seconds: f64,
-    worker_cleanup_seconds: f64,
-    cleanup_calls: usize,
 }
 
 enum Command {
     BuildScalars,
     BuildIndex,
     Prefetch(usize),
+    MeasureWindow(Arc<Vec<u64>>),
+    ProbeWindow(Arc<Vec<u64>>),
     ReturnCandidates(Arc<HashSet<u64>>),
     PrepareBatch {
         rules: Arc<Vec<RuleSpec>>,
@@ -213,11 +225,6 @@ enum Command {
         first_new_id: u32,
         rules: Arc<Vec<RuleSpec>>,
         drops: Arc<Vec<OnceLock<Arc<HashSet<u64>>>>>,
-    },
-    CommitReduce {
-        first_new_id: u32,
-        rules: Arc<Vec<RuleSpec>>,
-        drops: Sets,
     },
     Apply(Arc<Vec<OnceLock<Arc<HashSet<u64>>>>>),
     Finish,
@@ -240,6 +247,8 @@ enum Reply {
         entries: Vec<HeapEntry>,
         pops: usize,
     },
+    WindowLengths(Vec<usize>),
+    Probed(ProbeReply),
     Returned,
     Reduced {
         delta_keys: usize,
@@ -249,7 +258,6 @@ enum Reply {
         dropped: usize,
         seconds: f64,
     },
-    Committed(CommittedReply),
     Prepared(PreparedReply),
     Gathered(GatheredReply),
     Applied(AppliedReply),
@@ -397,6 +405,66 @@ fn valid_pair<const UNCHECKED: bool>(
     }
     let after = right.checked_add(rule.b_length)?;
     (after <= last).then_some((right, after))
+}
+
+/// Every overlapping pair has a left occurrence whose right neighbor is the
+/// other pair. Read only the stable corpus; selected lists remain in the index.
+fn probe_window<const UNCHECKED: bool>(
+    corpus: &[AtomicU32],
+    index: &HashMap<u64, Vec<u32>>,
+    lengths: &[u32],
+    keys: &[u64],
+) -> ProbeReply {
+    let started = Instant::now();
+    let ranks: HashMap<u64, usize> = keys.iter().enumerate().map(|(i, &key)| (key, i)).collect();
+    let last = corpus.len() - 1;
+    let mut cutoff = keys.len();
+    let mut visited = 0;
+    let mut stale = 0;
+    for (rank, &key) in keys.iter().enumerate() {
+        let a = (key >> 32) as u32;
+        let b = key as u32;
+        let a_length = lengths[a as usize] as usize;
+        let b_length = lengths[b as usize] as usize;
+        if let Some(positions) = index.get(&key) {
+            for &raw in positions {
+                visited += 1;
+                let pos = raw as usize;
+                if pos == 0 || pos >= last || load::<UNCHECKED>(corpus, pos) != a {
+                    stale += 1;
+                    continue;
+                }
+                let Some(right) = pos.checked_add(a_length) else {
+                    stale += 1;
+                    continue;
+                };
+                if right >= last || load::<UNCHECKED>(corpus, right) != b {
+                    stale += 1;
+                    continue;
+                }
+                let Some(after) = right.checked_add(b_length) else {
+                    stale += 1;
+                    continue;
+                };
+                if after > last {
+                    stale += 1;
+                    continue;
+                }
+                let c = load::<UNCHECKED>(corpus, after);
+                if c != 0
+                    && let Some(&next_rank) = ranks.get(&pair_key(b, c))
+                {
+                    cutoff = cutoff.min(rank.max(next_rank));
+                }
+            }
+        }
+    }
+    ProbeReply {
+        cutoff,
+        visited,
+        stale,
+        work_seconds: started.elapsed().as_secs_f64(),
+    }
 }
 
 /// From the stable batch snapshot, emit only the final edges. The left match
@@ -626,10 +694,15 @@ fn write_plan<const UNCHECKED: bool>(
     }
 }
 
-fn write_plan_endpoints<const UNCHECKED: bool, const COMPACT: bool>(
+fn apply_plans<const UNCHECKED: bool, const COMPACT: bool>(
     corpus: &[AtomicU32],
+    index: &mut HashMap<u64, Vec<u32>>,
+    memory: &mut IndexMemory,
     plans: &mut PlanBuffer<COMPACT>,
-) -> usize {
+    new_edges: &mut Vec<NewEdge>,
+    drop_sets: &[OnceLock<Arc<HashSet<u64>>>],
+) -> AppliedReply {
+    let started = Instant::now();
     let merged = plans.len();
     if COMPACT {
         let mut start = 0;
@@ -658,15 +731,6 @@ fn write_plan_endpoints<const UNCHECKED: bool, const COMPACT: bool>(
             );
         }
     }
-    merged
-}
-
-fn finalize_index(
-    index: &mut HashMap<u64, Vec<u32>>,
-    memory: &mut IndexMemory,
-    new_edges: &mut Vec<NewEdge>,
-    drop_sets: &[OnceLock<Arc<HashSet<u64>>>],
-) {
     for set in drop_sets {
         for key in set.get().expect("owner reduction barrier").iter() {
             let _ = take_positions(index, memory, *key);
@@ -682,40 +746,9 @@ fn finalize_index(
             append_position(index, memory, key, edge.pos);
         }
     }
-}
-
-fn apply_plans<const UNCHECKED: bool, const COMPACT: bool>(
-    corpus: &[AtomicU32],
-    index: &mut HashMap<u64, Vec<u32>>,
-    memory: &mut IndexMemory,
-    plans: &mut PlanBuffer<COMPACT>,
-    new_edges: &mut Vec<NewEdge>,
-    drop_sets: &[OnceLock<Arc<HashSet<u64>>>],
-) -> AppliedReply {
-    let started = Instant::now();
-    let merges = write_plan_endpoints::<UNCHECKED, COMPACT>(corpus, plans);
-    finalize_index(index, memory, new_edges, drop_sets);
     AppliedReply {
-        merges,
+        merges: merged,
         work_seconds: started.elapsed().as_secs_f64(),
-    }
-}
-
-fn complete_pending_index(
-    index: &mut HashMap<u64, Vec<u32>>,
-    memory: &mut IndexMemory,
-    peak_memory: &mut IndexMemory,
-    new_edges: &mut Vec<NewEdge>,
-    pending_drops: &mut Option<Sets>,
-    cleanup_seconds: &mut f64,
-    cleanup_calls: &mut usize,
-) {
-    if let Some(drops) = pending_drops.take() {
-        let started = Instant::now();
-        finalize_index(index, memory, new_edges, &drops);
-        sample_memory(index, memory, peak_memory);
-        *cleanup_seconds += started.elapsed().as_secs_f64();
-        *cleanup_calls += 1;
     }
 }
 
@@ -802,12 +835,8 @@ impl PairState {
     }
 
     fn return_candidates(&mut self, selected: &HashSet<u64>) {
-        self.return_candidates_if(|key| selected.contains(&key));
-    }
-
-    fn return_candidates_if(&mut self, selected: impl Fn(u64) -> bool) {
         for entry in self.held.drain(..) {
-            if !selected(entry.key) {
+            if !selected.contains(&entry.key) {
                 self.heap.push(entry);
             }
         }
@@ -863,7 +892,7 @@ impl PairState {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
+fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool>(
     worker_id: usize,
     corpus: Arc<Vec<AtomicU32>>,
     pivots: Arc<Vec<u32>>,
@@ -919,9 +948,6 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool
         let mut edge_peak_bytes = 0;
         let mut worker_plan_seconds = 0.0;
         let mut worker_apply_seconds = 0.0;
-        let mut worker_cleanup_seconds = 0.0;
-        let mut cleanup_calls = 0;
-        let mut pending_drops: Option<Sets> = None;
         while let Ok(command) = rx.recv() {
             let reply: TrainResult<Reply> = match command {
                 Command::BuildScalars => {
@@ -959,77 +985,42 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool
                 }
                 Command::Prefetch(count) => {
                     let (entries, pops) = scalars.prefetch(count, minimum);
-                    if PIPELINE && pending_drops.is_some() {
-                        // The coordinator can merge current scalar frontiers
-                        // while this worker finishes its previous index epoch.
-                        if tx.send(Reply::Candidates { entries, pops }).is_err() {
-                            return;
-                        }
-                        complete_pending_index(
-                            &mut index,
-                            &mut memory,
-                            &mut peak_memory,
-                            &mut new_edges,
-                            &mut pending_drops,
-                            &mut worker_cleanup_seconds,
-                            &mut cleanup_calls,
-                        );
-                        continue;
-                    }
                     Ok(Reply::Candidates { entries, pops })
                 }
+                Command::MeasureWindow(keys) => Ok(Reply::WindowLengths(
+                    keys.iter()
+                        .map(|key| index.get(key).map_or(0, Vec::len))
+                        .collect(),
+                )),
+                Command::ProbeWindow(keys) => Ok(Reply::Probed(probe_window::<UNCHECKED>(
+                    &corpus, &index, &lengths, &keys,
+                ))),
                 Command::ReturnCandidates(selected) => {
                     scalars.return_candidates(&selected);
                     Ok(Reply::Returned)
                 }
-                Command::PrepareBatch { rules, selected } => {
-                    if PIPELINE {
-                        complete_pending_index(
-                            &mut index,
-                            &mut memory,
-                            &mut peak_memory,
-                            &mut new_edges,
-                            &mut pending_drops,
-                            &mut worker_cleanup_seconds,
-                            &mut cleanup_calls,
-                        );
-                        scalars.return_candidates_if(|key| selected.contains_key(&key));
-                    }
-                    prepare_batch::<UNCHECKED, COMPACT>(
-                        &corpus,
-                        &mut lengths,
-                        &pivots,
-                        &weights,
-                        &mut index,
-                        &mut memory,
-                        &rules,
-                        &selected,
-                        &mut plans,
-                        &mut new_edges,
-                    )
-                    .map(|mut reply| {
-                        route(&delta_mailboxes, std::mem::take(&mut reply.delta));
-                        plan_peak_bytes = plan_peak_bytes.max(reply.plan_capacity_bytes);
-                        group_peak_bytes = group_peak_bytes.max(reply.group_capacity_bytes);
-                        edge_peak_bytes = edge_peak_bytes
-                            .max(reply.edge_capacity * std::mem::size_of::<NewEdge>());
-                        worker_plan_seconds += reply.work_seconds;
-                        Reply::Prepared(reply)
-                    })
-                }
+                Command::PrepareBatch { rules, selected } => prepare_batch::<UNCHECKED, COMPACT>(
+                    &corpus,
+                    &mut lengths,
+                    &pivots,
+                    &weights,
+                    &mut index,
+                    &mut memory,
+                    &rules,
+                    &selected,
+                    &mut plans,
+                    &mut new_edges,
+                )
+                .map(|mut reply| {
+                    route(&delta_mailboxes, std::mem::take(&mut reply.delta));
+                    plan_peak_bytes = plan_peak_bytes.max(reply.plan_capacity_bytes);
+                    group_peak_bytes = group_peak_bytes.max(reply.group_capacity_bytes);
+                    edge_peak_bytes =
+                        edge_peak_bytes.max(reply.edge_capacity * std::mem::size_of::<NewEdge>());
+                    worker_plan_seconds += reply.work_seconds;
+                    Reply::Prepared(reply)
+                }),
                 Command::GatherSelf(rule) => {
-                    if PIPELINE {
-                        complete_pending_index(
-                            &mut index,
-                            &mut memory,
-                            &mut peak_memory,
-                            &mut new_edges,
-                            &mut pending_drops,
-                            &mut worker_cleanup_seconds,
-                            &mut cleanup_calls,
-                        );
-                        scalars.return_candidates_if(|key| key == rule.key);
-                    }
                     let started = Instant::now();
                     let mut valid_positions = Vec::new();
                     let mut visited = 0;
@@ -1102,44 +1093,6 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool
                             }
                         })
                 }
-                Command::CommitReduce {
-                    first_new_id,
-                    rules,
-                    drops,
-                } => {
-                    debug_assert!(PIPELINE);
-                    debug_assert!(pending_drops.is_none());
-                    let started = Instant::now();
-                    let owned: Vec<RuleSpec> = rules
-                        .iter()
-                        .copied()
-                        .filter(|r| owner_pair(r.key, delta_mailboxes.len()) == worker_id)
-                        .collect();
-                    scalars
-                        .reduce(&delta_mailboxes[worker_id], first_new_id, &owned, minimum)
-                        .map(|(drop_keys, delta_keys)| {
-                            let dropped = drop_keys.len();
-                            let _ = drops[worker_id].set(Arc::new(drop_keys));
-                            let reduce_seconds = started.elapsed().as_secs_f64();
-                            let write_started = Instant::now();
-                            let merges =
-                                write_plan_endpoints::<UNCHECKED, COMPACT>(&corpus, &mut plans);
-                            let write_seconds = write_started.elapsed().as_secs_f64();
-                            worker_apply_seconds += write_seconds;
-                            pending_drops = Some(drops);
-                            Reply::Committed(CommittedReply {
-                                delta_keys,
-                                scalar_keys: scalars.frequencies.len(),
-                                scalar_capacity: scalars.frequencies.capacity(),
-                                heap_capacity: scalars.heap.capacity(),
-                                dropped,
-                                reduce_seconds,
-                                merges,
-                                write_seconds,
-                                staged_edges: new_edges.len(),
-                            })
-                        })
-                }
                 Command::Apply(drops) => {
                     let reply = apply_plans::<UNCHECKED, COMPACT>(
                         &corpus,
@@ -1154,18 +1107,6 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool
                     Ok(Reply::Applied(reply))
                 }
                 Command::Finish => {
-                    if PIPELINE {
-                        complete_pending_index(
-                            &mut index,
-                            &mut memory,
-                            &mut peak_memory,
-                            &mut new_edges,
-                            &mut pending_drops,
-                            &mut worker_cleanup_seconds,
-                            &mut cleanup_calls,
-                        );
-                        scalars.return_candidates_if(|_| false);
-                    }
                     let _ = tx.send(Reply::Final(FinalReply {
                         memory,
                         peak_memory,
@@ -1177,8 +1118,6 @@ fn spawn_worker<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool
                         heap_capacity: scalars.heap.capacity(),
                         worker_plan_seconds,
                         worker_apply_seconds,
-                        worker_cleanup_seconds,
-                        cleanup_calls,
                     }));
                     return;
                 }
@@ -1251,7 +1190,7 @@ fn fetch(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn select_prefix<const PIPELINE: bool>(
+fn select_prefix(
     workers: &[Worker],
     remaining: usize,
     cap: usize,
@@ -1259,9 +1198,12 @@ fn select_prefix<const PIPELINE: bool>(
     refill_messages: &mut usize,
     stop_self: &mut usize,
     stop_conflict: &mut usize,
+    spatial: &mut SpatialStats,
 ) -> TrainResult<Vec<(u64, u64)>> {
     let mut queues: Vec<VecDeque<HeapEntry>> = Vec::with_capacity(workers.len());
     let mut frontier = BinaryHeap::new();
+    // Preserve the caller's type-only cap; rent at most 64 further keys once
+    // that certificate stops, so speculative heap work stays bounded.
     let limit = remaining.min(cap.max(1));
     let page_size = limit.min(32);
     for worker in workers {
@@ -1287,6 +1229,7 @@ fn select_prefix<const PIPELINE: bool>(
     let mut pending = Vec::new();
     let mut heads = HashSet::new();
     let mut tails = HashSet::new();
+    let mut base_width = None;
     while pending.len() < limit {
         let Some(Frontier { entry, owner }) = frontier.pop() else {
             break;
@@ -1301,14 +1244,20 @@ fn select_prefix<const PIPELINE: bool>(
             pending.push((entry.key, entry.frequency));
             break;
         }
-        if tails.contains(&a) || heads.contains(&b) {
-            *stop_conflict += 1;
-            break;
+        if base_width.is_none() {
+            if tails.contains(&a) || heads.contains(&b) {
+                *stop_conflict += 1;
+                base_width = Some(pending.len());
+            } else {
+                heads.insert(a);
+                tails.insert(b);
+            }
         }
-        heads.insert(a);
-        tails.insert(b);
         pending.push((entry.key, entry.frequency));
         queues[owner].pop_front();
+        if base_width.is_some_and(|base| pending.len() >= base.saturating_add(64)) {
+            break;
+        }
         if pending.len() < limit {
             if queues[owner].is_empty() {
                 queues[owner] =
@@ -1319,21 +1268,104 @@ fn select_prefix<const PIPELINE: bool>(
             }
         }
     }
-    if !PIPELINE {
-        let selected = Arc::new(pending.iter().map(|(key, _)| *key).collect::<HashSet<_>>());
+    let base_width = base_width.unwrap_or(pending.len());
+    spatial.base_width_sum += base_width;
+    if base_width < pending.len() {
+        let keys: Arc<Vec<u64>> = Arc::new(pending.iter().map(|(key, _)| *key).collect());
+        let metadata_started = Instant::now();
         for worker in workers {
             worker
                 .commands
-                .send(Command::ReturnCandidates(Arc::clone(&selected)))
-                .map_err(|_| TrainError::InternalInvariant("candidate restore send failed"))?;
+                .send(Command::MeasureWindow(Arc::clone(&keys)))
+                .map_err(|_| TrainError::InternalInvariant("spatial length send failed"))?;
         }
-        *refill_messages += 2 * workers.len();
+        spatial.metadata_messages += 2 * workers.len();
+        let mut histories = vec![0_usize; keys.len()];
         for worker in workers {
-            if !matches!(recv(worker)?, Reply::Returned) {
+            let Reply::WindowLengths(local) = recv(worker)? else {
+                return Err(TrainError::InternalInvariant("expected spatial lengths"));
+            };
+            if local.len() != histories.len() {
                 return Err(TrainError::InternalInvariant(
-                    "expected candidate restore reply",
+                    "spatial length count mismatch",
                 ));
             }
+            for (total, length) in histories.iter_mut().zip(local) {
+                *total = total.saturating_add(length);
+            }
+        }
+        spatial.metadata_seconds += metadata_started.elapsed().as_secs_f64();
+        let base_history = histories[..base_width]
+            .iter()
+            .fold(0_usize, |sum, &length| sum.saturating_add(length));
+        spatial.base_history_sum = spatial.base_history_sum.saturating_add(base_history);
+        let budget = base_history.saturating_mul(2);
+        let mut extra = 0_usize;
+        let mut scan_width = base_width;
+        for &length in &histories[base_width..] {
+            if length > budget.saturating_sub(extra) {
+                break;
+            }
+            extra += length;
+            scan_width += 1;
+        }
+        spatial.budget_epochs += usize::from(scan_width < pending.len());
+        if scan_width > base_width {
+            let probe_keys = Arc::new(keys[..scan_width].to_vec());
+            let expected_visits = histories[..scan_width]
+                .iter()
+                .fold(0_usize, |sum, &length| sum.saturating_add(length));
+            let visits_before = spatial.probe_visits;
+            let probe_started = Instant::now();
+            for worker in workers {
+                worker
+                    .commands
+                    .send(Command::ProbeWindow(Arc::clone(&probe_keys)))
+                    .map_err(|_| TrainError::InternalInvariant("spatial probe send failed"))?;
+            }
+            spatial.probe_messages += 2 * workers.len();
+            let mut cutoff = scan_width;
+            for worker in workers {
+                let Reply::Probed(reply) = recv(worker)? else {
+                    return Err(TrainError::InternalInvariant("expected spatial probe"));
+                };
+                cutoff = cutoff.min(reply.cutoff);
+                spatial.probe_visits += reply.visited;
+                spatial.probe_stale += reply.stale;
+                spatial.probe_worker_seconds_sum += reply.work_seconds;
+            }
+            spatial.probe_seconds += probe_started.elapsed().as_secs_f64();
+            if spatial.probe_visits - visits_before != expected_visits {
+                return Err(TrainError::InternalInvariant(
+                    "spatial index changed during read-only probe",
+                ));
+            }
+            if cutoff < base_width {
+                return Err(TrainError::InternalInvariant(
+                    "spatial conflict invalidated type certificate",
+                ));
+            }
+            spatial.conflict_epochs += usize::from(cutoff < scan_width);
+            pending.truncate(cutoff);
+        } else {
+            pending.truncate(base_width);
+        }
+    }
+    spatial.widened_epochs += usize::from(pending.len() > base_width);
+    spatial.final_width_sum += pending.len();
+    let selected = Arc::new(pending.iter().map(|(key, _)| *key).collect::<HashSet<_>>());
+    for worker in workers {
+        worker
+            .commands
+            .send(Command::ReturnCandidates(Arc::clone(&selected)))
+            .map_err(|_| TrainError::InternalInvariant("candidate restore send failed"))?;
+    }
+    *refill_messages += 2 * workers.len();
+    for worker in workers {
+        if !matches!(recv(worker)?, Reply::Returned) {
+            return Err(TrainError::InternalInvariant(
+                "expected candidate restore reply",
+            ));
         }
     }
     Ok(pending)
@@ -1344,26 +1376,10 @@ pub(super) fn train<const UNCHECKED: bool>(
     options: Options,
     cap: usize,
 ) -> TrainResult<Result> {
-    run::<UNCHECKED, false, false>(input, options, cap)
+    run::<UNCHECKED, false>(input, options, cap)
 }
 
-pub(super) fn train_compact<const UNCHECKED: bool>(
-    input: Prepared,
-    options: Options,
-    cap: usize,
-) -> TrainResult<Result> {
-    run::<UNCHECKED, true, false>(input, options, cap)
-}
-
-pub(super) fn train_pipeline<const UNCHECKED: bool>(
-    input: Prepared,
-    options: Options,
-    cap: usize,
-) -> TrainResult<Result> {
-    run::<UNCHECKED, false, true>(input, options, cap)
-}
-
-fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
+fn run<const UNCHECKED: bool, const COMPACT: bool>(
     input: Prepared,
     options: Options,
     cap: usize,
@@ -1392,7 +1408,7 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
         .map(|id| {
             let start = 1 + id * (last - 1) / worker_count;
             let end = 1 + (id + 1) * (last - 1) / worker_count;
-            spawn_worker::<UNCHECKED, COMPACT, PIPELINE>(
+            spawn_worker::<UNCHECKED, COMPACT>(
                 id,
                 Arc::clone(&corpus),
                 Arc::clone(&pivots),
@@ -1493,12 +1509,6 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
     let mut owner_reduce_work_seconds_sum = 0.0;
     let mut worker_plan_seconds_sum = 0.0;
     let mut worker_apply_seconds_sum = 0.0;
-    let mut commit_reduce_seconds = 0.0;
-    let mut pending_edge_len_peak = 0;
-    let mut pending_edge_len_peak_sum = 0;
-    let mut pending_drop_keys_peak_sum = 0;
-    let mut worker_cleanup_seconds_sum = 0.0;
-    let mut cleanup_calls_sum = 0;
     let mut worker_delta_keys_total = 0;
     let mut owner_delta_keys_total = 0;
     let mut owner_drop_keys_total = 0;
@@ -1510,9 +1520,10 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
     let mut edge_capacity_peak = 0;
     let mut owner_scalar_capacity_peak = initial_scalar_capacity;
     let mut owner_heap_capacity_peak = initial_heap_capacity;
+    let mut spatial = SpatialStats::default();
     while merges.len() < options.max_merges {
         let selection_started = Instant::now();
-        let prefix = select_prefix::<PIPELINE>(
+        let prefix = select_prefix(
             &workers,
             options.max_merges - merges.len(),
             cap,
@@ -1520,6 +1531,7 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
             &mut refill_messages,
             &mut stop_self,
             &mut stop_conflict,
+            &mut spatial,
         )?;
         select_seconds += selection_started.elapsed().as_secs_f64();
         if prefix.is_empty() {
@@ -1641,130 +1653,76 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
         edge_capacity_peak = edge_capacity_peak.max(round_edge_capacity);
         mailbox_capacity_peak = mailbox_capacity_peak.max(mailbox_capacity(&delta_mailboxes));
         plan_seconds += plan_started.elapsed().as_secs_f64();
+        let reduce_started = Instant::now();
         let drops: Sets = Arc::new((0..worker_count).map(|_| OnceLock::new()).collect());
-        if PIPELINE {
-            let commit_started = Instant::now();
-            for worker in &workers {
-                worker
-                    .commands
-                    .send(Command::CommitReduce {
-                        first_new_id,
-                        rules: Arc::clone(&rules),
-                        drops: Arc::clone(&drops),
-                    })
-                    .map_err(|_| TrainError::InternalInvariant("commit reduce send failed"))?;
-            }
-            messages += 2 * worker_count;
-            let mut scalar_capacity = 0;
-            let mut heap_capacity = 0;
-            let mut applied = 0;
-            let mut staged_edges_sum = 0;
-            let mut dropped_sum = 0;
-            for worker in &workers {
-                let Reply::Committed(reply) = recv(worker)? else {
-                    return Err(TrainError::InternalInvariant("expected committed reply"));
-                };
-                owner_delta_keys_total += reply.delta_keys;
-                owner_drop_keys_total += reply.dropped;
-                dropped_sum += reply.dropped;
-                scalar_capacity += reply.scalar_capacity;
-                heap_capacity += reply.heap_capacity;
-                owner_reduce_work_seconds_sum += reply.reduce_seconds;
-                worker_apply_seconds_sum += reply.write_seconds;
-                pending_edge_len_peak = pending_edge_len_peak.max(reply.staged_edges);
-                staged_edges_sum += reply.staged_edges;
-                applied += reply.merges;
-                let _ = reply.scalar_keys;
-            }
-            owner_scalar_capacity_peak = owner_scalar_capacity_peak.max(scalar_capacity);
-            owner_heap_capacity_peak = owner_heap_capacity_peak.max(heap_capacity);
-            pending_edge_len_peak_sum = pending_edge_len_peak_sum.max(staged_edges_sum);
-            pending_drop_keys_peak_sum = pending_drop_keys_peak_sum.max(dropped_sum);
-            if applied != planned {
-                return Err(TrainError::InternalInvariant(
-                    "batch plan/commit count mismatch",
-                ));
-            }
-            actual_merges += applied;
-            for rule in rules.iter() {
-                merges.push(Rule {
-                    left: rule.a,
-                    right: rule.b,
-                    frequency: rule.frequency,
-                });
-            }
-            commit_reduce_seconds += commit_started.elapsed().as_secs_f64();
-        } else {
-            let reduce_started = Instant::now();
-            for worker in &workers {
-                worker
-                    .commands
-                    .send(Command::Reduce {
-                        first_new_id,
-                        rules: Arc::clone(&rules),
-                        drops: Arc::clone(&drops),
-                    })
-                    .map_err(|_| TrainError::InternalInvariant("owner reduce send failed"))?;
-            }
-            messages += 2 * worker_count;
-            let mut scalar_capacity = 0;
-            let mut heap_capacity = 0;
-            for worker in &workers {
-                match recv(worker)? {
-                    Reply::Reduced {
-                        delta_keys,
-                        scalar_keys,
-                        scalar_capacity: sc,
-                        heap_capacity: hc,
-                        dropped,
-                        seconds,
-                    } => {
-                        owner_delta_keys_total += delta_keys;
-                        owner_drop_keys_total += dropped;
-                        scalar_capacity += sc;
-                        heap_capacity += hc;
-                        owner_reduce_work_seconds_sum += seconds;
-                        let _ = scalar_keys;
-                    }
-                    _ => return Err(TrainError::InternalInvariant("expected owner reduce reply")),
-                }
-            }
-            owner_scalar_capacity_peak = owner_scalar_capacity_peak.max(scalar_capacity);
-            owner_heap_capacity_peak = owner_heap_capacity_peak.max(heap_capacity);
-            for rule in rules.iter() {
-                merges.push(Rule {
-                    left: rule.a,
-                    right: rule.b,
-                    frequency: rule.frequency,
-                });
-            }
-            owner_reduce_seconds += reduce_started.elapsed().as_secs_f64();
-            let apply_started = Instant::now();
-            for worker in &workers {
-                worker
-                    .commands
-                    .send(Command::Apply(Arc::clone(&drops)))
-                    .map_err(|_| TrainError::InternalInvariant("apply send failed"))?;
-            }
-            messages += 2 * worker_count;
-            let mut applied = 0;
-            for worker in &workers {
-                let Reply::Applied(reply) = recv(worker)? else {
-                    return Err(TrainError::InternalInvariant("expected applied reply"));
-                };
-                applied += reply.merges;
-                worker_apply_seconds_sum += reply.work_seconds;
-            }
-            if applied != planned {
-                return Err(TrainError::InternalInvariant(
-                    "batch plan/apply count mismatch",
-                ));
-            }
-            actual_merges += applied;
-            apply_seconds += apply_started.elapsed().as_secs_f64();
+        for worker in &workers {
+            worker
+                .commands
+                .send(Command::Reduce {
+                    first_new_id,
+                    rules: Arc::clone(&rules),
+                    drops: Arc::clone(&drops),
+                })
+                .map_err(|_| TrainError::InternalInvariant("owner reduce send failed"))?;
         }
+        messages += 2 * worker_count;
+        let mut scalar_capacity = 0;
+        let mut heap_capacity = 0;
+        for worker in &workers {
+            match recv(worker)? {
+                Reply::Reduced {
+                    delta_keys,
+                    scalar_keys,
+                    scalar_capacity: sc,
+                    heap_capacity: hc,
+                    dropped,
+                    seconds,
+                } => {
+                    owner_delta_keys_total += delta_keys;
+                    owner_drop_keys_total += dropped;
+                    scalar_capacity += sc;
+                    heap_capacity += hc;
+                    owner_reduce_work_seconds_sum += seconds;
+                    let _ = scalar_keys;
+                }
+                _ => return Err(TrainError::InternalInvariant("expected owner reduce reply")),
+            }
+        }
+        owner_scalar_capacity_peak = owner_scalar_capacity_peak.max(scalar_capacity);
+        owner_heap_capacity_peak = owner_heap_capacity_peak.max(heap_capacity);
+        for rule in rules.iter() {
+            merges.push(Rule {
+                left: rule.a,
+                right: rule.b,
+                frequency: rule.frequency,
+            });
+        }
+        owner_reduce_seconds += reduce_started.elapsed().as_secs_f64();
+        let apply_started = Instant::now();
+        for worker in &workers {
+            worker
+                .commands
+                .send(Command::Apply(Arc::clone(&drops)))
+                .map_err(|_| TrainError::InternalInvariant("apply send failed"))?;
+        }
+        messages += 2 * worker_count;
+        let mut applied = 0;
+        for worker in &workers {
+            let Reply::Applied(reply) = recv(worker)? else {
+                return Err(TrainError::InternalInvariant("expected applied reply"));
+            };
+            applied += reply.merges;
+            worker_apply_seconds_sum += reply.work_seconds;
+        }
+        if applied != planned {
+            return Err(TrainError::InternalInvariant(
+                "batch plan/apply count mismatch",
+            ));
+        }
+        actual_merges += applied;
+        apply_seconds += apply_started.elapsed().as_secs_f64();
     }
-    let merge_seconds_before_finish = merge_started.elapsed().as_secs_f64();
+    let merge_seconds = merge_started.elapsed().as_secs_f64();
     for worker in &workers {
         worker
             .commands
@@ -1797,15 +1755,8 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
         worker_plan_peak_bytes_sum += reply.plan_peak_bytes;
         worker_group_peak_bytes_sum += reply.group_peak_bytes;
         worker_edge_peak_bytes_sum += reply.edge_peak_bytes;
-        worker_cleanup_seconds_sum += reply.worker_cleanup_seconds;
-        cleanup_calls_sum += reply.cleanup_calls;
         let _ = (reply.worker_plan_seconds, reply.worker_apply_seconds);
     }
-    let merge_seconds = if PIPELINE {
-        merge_started.elapsed().as_secs_f64()
-    } else {
-        merge_seconds_before_finish
-    };
     messages += 2 * worker_count + refill_messages;
     drop(workers);
     let mut final_tokens = Vec::new();
@@ -2005,6 +1956,67 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
         "certificate_stop_conflict",
         stop_conflict as f64,
     );
+    metric(
+        &mut metrics,
+        "spatial_base_width_sum",
+        spatial.base_width_sum as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_final_width_sum",
+        spatial.final_width_sum as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_widened_epochs",
+        spatial.widened_epochs as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_conflict_epochs",
+        spatial.conflict_epochs as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_budget_epochs",
+        spatial.budget_epochs as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_metadata_seconds",
+        spatial.metadata_seconds,
+    );
+    metric(&mut metrics, "spatial_probe_seconds", spatial.probe_seconds);
+    metric(
+        &mut metrics,
+        "spatial_probe_worker_seconds_sum",
+        spatial.probe_worker_seconds_sum,
+    );
+    metric(
+        &mut metrics,
+        "spatial_base_history_sum",
+        spatial.base_history_sum as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_probe_visits",
+        spatial.probe_visits as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_probe_stale",
+        spatial.probe_stale as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_metadata_messages",
+        spatial.metadata_messages as f64,
+    );
+    metric(
+        &mut metrics,
+        "spatial_probe_messages",
+        spatial.probe_messages as f64,
+    );
     metric(&mut metrics, "aa_epochs", aa_epochs as f64);
     metric(
         &mut metrics,
@@ -2020,33 +2032,6 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
         owner_reduce_work_seconds_sum,
     );
     metric(&mut metrics, "apply_seconds", apply_seconds);
-    metric(&mut metrics, "commit_reduce_seconds", commit_reduce_seconds);
-    metric(
-        &mut metrics,
-        "worker_cleanup_seconds_sum",
-        worker_cleanup_seconds_sum,
-    );
-    metric(&mut metrics, "cleanup_calls_sum", cleanup_calls_sum as f64);
-    metric(
-        &mut metrics,
-        "pending_edge_len_peak_worker",
-        pending_edge_len_peak as f64,
-    );
-    metric(
-        &mut metrics,
-        "pending_edge_len_peak_sum",
-        pending_edge_len_peak_sum as f64,
-    );
-    metric(
-        &mut metrics,
-        "pending_drop_keys_peak_sum",
-        pending_drop_keys_peak_sum as f64,
-    );
-    metric(
-        &mut metrics,
-        "pipelined_owner_protocol",
-        if PIPELINE { 1.0 } else { 0.0 },
-    );
     metric(
         &mut metrics,
         "worker_plan_seconds_sum",
@@ -2077,11 +2062,42 @@ fn run<const UNCHECKED: bool, const COMPACT: bool, const PIPELINE: bool>(
         "candidate_refill_messages",
         refill_messages as f64,
     );
-    metric(&mut metrics, "round_messages", messages as f64);
+    metric(
+        &mut metrics,
+        "round_messages",
+        (messages + spatial.metadata_messages + spatial.probe_messages) as f64,
+    );
     metric(
         &mut metrics,
         "unchecked_corpus_access",
         if UNCHECKED { 1.0 } else { 0.0 },
     );
     Ok(Result { core, metrics })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn actual_overlap_distinguishes_separate_pieces_from_abc() {
+        let keys = [pair_key(1, 2), pair_key(2, 3)];
+        let lengths = [0, 1, 1, 1];
+        let separate: Vec<_> = [0, 1, 2, 0, 2, 3, 0]
+            .into_iter()
+            .map(AtomicU32::new)
+            .collect();
+        let separate_index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![4])]);
+        assert_eq!(
+            probe_window::<false>(&separate, &separate_index, &lengths, &keys).cutoff,
+            2
+        );
+
+        let chain: Vec<_> = [0, 1, 2, 3, 0].into_iter().map(AtomicU32::new).collect();
+        let chain_index = HashMap::from([(keys[0], vec![1]), (keys[1], vec![2])]);
+        assert_eq!(
+            probe_window::<false>(&chain, &chain_index, &lengths, &keys).cutoff,
+            1
+        );
+    }
 }

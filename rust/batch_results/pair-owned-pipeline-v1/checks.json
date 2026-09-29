@@ -1,0 +1,153 @@
+{
+  "status": "passed",
+  "variant": "parallel_pair_owned_pipeline",
+  "compared_variant": "parallel_pair_owned",
+  "binary_sha256": "25ad976ed8ede66c63b0ffc3e3956ac6999fdb2b11bf96b9459c68109e712147",
+  "source_snapshot": "native-source-snapshot.tar.gz",
+  "source_hashes": "native-source-hashes.json",
+  "validation": {
+    "cargo_test_pair_owned": "passed 4/4; includes pipeline in all existing scenarios",
+    "cargo_clippy_all_targets_d_warnings": "passed",
+    "cargo_release_build": "passed",
+    "differential": {
+      "cases": 20,
+      "random_cases": 8,
+      "compared_runs": 80,
+      "explicit_compact_limit_skips": 0,
+      "variants": [
+        "parallel_pair_owned_pipeline"
+      ],
+      "workers_for_parallel": [
+        1,
+        4
+      ],
+      "bounds": [
+        "checked",
+        "unchecked"
+      ],
+      "oracle": "full-recount Python naive; complete merge trace and final tokens",
+      "all_compared_traces_match": true,
+      "all_compared_fingerprints_match": true,
+      "seed": 20260930,
+      "binary_sha256": "25ad976ed8ede66c63b0ffc3e3956ac6999fdb2b11bf96b9459c68109e712147",
+      "skips": []
+    }
+  },
+  "measurements": {
+    "quick": {
+      "rows": 8,
+      "comparison": [
+        {
+          "case": "quick-en-continuous-262144",
+          "workers": 1,
+          "old_call_seconds": 0.183679503,
+          "pipeline_call_seconds": 0.155655248,
+          "pipeline_over_old_speedup": 1.1800405406183285,
+          "old_vm_hwm_mib": 9.46875,
+          "pipeline_vm_hwm_mib": 9.7890625,
+          "old_messages": 700.0,
+          "pipeline_messages": 424.0,
+          "fingerprints_match": true
+        },
+        {
+          "case": "quick-en-continuous-262144",
+          "workers": 4,
+          "old_call_seconds": 0.06765942,
+          "pipeline_call_seconds": 0.077968377,
+          "pipeline_over_old_speedup": 0.8677802796895464,
+          "old_vm_hwm_mib": 11.40234375,
+          "pipeline_vm_hwm_mib": 11.75390625,
+          "old_messages": 2800.0,
+          "pipeline_messages": 1696.0,
+          "fingerprints_match": true
+        },
+        {
+          "case": "quick-zh-continuous-262144",
+          "workers": 1,
+          "old_call_seconds": 0.093642752,
+          "pipeline_call_seconds": 0.075109234,
+          "pipeline_over_old_speedup": 1.2467541873746175,
+          "old_vm_hwm_mib": 7.375,
+          "pipeline_vm_hwm_mib": 7.79296875,
+          "old_messages": 900.0,
+          "pipeline_messages": 552.0,
+          "fingerprints_match": true
+        },
+        {
+          "case": "quick-zh-continuous-262144",
+          "workers": 4,
+          "old_call_seconds": 0.039647863,
+          "pipeline_call_seconds": 0.03528832,
+          "pipeline_over_old_speedup": 1.123540678615474,
+          "old_vm_hwm_mib": 10.00390625,
+          "pipeline_vm_hwm_mib": 9.86328125,
+          "old_messages": 3600.0,
+          "pipeline_messages": 2208.0,
+          "fingerprints_match": true
+        }
+      ],
+      "binary_sha256": "25ad976ed8ede66c63b0ffc3e3956ac6999fdb2b11bf96b9459c68109e712147",
+      "manifest_sha256": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+      "all_fingerprints_match": true
+    },
+    "smoke": {
+      "rows": 8,
+      "comparison": [
+        {
+          "case": "en-4m-continuous",
+          "workers": 1,
+          "old_call_seconds": 3.175340153,
+          "pipeline_call_seconds": 3.074974781,
+          "pipeline_over_old_speedup": 1.0326394130514984,
+          "old_vm_hwm_mib": 111.375,
+          "pipeline_vm_hwm_mib": 110.859375,
+          "old_messages": 2558.0,
+          "pipeline_messages": 1554.0,
+          "fingerprints_match": true
+        },
+        {
+          "case": "en-4m-continuous",
+          "workers": 4,
+          "old_call_seconds": 1.162070892,
+          "pipeline_call_seconds": 1.130285579,
+          "pipeline_over_old_speedup": 1.028121488578242,
+          "old_vm_hwm_mib": 136.17578125,
+          "pipeline_vm_hwm_mib": 136.7265625,
+          "old_messages": 10160.0,
+          "pipeline_messages": 6144.0,
+          "fingerprints_match": true
+        },
+        {
+          "case": "zh-4m-continuous",
+          "workers": 1,
+          "old_call_seconds": 1.891615396,
+          "pipeline_call_seconds": 1.838080669,
+          "pipeline_over_old_speedup": 1.029125341397081,
+          "old_vm_hwm_mib": 122.1171875,
+          "pipeline_vm_hwm_mib": 122.3984375,
+          "old_messages": 2836.0,
+          "pipeline_messages": 1736.0,
+          "fingerprints_match": true
+        },
+        {
+          "case": "zh-4m-continuous",
+          "workers": 4,
+          "old_call_seconds": 0.746886011,
+          "pipeline_call_seconds": 0.613506061,
+          "pipeline_over_old_speedup": 1.2174060836213971,
+          "old_vm_hwm_mib": 119.7265625,
+          "pipeline_vm_hwm_mib": 120.87890625,
+          "old_messages": 11240.0,
+          "pipeline_messages": 6840.0,
+          "fingerprints_match": true
+        }
+      ],
+      "binary_sha256": "25ad976ed8ede66c63b0ffc3e3956ac6999fdb2b11bf96b9459c68109e712147",
+      "manifest_sha256": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b",
+      "all_fingerprints_match": true
+    }
+  },
+  "note": "n=1 screening; call_seconds is the comparison metric; pipeline merge_seconds includes Finish cleanup whereas baseline merge_seconds does not. VmHWM is the native process memory high-water field.",
+  "binary_path": "rust/target/reruns/pair-owned-pipeline-v1/ablation",
+  "binary_git_ignored": true
+}

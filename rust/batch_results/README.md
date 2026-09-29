@@ -24,6 +24,8 @@ Subsequent focused experiments:
 | [pair-owned-differential-v1.json](pair-owned-differential-v1.json) | Initial sharding: 120 complete-trace comparisons |
 | [pair-owned-compact-v1/README.md](pair-owned-compact-v1/README.md) | Independent same-binary Plan16 versus grouped Plan4 memory ablation; n=1 |
 | [sparse-owner-v1/README.md](sparse-owner-v1/README.md) | Cached frontier and sparse dispatch versus a fair all-worker single-rule baseline; n=1, 240 trace comparisons |
+| [sparse-dispatch-v1/README.md](sparse-dispatch-v1/README.md) | Same-kernel dispatch-mask isolation, 80 trace comparisons; n=3 timings overlapped another build and remain provisional |
+| [pair-owned-pipeline-v1/README.md](pair-owned-pipeline-v1/README.md) | Three-phase exact batch pipeline versus the original sharded kernel; 80 trace comparisons, n=1 quick/smoke |
 | [quality-quick-v1/commands.json](quality-quick-v1/commands.json) | Exact versus relaxed heldout token counts; disjoint 256 KiB train/heldout slices and 512 rules |
 
 Each timing JSONL has a `.environment.json` sidecar. Samples are isolated child processes, interleaved within a stage; the entire child, including the coordinator, receives the stated CPU budget. `call_seconds` times the native training call. Process VmHWM includes input parsing and fingerprint generation as well. Hashes pin the executable and input independently of later documentation or runner edits.

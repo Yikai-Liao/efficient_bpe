@@ -1,0 +1,84 @@
+{
+  "experiment": "sparse-dispatch-v1",
+  "purpose": "Isolate the effect of forcing all workers through the three dispatch masks in the sparse-owner kernel.",
+  "revision": "d6c02be108004837a9846fd6215abbcade446056",
+  "binary_sha256": "b37079e2ffddd2ffc49487c0252e2a058235aadbfaaeee6d48b4314cf0f36858",
+  "native_source_sha256": {
+    "rust/src/ablation/parallel_sparse_owner.rs": "a739af50f39ec06e273edf01990b244e50f66d6b2e52b72413e875b247c5e86b",
+    "rust/src/ablation/sparse_frontier.rs": "0d53f697c9319ac8a70782e45fcff784797651cf28131dadca0d334f501e6bfd",
+    "rust/src/ablation/worker_groups.rs": "60a1c48868ef1a70ff45dd7c720786e69138f6090aacf0e04e7afd9b25dc8e07",
+    "rust/src/ablation/trainer.rs": "7db8b055c15adb3defcb6c7fe38a9e4ac33ea56a9cdb4927fb5e32201554ce1e",
+    "rust/tools/ablation_benchmark.py": "3324919266b6504a766edd9fa9e949903e5f29caf5c4a7109831b6f59d01671e",
+    "rust/tools/ablation_differential.py": "c089f9064d250a84950857228563e8edd742143492b67d374d518efd735eb4b4"
+  },
+  "validation": {
+    "sparse_frontier_unit_tests": "passed (2)",
+    "worker_groups_unit_tests": "passed (1; worker counts 1 through 257)",
+    "sparse_owner_integration_tests": "passed (5)",
+    "cargo_clippy_all_targets_d_warnings": "passed",
+    "differential": {
+      "cases": 20,
+      "random_cases": 8,
+      "variants": [
+        "parallel_sparse_owner_all"
+      ],
+      "workers": [
+        1,
+        4
+      ],
+      "bounds": [
+        "checked",
+        "unchecked"
+      ],
+      "compared_runs": 80,
+      "exact_trace_and_fingerprint": "all passed",
+      "skips": 0
+    }
+  },
+  "benchmarks": {
+    "quick_w4": {
+      "cases": [
+        "quick-en-continuous-262144",
+        "quick-zh-continuous-262144"
+      ],
+      "variants": [
+        "parallel_sparse_owner",
+        "parallel_sparse_owner_all"
+      ],
+      "workers": 4,
+      "bounds": "checked",
+      "repeats_per_variant_case": 3,
+      "rows": 12,
+      "all_fingerprints_stable": true
+    },
+    "edges_w4": {
+      "cases": [
+        "chain-2000",
+        "single-run-a-65536",
+        "single-piece-ab-65536"
+      ],
+      "variants": [
+        "parallel_sparse_owner",
+        "parallel_sparse_owner_all"
+      ],
+      "workers": 4,
+      "bounds": "checked",
+      "repeats_per_variant_case": 3,
+      "rows": 18,
+      "all_fingerprints_stable": true
+    }
+  },
+  "scope_note": "No 4 MiB smoke, full matrix, or post-freeze native rebuild was run. Metrics and timing are diagnostic n=3 observations, not formal ranking. CoreStats.heap_pops is owner-local only and excludes coordinator Frontier stale pops/rebuilds.",
+  "timing_contention": {
+    "status": "potentially_contended",
+    "reported_window_utc": "2026-09-29 17:04–17:09",
+    "source": "radical prototype agent reported independent crate cargo check/test during this interval",
+    "action": "No immediate rerun per parent direction; repeat a small isolated timing later before relying on the performance signal."
+  },
+  "memory_metric_correction": {
+    "table_field": "vm_hwm_mib",
+    "units": "MiB",
+    "reason": "Previous README table used peak_rss_mib, an inherited resource high-water mark that was nearly constant across benchmark subprocesses on this runner.",
+    "interpretation": "Native VmHWM values differ slightly; equal capacity metrics do not prove equal peak RSS."
+  }
+}

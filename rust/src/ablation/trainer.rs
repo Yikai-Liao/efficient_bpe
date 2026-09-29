@@ -39,6 +39,8 @@ pub fn variant_names() -> &'static [&'static str] {
         "parallel_certified_single",
         "parallel_batch_relaxed",
         "parallel_pair_owned",
+        "parallel_pair_owned_pipeline",
+        "parallel_pair_owned_spatial",
         "parallel_pair_owned_single",
         "parallel_pair_owned_compact",
         "parallel_sparse_owner",

@@ -6,6 +6,13 @@ mod trainer;
 
 pub use trainer::{Bounds, Prepared, Rule, TrainError, TrainOptions, TrainResult, train};
 
+/// Check the shared input contract without constructing a training index.
+/// Experimental kernels should include this same validation in their timed
+/// training call before relying on dense IDs, unit initial lengths, or pivots.
+pub fn validate_prepared(input: &Prepared, options: TrainOptions) -> Result<(), TrainError> {
+    trainer::validate(input, options)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

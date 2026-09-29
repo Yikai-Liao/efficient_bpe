@@ -17,6 +17,8 @@ mod piece;
 mod sharded;
 #[path = "parallel_sparse_owner.rs"]
 mod sparse_owner;
+#[path = "parallel_spatial.rs"]
+mod spatial;
 
 use super::{Options, Result, validate};
 use crate::{Prepared, Rule, TrainError, TrainOptions, TrainResult};
@@ -166,6 +168,8 @@ pub fn train(
             | "certified_single"
             | "batch_relaxed"
             | "pair_owned"
+            | "pair_owned_pipeline"
+            | "pair_owned_spatial"
             | "pair_owned_single"
             | "pair_owned_compact"
             | "sparse_owner"
@@ -189,6 +193,20 @@ pub fn train(
         return Ok(Result { core, metrics });
     }
     match mode {
+        "pair_owned_spatial" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                spatial::train::<true>(input, options, 256)
+            } else {
+                spatial::train::<false>(input, options, 256)
+            }
+        }
+        "pair_owned_pipeline" => {
+            if options.bounds == crate::Bounds::Unchecked {
+                sharded::train_pipeline::<true>(input, options, 256)
+            } else {
+                sharded::train_pipeline::<false>(input, options, 256)
+            }
+        }
         "sparse_owner_all" => {
             if options.bounds == crate::Bounds::Unchecked {
                 sparse_owner::train_all::<true>(input, options)
