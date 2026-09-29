@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "measured_calls": 56,
+  "full_trace_matches": 56,
+  "group_count": 32,
+  "family_call_counts": {
+    "micro": 24,
+    "atomic": 16,
+    "ordered": 12,
+    "serial": 4
+  },
+  "source_file_count": 20,
+  "shared_file_count": 26,
+  "source_capsule_sha256": "79070c7896337ac3b483246e5ed025ec245c90978f195d25b26a34d5f277f676",
+  "binary_sha256": {
+    "micro": "da21c2f7e00e92a3d67e440476f6ed8cd85f4d10138d8d051bbe7eeada5deb19",
+    "atomic": "8d2d8aebc774ac33147c6680de9917b0e90c8334667a3504df3791c470862039",
+    "ordered": "dcd230559be789c94183bd1e954cd753ad3f682f15100749f6a6a68f4c0a5662",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  },
+  "base_commit": "e2cfd89950f6b80cd4cad229737979417f4ff04a",
+  "cpu_affinity": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "memory_metric": "train_vm_hwm_mib",
+  "cpu_metric": "call_cpu_seconds",
+  "verification": "offline hashes, manifest, measured-row invariants; no training rerun"
+}

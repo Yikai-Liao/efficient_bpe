@@ -1,0 +1,1298 @@
+{
+  "status": "passed",
+  "rows": 56,
+  "groups": [
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "atomic_owner",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.056080908,
+        0.059943789
+      ],
+      "raw_call_cpu_seconds": [
+        0.05593632300000001,
+        0.05992568000000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.9453125,
+        7.8984375
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.0580123485,
+      "median_call_cpu_seconds": 0.05793100150000001,
+      "median_train_vm_hwm_mib": 7.921875,
+      "median_plan_seconds": 0.0251941875,
+      "median_old_route_records_before_flush": 0.0,
+      "median_atomic_old_calls": 0.0,
+      "median_atomic_retire_markers": 0.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0,
+      "median_preflush_route_capacity_peak": 0.0,
+      "median_fused_commit_seconds": 0.014505436,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 1.5087e-05,
+      "median_occupied_cores": 0.998597764060526
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "atomic_owner",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.035584643,
+        0.030862147
+      ],
+      "raw_call_cpu_seconds": [
+        0.092186376,
+        0.093547636
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.625,
+        8.71484375
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.033223395,
+      "median_call_cpu_seconds": 0.092867006,
+      "median_train_vm_hwm_mib": 8.669921875,
+      "median_plan_seconds": 0.012045202500000001,
+      "median_old_route_records_before_flush": 0.0,
+      "median_atomic_old_calls": 0.0,
+      "median_atomic_retire_markers": 0.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0,
+      "median_preflush_route_capacity_peak": 0.0,
+      "median_fused_commit_seconds": 0.008000295500000002,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 1.52155e-05,
+      "median_occupied_cores": 2.7952292654016846,
+      "fair_serial_over_w4": 1.1302408438391078,
+      "self_w1_over_w4": 1.7461294518516242,
+      "cpu_inflation_c4_over_c1": 1.6030623257911394
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "atomic_producer-atomic",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.061382572,
+        0.055576113
+      ],
+      "raw_call_cpu_seconds": [
+        0.05994915000000001,
+        0.05543321600000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.94921875,
+        7.8203125
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.0584793425,
+      "median_call_cpu_seconds": 0.05769118300000001,
+      "median_train_vm_hwm_mib": 7.884765625,
+      "median_plan_seconds": 0.026876087999999992,
+      "median_old_route_records_before_flush": 30705.0,
+      "median_atomic_old_calls": 27587.0,
+      "median_atomic_retire_markers": 4299.0,
+      "median_atomic_flush_worker_seconds_sum": 0.002415551,
+      "median_preflush_route_capacity_peak": 3584.0,
+      "median_fused_commit_seconds": 0.0129805695,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 1.2794e-05,
+      "median_occupied_cores": 0.9865224288388674
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "atomic_producer-atomic",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.049460791,
+        0.033137856
+      ],
+      "raw_call_cpu_seconds": [
+        0.104484333,
+        0.10028627100000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.6796875,
+        8.33203125
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.0412993235,
+      "median_call_cpu_seconds": 0.10238530200000001,
+      "median_train_vm_hwm_mib": 8.505859375,
+      "median_plan_seconds": 0.016981604,
+      "median_old_route_records_before_flush": 32870.5,
+      "median_atomic_old_calls": 29752.5,
+      "median_atomic_retire_markers": 4299.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0035138549999999998,
+      "median_preflush_route_capacity_peak": 4592.0,
+      "median_fused_commit_seconds": 0.008848608000000003,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 1.735e-05,
+      "median_occupied_cores": 2.479103610498608,
+      "fair_serial_over_w4": 0.9092264671115012,
+      "self_w1_over_w4": 1.4159879035306717,
+      "cpu_inflation_c4_over_c1": 1.7747131654415893
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "micro_region_k1",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.062282318,
+        0.064263071
+      ],
+      "raw_call_cpu_seconds": [
+        0.061438095,
+        0.06412591100000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.515625,
+        8.5859375
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.0632726945,
+      "median_call_cpu_seconds": 0.062782003,
+      "median_train_vm_hwm_mib": 8.55078125,
+      "median_plan_seconds": 0.029322255,
+      "median_region_non_aa_posting_visits": 202627.0,
+      "median_region_non_aa_valid_merges": 144210.0,
+      "median_region_sum_visit_makespan_lower_bound": 202627.0,
+      "median_region_sum_merge_makespan_lower_bound": 144210.0,
+      "median_region_peak_route_header_capacity_bytes": 88.0,
+      "median_region_count_effective": 1.0,
+      "median_region_partition_worker_seconds": 0.00029474149999999996,
+      "median_region_partition_searches": 1024.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.010528748,
+      "median_birth_group_fill_seconds": 0.005663324000000001,
+      "median_aa_sort_seconds": 1.69415e-05,
+      "median_occupied_cores": 0.9922448142302521,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "micro_region_k1",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.048171841,
+        0.038129901
+      ],
+      "raw_call_cpu_seconds": [
+        0.12914660600000002,
+        0.10166673400000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.859375,
+        9.06640625
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.043150871,
+      "median_call_cpu_seconds": 0.11540667000000002,
+      "median_train_vm_hwm_mib": 8.962890625,
+      "median_plan_seconds": 0.017934022499999994,
+      "median_region_non_aa_posting_visits": 202627.0,
+      "median_region_non_aa_valid_merges": 144210.0,
+      "median_region_sum_visit_makespan_lower_bound": 54935.0,
+      "median_region_sum_merge_makespan_lower_bound": 39835.0,
+      "median_region_peak_route_header_capacity_bytes": 1408.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 0.0009774739999999999,
+      "median_region_partition_searches": 4096.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.008318513499999998,
+      "median_birth_group_fill_seconds": 0.004757328499999999,
+      "median_aa_sort_seconds": 8.772e-06,
+      "median_occupied_cores": 2.6744922483719975,
+      "static_non_aa_visit_ratio": 3.6884863930099208,
+      "fair_serial_over_w4": 0.8702127472699218,
+      "self_w1_over_w4": 1.4663132639895033,
+      "cpu_inflation_c4_over_c1": 1.8382126164404153
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "micro_region_k4",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.067797613,
+        0.060325654
+      ],
+      "raw_call_cpu_seconds": [
+        0.066352934,
+        0.05965674300000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.73828125,
+        8.76171875
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.0640616335,
+      "median_call_cpu_seconds": 0.06300483850000001,
+      "median_train_vm_hwm_mib": 8.75,
+      "median_plan_seconds": 0.029078747500000002,
+      "median_region_non_aa_posting_visits": 202627.0,
+      "median_region_non_aa_valid_merges": 144210.0,
+      "median_region_sum_visit_makespan_lower_bound": 202627.0,
+      "median_region_sum_merge_makespan_lower_bound": 144210.0,
+      "median_region_peak_route_header_capacity_bytes": 352.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 0.0006043385,
+      "median_region_partition_searches": 4096.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.011788024999999999,
+      "median_birth_group_fill_seconds": 0.006664594000000001,
+      "median_aa_sort_seconds": 1.3039e-05,
+      "median_occupied_cores": 0.9835034646751554,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "micro_region_k4",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.04993554,
+        0.058912471
+      ],
+      "raw_call_cpu_seconds": [
+        0.117360735,
+        0.17082655400000002
+      ],
+      "raw_train_vm_hwm_mib": [
+        9.6484375,
+        9.5390625
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.0544240055,
+      "median_call_cpu_seconds": 0.1440936445,
+      "median_train_vm_hwm_mib": 9.59375,
+      "median_plan_seconds": 0.021320994499999992,
+      "median_region_non_aa_posting_visits": 202627.0,
+      "median_region_non_aa_valid_merges": 144210.0,
+      "median_region_sum_visit_makespan_lower_bound": 50698.0,
+      "median_region_sum_merge_makespan_lower_bound": 36166.0,
+      "median_region_peak_route_header_capacity_bytes": 5632.0,
+      "median_region_count_effective": 16.0,
+      "median_region_partition_worker_seconds": 0.0016600085000000003,
+      "median_region_partition_searches": 16384.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.009732487499999998,
+      "median_birth_group_fill_seconds": 0.005839975000000001,
+      "median_aa_sort_seconds": 9.864e-06,
+      "median_occupied_cores": 2.6476118980254038,
+      "static_non_aa_visit_ratio": 3.996745433744921,
+      "fair_serial_over_w4": 0.6899609401222775,
+      "self_w1_over_w4": 1.1770841361538524,
+      "cpu_inflation_c4_over_c1": 2.2870250591944616
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "micro_snapshot_k1",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.044042915,
+        0.033084915
+      ],
+      "raw_call_cpu_seconds": [
+        0.09865924100000001,
+        0.10321989100000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        9.0078125,
+        9.08203125
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.038563915000000004,
+      "median_call_cpu_seconds": 0.10093956600000001,
+      "median_train_vm_hwm_mib": 9.044921875,
+      "median_plan_seconds": 0.015612956,
+      "median_region_non_aa_posting_visits": 202627.0,
+      "median_region_non_aa_valid_merges": 144210.0,
+      "median_region_sum_visit_makespan_lower_bound": 54935.0,
+      "median_region_sum_merge_makespan_lower_bound": 39835.0,
+      "median_region_peak_route_header_capacity_bytes": 1408.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 0.0009059905000000001,
+      "median_region_partition_searches": 4096.0,
+      "median_snapshot_boundary_queries": 21.0,
+      "median_snapshot_deferred_stores": 2.0,
+      "median_frequency_reduce_seconds": 0.006668830000000001,
+      "median_birth_group_fill_seconds": 0.004158066499999999,
+      "median_aa_sort_seconds": 1.0152e-05,
+      "median_occupied_cores": 2.6174615829331644,
+      "static_non_aa_visit_ratio": 3.6884863930099208,
+      "fair_serial_over_w4": 0.9737195510362471
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "micro_snapshot_k4",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.055772688,
+        0.047640736
+      ],
+      "raw_call_cpu_seconds": [
+        0.127241866,
+        0.139183616
+      ],
+      "raw_train_vm_hwm_mib": [
+        9.76171875,
+        9.59375
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.051706712,
+      "median_call_cpu_seconds": 0.13321274100000002,
+      "median_train_vm_hwm_mib": 9.677734375,
+      "median_plan_seconds": 0.0211774615,
+      "median_region_non_aa_posting_visits": 202627.0,
+      "median_region_non_aa_valid_merges": 144210.0,
+      "median_region_sum_visit_makespan_lower_bound": 50698.0,
+      "median_region_sum_merge_makespan_lower_bound": 36166.0,
+      "median_region_peak_route_header_capacity_bytes": 5632.0,
+      "median_region_count_effective": 16.0,
+      "median_region_partition_worker_seconds": 0.0018653825000000002,
+      "median_region_partition_searches": 16384.0,
+      "median_snapshot_boundary_queries": 76.0,
+      "median_snapshot_deferred_stores": 12.0,
+      "median_frequency_reduce_seconds": 0.008502419,
+      "median_birth_group_fill_seconds": 0.006175874499999999,
+      "median_aa_sort_seconds": 9.461999999999999e-06,
+      "median_occupied_cores": 2.5763142897192925,
+      "static_non_aa_visit_ratio": 3.996745433744921,
+      "fair_serial_over_w4": 0.7262197990852715
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "ordered_global",
+      "workers": 1,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.055277236
+      ],
+      "raw_call_cpu_seconds": [
+        0.055153101999999996
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.5546875
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.055277236,
+      "median_call_cpu_seconds": 0.055153101999999996,
+      "median_train_vm_hwm_mib": 8.5546875,
+      "median_plan_seconds": 0.025230543000000005,
+      "median_region_non_aa_posting_visits": 202627,
+      "median_region_non_aa_valid_merges": 144210,
+      "median_region_sum_visit_makespan_lower_bound": 202627,
+      "median_region_sum_merge_makespan_lower_bound": 144210,
+      "median_region_peak_route_header_capacity_bytes": 88,
+      "median_region_count_effective": 1,
+      "median_region_partition_worker_seconds": 0.000264383,
+      "median_region_partition_searches": 1024,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.009302015,
+      "median_birth_group_fill_seconds": 0.005302714000000002,
+      "median_aa_sort_seconds": 0.0,
+      "median_aa_sort_elided_batches": 1,
+      "median_aa_sort_elided_positions": 250,
+      "median_ordered_birth_reversal_segments": 19258,
+      "median_ordered_birth_reversal_positions": 269984,
+      "median_occupied_cores": 0.9977543377892483,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "ordered_global",
+      "workers": 4,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.038337203
+      ],
+      "raw_call_cpu_seconds": [
+        0.112314334
+      ],
+      "raw_train_vm_hwm_mib": [
+        9.0234375
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.038337203,
+      "median_call_cpu_seconds": 0.112314334,
+      "median_train_vm_hwm_mib": 9.0234375,
+      "median_plan_seconds": 0.015963388999999998,
+      "median_region_non_aa_posting_visits": 202627,
+      "median_region_non_aa_valid_merges": 144210,
+      "median_region_sum_visit_makespan_lower_bound": 54935,
+      "median_region_sum_merge_makespan_lower_bound": 39835,
+      "median_region_peak_route_header_capacity_bytes": 1408,
+      "median_region_count_effective": 4,
+      "median_region_partition_worker_seconds": 0.000851686,
+      "median_region_partition_searches": 4096,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.007444953999999998,
+      "median_birth_group_fill_seconds": 0.004498126,
+      "median_aa_sort_seconds": 0.0,
+      "median_aa_sort_elided_batches": 1,
+      "median_aa_sort_elided_positions": 250,
+      "median_ordered_birth_reversal_segments": 50812,
+      "median_ordered_birth_reversal_positions": 269984,
+      "median_occupied_cores": 2.9296434066929713,
+      "static_non_aa_visit_ratio": 3.6884863930099208,
+      "fair_serial_over_w4": 0.9794777673269487,
+      "self_w1_over_w4": 1.4418692986027175,
+      "cpu_inflation_c4_over_c1": 2.036410100741025
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "ordered_region",
+      "workers": 1,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.064025957
+      ],
+      "raw_call_cpu_seconds": [
+        0.06355429800000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.62890625
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.064025957,
+      "median_call_cpu_seconds": 0.06355429800000001,
+      "median_train_vm_hwm_mib": 8.62890625,
+      "median_plan_seconds": 0.030270865,
+      "median_region_non_aa_posting_visits": 202627,
+      "median_region_non_aa_valid_merges": 144210,
+      "median_region_sum_visit_makespan_lower_bound": 202627,
+      "median_region_sum_merge_makespan_lower_bound": 144210,
+      "median_region_peak_route_header_capacity_bytes": 88,
+      "median_region_count_effective": 1,
+      "median_region_partition_worker_seconds": 0.00031291500000000014,
+      "median_region_partition_searches": 1024,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.011181605999999997,
+      "median_birth_group_fill_seconds": 0.005531805000000002,
+      "median_aa_sort_seconds": 1.9516e-05,
+      "median_aa_sort_elided_batches": 0,
+      "median_aa_sort_elided_positions": 0,
+      "median_ordered_birth_reversal_segments": 0,
+      "median_ordered_birth_reversal_positions": 0,
+      "median_occupied_cores": 0.9926333158909286,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "ordered_region",
+      "workers": 4,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.039242407
+      ],
+      "raw_call_cpu_seconds": [
+        0.11164845200000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        9.06640625
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.039242407,
+      "median_call_cpu_seconds": 0.11164845200000001,
+      "median_train_vm_hwm_mib": 9.06640625,
+      "median_plan_seconds": 0.015802653000000003,
+      "median_region_non_aa_posting_visits": 202627,
+      "median_region_non_aa_valid_merges": 144210,
+      "median_region_sum_visit_makespan_lower_bound": 54935,
+      "median_region_sum_merge_makespan_lower_bound": 39835,
+      "median_region_peak_route_header_capacity_bytes": 1408,
+      "median_region_count_effective": 4,
+      "median_region_partition_worker_seconds": 0.0008339060000000001,
+      "median_region_partition_searches": 4096,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.008128747000000002,
+      "median_birth_group_fill_seconds": 0.003926911000000002,
+      "median_aa_sort_seconds": 7.117e-06,
+      "median_aa_sort_elided_batches": 0,
+      "median_aa_sort_elided_positions": 0,
+      "median_ordered_birth_reversal_segments": 0,
+      "median_ordered_birth_reversal_positions": 0,
+      "median_occupied_cores": 2.8450969381159523,
+      "static_non_aa_visit_ratio": 3.6884863930099208,
+      "fair_serial_over_w4": 0.9568841687004571,
+      "self_w1_over_w4": 1.6315502002718638,
+      "cpu_inflation_c4_over_c1": 1.756741172721316
+    },
+    {
+      "case_id": "quick-en-continuous-262144",
+      "mode": "serial_cf32_ahash_checked",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.039023642,
+        0.036077234
+      ],
+      "raw_call_cpu_seconds": [
+        0.038464808,
+        0.036071899000000004
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.9140625,
+        7.91796875
+      ],
+      "fingerprint": "0bcb71539a6d3798af47002cfdd18f2f34a85a5c14b0453f52fde997dc644c54",
+      "median_call_seconds": 0.037550438,
+      "median_call_cpu_seconds": 0.037268353500000004,
+      "median_train_vm_hwm_mib": 7.916015625,
+      "median_occupied_cores": 0.9924878506077613
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "atomic_owner",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.042152549,
+        0.034442595
+      ],
+      "raw_call_cpu_seconds": [
+        0.041805951,
+        0.033460983
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.21875,
+        7.22265625
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.038297572,
+      "median_call_cpu_seconds": 0.037633467000000004,
+      "median_train_vm_hwm_mib": 7.220703125,
+      "median_plan_seconds": 0.008363538999999996,
+      "median_old_route_records_before_flush": 0.0,
+      "median_atomic_old_calls": 0.0,
+      "median_atomic_retire_markers": 0.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0,
+      "median_preflush_route_capacity_peak": 0.0,
+      "median_fused_commit_seconds": 0.008421079500000001,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 0.00015910500000000004,
+      "median_occupied_cores": 0.9826593445662822
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "atomic_owner",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.025545487,
+        0.022342048
+      ],
+      "raw_call_cpu_seconds": [
+        0.074992393,
+        0.066414913
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.09375,
+        7.9609375
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.023943767499999997,
+      "median_call_cpu_seconds": 0.070703653,
+      "median_train_vm_hwm_mib": 8.02734375,
+      "median_plan_seconds": 0.0057363845,
+      "median_old_route_records_before_flush": 0.0,
+      "median_atomic_old_calls": 0.0,
+      "median_atomic_retire_markers": 0.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0,
+      "median_preflush_route_capacity_peak": 0.0,
+      "median_fused_commit_seconds": 0.0049915310000000004,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 0.0001428765,
+      "median_occupied_cores": 2.9529042578616758,
+      "fair_serial_over_w4": 0.8288495743203321,
+      "self_w1_over_w4": 1.599479781116318,
+      "cpu_inflation_c4_over_c1": 1.8787440710684455
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "atomic_producer-atomic",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.029530741,
+        0.031706929
+      ],
+      "raw_call_cpu_seconds": [
+        0.029410778,
+        0.031702448
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.1796875,
+        7.17578125
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.030618835,
+      "median_call_cpu_seconds": 0.030556613,
+      "median_train_vm_hwm_mib": 7.177734375,
+      "median_plan_seconds": 0.009322055999999999,
+      "median_old_route_records_before_flush": 14968.0,
+      "median_atomic_old_calls": 9287.0,
+      "median_atomic_retire_markers": 3748.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0012302629999999997,
+      "median_preflush_route_capacity_peak": 1792.0,
+      "median_fused_commit_seconds": 0.004898970000000001,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 0.00016120849999999999,
+      "median_occupied_cores": 0.997967852140684
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "atomic_producer-atomic",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.022902172,
+        0.022053498
+      ],
+      "raw_call_cpu_seconds": [
+        0.05311124500000001,
+        0.063464828
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.015625,
+        7.97265625
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.022477835,
+      "median_call_cpu_seconds": 0.0582880365,
+      "median_train_vm_hwm_mib": 7.994140625,
+      "median_plan_seconds": 0.006172553500000002,
+      "median_old_route_records_before_flush": 15258.0,
+      "median_atomic_old_calls": 9577.0,
+      "median_atomic_retire_markers": 3748.0,
+      "median_atomic_flush_worker_seconds_sum": 0.0019305404999999999,
+      "median_preflush_route_capacity_peak": 2268.0,
+      "median_fused_commit_seconds": 0.0036264905,
+      "median_frequency_reduce_seconds": 0.0,
+      "median_birth_group_fill_seconds": 0.0,
+      "median_aa_sort_seconds": 0.00013969649999999998,
+      "median_occupied_cores": 2.593133925042158,
+      "fair_serial_over_w4": 0.8829044923588059,
+      "self_w1_over_w4": 1.3621790087879904,
+      "cpu_inflation_c4_over_c1": 1.907542452430837
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "micro_region_k1",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.034717034,
+        0.034280066
+      ],
+      "raw_call_cpu_seconds": [
+        0.032358327,
+        0.034243808
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.46875,
+        7.3671875
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.03449855,
+      "median_call_cpu_seconds": 0.0333010675,
+      "median_train_vm_hwm_mib": 7.41796875,
+      "median_plan_seconds": 0.007984832500000004,
+      "median_region_non_aa_posting_visits": 28281.0,
+      "median_region_non_aa_valid_merges": 25495.0,
+      "median_region_sum_visit_makespan_lower_bound": 28281.0,
+      "median_region_sum_merge_makespan_lower_bound": 25495.0,
+      "median_region_peak_route_header_capacity_bytes": 88.0,
+      "median_region_count_effective": 1.0,
+      "median_region_partition_worker_seconds": 0.00012066750000000001,
+      "median_region_partition_searches": 1024.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.0051821755,
+      "median_birth_group_fill_seconds": 0.0024424985,
+      "median_aa_sort_seconds": 0.0001502325,
+      "median_occupied_cores": 0.9652889034466666,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "micro_region_k1",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.020929997,
+        0.022181361
+      ],
+      "raw_call_cpu_seconds": [
+        0.06922098,
+        0.058659573
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.1328125,
+        8.3671875
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.021555679,
+      "median_call_cpu_seconds": 0.0639402765,
+      "median_train_vm_hwm_mib": 8.25,
+      "median_plan_seconds": 0.0059793715,
+      "median_region_non_aa_posting_visits": 28281.0,
+      "median_region_non_aa_valid_merges": 25495.0,
+      "median_region_sum_visit_makespan_lower_bound": 10708.0,
+      "median_region_sum_merge_makespan_lower_bound": 9763.0,
+      "median_region_peak_route_header_capacity_bytes": 1408.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 0.00036107299999999995,
+      "median_region_partition_searches": 4096.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.003336024499999999,
+      "median_birth_group_fill_seconds": 0.0020433114999999996,
+      "median_aa_sort_seconds": 9.83355e-05,
+      "median_occupied_cores": 2.9662844997830966,
+      "static_non_aa_visit_ratio": 2.6411094508778485,
+      "fair_serial_over_w4": 0.92067531252437,
+      "self_w1_over_w4": 1.6004390304754492,
+      "cpu_inflation_c4_over_c1": 1.920066871730163
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "micro_region_k4",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.036103479,
+        0.032726039
+      ],
+      "raw_call_cpu_seconds": [
+        0.033920383000000005,
+        0.032713411000000005
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.390625,
+        7.3203125
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.034414759,
+      "median_call_cpu_seconds": 0.033316897000000005,
+      "median_train_vm_hwm_mib": 7.35546875,
+      "median_plan_seconds": 0.009060710999999999,
+      "median_region_non_aa_posting_visits": 28281.0,
+      "median_region_non_aa_valid_merges": 25495.0,
+      "median_region_sum_visit_makespan_lower_bound": 28281.0,
+      "median_region_sum_merge_makespan_lower_bound": 25495.0,
+      "median_region_peak_route_header_capacity_bytes": 352.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 0.00025651099999999996,
+      "median_region_partition_searches": 4096.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.005618375999999999,
+      "median_birth_group_fill_seconds": 0.0026710549999999994,
+      "median_aa_sort_seconds": 0.000131893,
+      "median_occupied_cores": 0.9680990937638123,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "micro_region_k4",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.02332174,
+        0.027412936
+      ],
+      "raw_call_cpu_seconds": [
+        0.07721533000000001,
+        0.06965227700000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.1875,
+        8.328125
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.025367338,
+      "median_call_cpu_seconds": 0.0734338035,
+      "median_train_vm_hwm_mib": 8.2578125,
+      "median_plan_seconds": 0.007084227499999997,
+      "median_region_non_aa_posting_visits": 28281.0,
+      "median_region_non_aa_valid_merges": 25495.0,
+      "median_region_sum_visit_makespan_lower_bound": 7943.0,
+      "median_region_sum_merge_makespan_lower_bound": 7259.0,
+      "median_region_peak_route_header_capacity_bytes": 5632.0,
+      "median_region_count_effective": 16.0,
+      "median_region_partition_worker_seconds": 0.0008464809999999998,
+      "median_region_partition_searches": 16384.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.003944040499999999,
+      "median_birth_group_fill_seconds": 0.0024133609999999993,
+      "median_aa_sort_seconds": 0.000107412,
+      "median_occupied_cores": 2.894817087232409,
+      "static_non_aa_visit_ratio": 3.5604935163036635,
+      "fair_serial_over_w4": 0.7823359904772034,
+      "self_w1_over_w4": 1.356656303471811,
+      "cpu_inflation_c4_over_c1": 2.2041009251251698
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "micro_snapshot_k1",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.017728806,
+        0.01741093
+      ],
+      "raw_call_cpu_seconds": [
+        0.05976543,
+        0.05815426300000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.0703125,
+        8.1796875
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.017569868000000002,
+      "median_call_cpu_seconds": 0.05895984650000001,
+      "median_train_vm_hwm_mib": 8.125,
+      "median_plan_seconds": 0.004846745999999999,
+      "median_region_non_aa_posting_visits": 28281.0,
+      "median_region_non_aa_valid_merges": 25495.0,
+      "median_region_sum_visit_makespan_lower_bound": 10708.0,
+      "median_region_sum_merge_makespan_lower_bound": 9763.0,
+      "median_region_peak_route_header_capacity_bytes": 1408.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 0.0003430170000000001,
+      "median_region_partition_searches": 4096.0,
+      "median_snapshot_boundary_queries": 2.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.0027643015,
+      "median_birth_group_fill_seconds": 0.0016632234999999999,
+      "median_aa_sort_seconds": 8.678049999999999e-05,
+      "median_occupied_cores": 3.3557364517479584,
+      "static_non_aa_visit_ratio": 2.6411094508778485,
+      "fair_serial_over_w4": 1.1295350369166117
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "micro_snapshot_k4",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.042275043,
+        0.021816157
+      ],
+      "raw_call_cpu_seconds": [
+        0.09043712200000001,
+        0.06980565600000001
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.94140625,
+        8.0
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.0320456,
+      "median_call_cpu_seconds": 0.08012138900000002,
+      "median_train_vm_hwm_mib": 7.970703125,
+      "median_plan_seconds": 0.009465311,
+      "median_region_non_aa_posting_visits": 28281.0,
+      "median_region_non_aa_valid_merges": 25495.0,
+      "median_region_sum_visit_makespan_lower_bound": 7943.0,
+      "median_region_sum_merge_makespan_lower_bound": 7259.0,
+      "median_region_peak_route_header_capacity_bytes": 5632.0,
+      "median_region_count_effective": 16.0,
+      "median_region_partition_worker_seconds": 0.0008258095,
+      "median_region_partition_searches": 16384.0,
+      "median_snapshot_boundary_queries": 41.0,
+      "median_snapshot_deferred_stores": 8.0,
+      "median_frequency_reduce_seconds": 0.005866034500000001,
+      "median_birth_group_fill_seconds": 0.0027313749999999994,
+      "median_aa_sort_seconds": 0.000141182,
+      "median_occupied_cores": 2.500230577676811,
+      "static_non_aa_visit_ratio": 3.5604935163036635,
+      "fair_serial_over_w4": 0.6192981719799285
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "ordered_global",
+      "workers": 1,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.029999884
+      ],
+      "raw_call_cpu_seconds": [
+        0.029452680000000002
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.52734375
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.029999884,
+      "median_call_cpu_seconds": 0.029452680000000002,
+      "median_train_vm_hwm_mib": 7.52734375,
+      "median_plan_seconds": 0.007020944999999999,
+      "median_region_non_aa_posting_visits": 28281,
+      "median_region_non_aa_valid_merges": 25495,
+      "median_region_sum_visit_makespan_lower_bound": 28281,
+      "median_region_sum_merge_makespan_lower_bound": 25495,
+      "median_region_peak_route_header_capacity_bytes": 88,
+      "median_region_count_effective": 1,
+      "median_region_partition_worker_seconds": 0.000105804,
+      "median_region_partition_searches": 1024,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.004390899000000001,
+      "median_birth_group_fill_seconds": 0.002146945,
+      "median_aa_sort_seconds": 0.0,
+      "median_aa_sort_elided_batches": 11,
+      "median_aa_sort_elided_positions": 1389,
+      "median_ordered_birth_reversal_segments": 5338,
+      "median_ordered_birth_reversal_positions": 40975,
+      "median_occupied_cores": 0.9817597961378784,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "ordered_global",
+      "workers": 4,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.020795837
+      ],
+      "raw_call_cpu_seconds": [
+        0.059881184000000004
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.046875
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.020795837,
+      "median_call_cpu_seconds": 0.059881184000000004,
+      "median_train_vm_hwm_mib": 8.046875,
+      "median_plan_seconds": 0.005856163999999999,
+      "median_region_non_aa_posting_visits": 28281,
+      "median_region_non_aa_valid_merges": 25495,
+      "median_region_sum_visit_makespan_lower_bound": 10708,
+      "median_region_sum_merge_makespan_lower_bound": 9763,
+      "median_region_peak_route_header_capacity_bytes": 1408,
+      "median_region_count_effective": 4,
+      "median_region_partition_worker_seconds": 0.0003738179999999999,
+      "median_region_partition_searches": 4096,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.0029830910000000006,
+      "median_birth_group_fill_seconds": 0.0023997899999999997,
+      "median_aa_sort_seconds": 0.0,
+      "median_aa_sort_elided_batches": 11,
+      "median_aa_sort_elided_positions": 1389,
+      "median_ordered_birth_reversal_segments": 11654,
+      "median_ordered_birth_reversal_positions": 40975,
+      "median_occupied_cores": 2.879479388110226,
+      "static_non_aa_visit_ratio": 2.6411094508778485,
+      "fair_serial_over_w4": 0.9543151112407737,
+      "self_w1_over_w4": 1.442590841618926,
+      "cpu_inflation_c4_over_c1": 2.0331319255157765
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "ordered_region",
+      "workers": 1,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.035796207
+      ],
+      "raw_call_cpu_seconds": [
+        0.034098561
+      ],
+      "raw_train_vm_hwm_mib": [
+        7.55078125
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.035796207,
+      "median_call_cpu_seconds": 0.034098561,
+      "median_train_vm_hwm_mib": 7.55078125,
+      "median_plan_seconds": 0.009121805,
+      "median_region_non_aa_posting_visits": 28281,
+      "median_region_non_aa_valid_merges": 25495,
+      "median_region_sum_visit_makespan_lower_bound": 28281,
+      "median_region_sum_merge_makespan_lower_bound": 25495,
+      "median_region_peak_route_header_capacity_bytes": 88,
+      "median_region_count_effective": 1,
+      "median_region_partition_worker_seconds": 0.00014132499999999993,
+      "median_region_partition_searches": 1024,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.006251249999999998,
+      "median_birth_group_fill_seconds": 0.0031729840000000007,
+      "median_aa_sort_seconds": 0.00019108799999999998,
+      "median_aa_sort_elided_batches": 0,
+      "median_aa_sort_elided_positions": 0,
+      "median_ordered_birth_reversal_segments": 0,
+      "median_ordered_birth_reversal_positions": 0,
+      "median_occupied_cores": 0.9525746959726767,
+      "static_non_aa_visit_ratio": 1.0
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "ordered_region",
+      "workers": 4,
+      "repeats": [
+        0
+      ],
+      "raw_call_seconds": [
+        0.022400031
+      ],
+      "raw_call_cpu_seconds": [
+        0.055421012
+      ],
+      "raw_train_vm_hwm_mib": [
+        8.3125
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.022400031,
+      "median_call_cpu_seconds": 0.055421012,
+      "median_train_vm_hwm_mib": 8.3125,
+      "median_plan_seconds": 0.006076625000000002,
+      "median_region_non_aa_posting_visits": 28281,
+      "median_region_non_aa_valid_merges": 25495,
+      "median_region_sum_visit_makespan_lower_bound": 10708,
+      "median_region_sum_merge_makespan_lower_bound": 9763,
+      "median_region_peak_route_header_capacity_bytes": 1408,
+      "median_region_count_effective": 4,
+      "median_region_partition_worker_seconds": 0.0003334590000000002,
+      "median_region_partition_searches": 4096,
+      "median_snapshot_boundary_queries": 0,
+      "median_snapshot_deferred_stores": 0,
+      "median_frequency_reduce_seconds": 0.003550874000000001,
+      "median_birth_group_fill_seconds": 0.002104880000000001,
+      "median_aa_sort_seconds": 9.528700000000001e-05,
+      "median_aa_sort_elided_batches": 0,
+      "median_aa_sort_elided_positions": 0,
+      "median_ordered_birth_reversal_segments": 0,
+      "median_ordered_birth_reversal_positions": 0,
+      "median_occupied_cores": 2.4741488973832224,
+      "static_non_aa_visit_ratio": 2.6411094508778485,
+      "fair_serial_over_w4": 0.8859711622720522,
+      "self_w1_over_w4": 1.5980427437801312,
+      "cpu_inflation_c4_over_c1": 1.625318206243366
+    },
+    {
+      "case_id": "quick-zh-continuous-262144",
+      "mode": "serial_cf32_ahash_checked",
+      "workers": 1,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.020950899,
+        0.018740664
+      ],
+      "raw_call_cpu_seconds": [
+        0.02094445,
+        0.018734937
+      ],
+      "raw_train_vm_hwm_mib": [
+        5.78125,
+        5.80078125
+      ],
+      "fingerprint": "b23f821ae88efcd4a4209d7044577ec49835afa3a5f966ff44bbe0ba2971a762",
+      "median_call_seconds": 0.0198457815,
+      "median_call_cpu_seconds": 0.019839693499999998,
+      "median_train_vm_hwm_mib": 5.791015625,
+      "median_occupied_cores": 0.9996932345546583
+    },
+    {
+      "case_id": "single-piece-ab-65536",
+      "mode": "ordered_global",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.011631416,
+        0.010862245
+      ],
+      "raw_call_cpu_seconds": [
+        0.021630566,
+        0.025386429000000002
+      ],
+      "raw_train_vm_hwm_mib": [
+        4.625,
+        4.52734375
+      ],
+      "fingerprint": "f28f8dd3e08c3b3a67f976e290c782049c728b742dbb4394d1064ee45fd010ae",
+      "median_call_seconds": 0.011246830499999999,
+      "median_call_cpu_seconds": 0.023508497500000003,
+      "median_train_vm_hwm_mib": 4.576171875,
+      "median_plan_seconds": 0.006105818000000001,
+      "median_region_non_aa_posting_visits": 32768.0,
+      "median_region_non_aa_valid_merges": 32768.0,
+      "median_region_sum_visit_makespan_lower_bound": 8192.0,
+      "median_region_sum_merge_makespan_lower_bound": 8192.0,
+      "median_region_peak_route_header_capacity_bytes": 1408.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 4.3875e-06,
+      "median_region_partition_searches": 128.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.00042868150000000005,
+      "median_birth_group_fill_seconds": 0.0010484305,
+      "median_aa_sort_seconds": 0.0,
+      "median_aa_sort_elided_batches": 15.0,
+      "median_aa_sort_elided_positions": 65519.0,
+      "median_ordered_birth_reversal_segments": 56.0,
+      "median_ordered_birth_reversal_positions": 65519.0,
+      "median_occupied_cores": 2.0902331105639056,
+      "static_non_aa_visit_ratio": 4.0
+    },
+    {
+      "case_id": "single-piece-ab-65536",
+      "mode": "ordered_region",
+      "workers": 4,
+      "repeats": [
+        1,
+        2
+      ],
+      "raw_call_seconds": [
+        0.008721818,
+        0.01408451
+      ],
+      "raw_call_cpu_seconds": [
+        0.019550770000000002,
+        0.024220883000000002
+      ],
+      "raw_train_vm_hwm_mib": [
+        4.7109375,
+        4.9140625
+      ],
+      "fingerprint": "f28f8dd3e08c3b3a67f976e290c782049c728b742dbb4394d1064ee45fd010ae",
+      "median_call_seconds": 0.011403164,
+      "median_call_cpu_seconds": 0.021885826500000004,
+      "median_train_vm_hwm_mib": 4.8125,
+      "median_plan_seconds": 0.005890146000000001,
+      "median_region_non_aa_posting_visits": 32768.0,
+      "median_region_non_aa_valid_merges": 32768.0,
+      "median_region_sum_visit_makespan_lower_bound": 8192.0,
+      "median_region_sum_merge_makespan_lower_bound": 8192.0,
+      "median_region_peak_route_header_capacity_bytes": 1408.0,
+      "median_region_count_effective": 4.0,
+      "median_region_partition_worker_seconds": 4.4455e-06,
+      "median_region_partition_searches": 128.0,
+      "median_snapshot_boundary_queries": 0.0,
+      "median_snapshot_deferred_stores": 0.0,
+      "median_frequency_reduce_seconds": 0.0003803535,
+      "median_birth_group_fill_seconds": 0.0009932909999999999,
+      "median_aa_sort_seconds": 0.001092825,
+      "median_aa_sort_elided_batches": 0.0,
+      "median_aa_sort_elided_positions": 0.0,
+      "median_ordered_birth_reversal_segments": 0.0,
+      "median_ordered_birth_reversal_positions": 0.0,
+      "median_occupied_cores": 1.9192766586536862,
+      "static_non_aa_visit_ratio": 4.0
+    }
+  ],
+  "aggregation": "separate medians of wall, process CPU, HWM and each metric; n=2 median is arithmetic midpoint",
+  "interpretation": "n=2 gives a range, not a confidence interval; static load ratio assumes equal visit cost"
+}

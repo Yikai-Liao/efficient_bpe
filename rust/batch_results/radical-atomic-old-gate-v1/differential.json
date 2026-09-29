@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "standard_fulltrace_matches": 80,
+  "directed_fulltrace_matches": 5,
+  "directed": [
+    {
+      "case": "weighted64",
+      "mode": "owner",
+      "hasher": "std",
+      "heap": "lazy",
+      "atomic_old_calls": 0,
+      "atomic_retire_markers": 0,
+      "old_route_records_before_flush": 0
+    },
+    {
+      "case": "weighted64",
+      "mode": "producer-atomic",
+      "hasher": "std",
+      "heap": "lazy",
+      "atomic_old_calls": 2,
+      "atomic_retire_markers": 2,
+      "old_route_records_before_flush": 2
+    },
+    {
+      "case": "large-u64-weight",
+      "mode": "owner",
+      "hasher": "std",
+      "heap": "lazy",
+      "atomic_old_calls": 0,
+      "atomic_retire_markers": 0,
+      "old_route_records_before_flush": 0
+    },
+    {
+      "case": "large-u64-weight",
+      "mode": "producer-atomic",
+      "hasher": "std",
+      "heap": "lazy",
+      "atomic_old_calls": 2,
+      "atomic_retire_markers": 2,
+      "old_route_records_before_flush": 2
+    },
+    {
+      "case": "weighted64-eager-fallback",
+      "requested": "producer-atomic",
+      "effective": "owner",
+      "atomic_old_calls": 0
+    }
+  ],
+  "binary_sha256": "8d2d8aebc774ac33147c6680de9917b0e90c8334667a3504df3791c470862039",
+  "oracle": "Python naive full recount; complete merge trace and final tokens"
+}

@@ -1,0 +1,121 @@
+{
+  "status": "passed",
+  "standard_cases": 20,
+  "standard_fulltrace_matches": 80,
+  "directed_fulltrace_matches": 10,
+  "directed": [
+    {
+      "case": "adjacent-fresh",
+      "order": "region",
+      "posting_order_effective": "region",
+      "aa_sort_elided_batches": 0,
+      "aa_sort_elided_positions": 0,
+      "ordered_birth_reversal_segments": 0,
+      "ordered_birth_reversal_positions": 0,
+      "snapshot_deferred_stores": 28,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "adjacent-fresh",
+      "order": "global",
+      "posting_order_effective": "global",
+      "aa_sort_elided_batches": 4,
+      "aa_sort_elided_positions": 41,
+      "ordered_birth_reversal_segments": 98,
+      "ordered_birth_reversal_positions": 136,
+      "snapshot_deferred_stores": 28,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "aa-to-non-aa",
+      "order": "region",
+      "posting_order_effective": "region",
+      "aa_sort_elided_batches": 0,
+      "aa_sort_elided_positions": 0,
+      "ordered_birth_reversal_segments": 0,
+      "ordered_birth_reversal_positions": 0,
+      "snapshot_deferred_stores": 4,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "aa-to-non-aa",
+      "order": "global",
+      "posting_order_effective": "global",
+      "aa_sort_elided_batches": 10,
+      "aa_sort_elided_positions": 146,
+      "ordered_birth_reversal_segments": 78,
+      "ordered_birth_reversal_positions": 145,
+      "snapshot_deferred_stores": 4,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "long-multicut",
+      "order": "region",
+      "posting_order_effective": "region",
+      "aa_sort_elided_batches": 0,
+      "aa_sort_elided_positions": 0,
+      "ordered_birth_reversal_segments": 0,
+      "ordered_birth_reversal_positions": 0,
+      "snapshot_deferred_stores": 0,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "long-multicut",
+      "order": "global",
+      "posting_order_effective": "global",
+      "aa_sort_elided_batches": 8,
+      "aa_sort_elided_positions": 1012,
+      "ordered_birth_reversal_segments": 97,
+      "ordered_birth_reversal_positions": 511,
+      "snapshot_deferred_stores": 0,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "remote-endpoint",
+      "order": "region",
+      "posting_order_effective": "region",
+      "aa_sort_elided_batches": 0,
+      "aa_sort_elided_positions": 0,
+      "ordered_birth_reversal_segments": 0,
+      "ordered_birth_reversal_positions": 0,
+      "snapshot_deferred_stores": 7,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "remote-endpoint",
+      "order": "global",
+      "posting_order_effective": "global",
+      "aa_sort_elided_batches": 1,
+      "aa_sort_elided_positions": 128,
+      "ordered_birth_reversal_segments": 33,
+      "ordered_birth_reversal_positions": 192,
+      "snapshot_deferred_stores": 7,
+      "endpoint_domain_fallback": false
+    },
+    {
+      "case": "domain-fallback",
+      "order": "region",
+      "posting_order_effective": "region",
+      "aa_sort_elided_batches": 0,
+      "aa_sort_elided_positions": 0,
+      "ordered_birth_reversal_segments": 0,
+      "ordered_birth_reversal_positions": 0,
+      "snapshot_deferred_stores": 0,
+      "endpoint_domain_fallback": true
+    },
+    {
+      "case": "domain-fallback",
+      "order": "global",
+      "posting_order_effective": "region",
+      "aa_sort_elided_batches": 0,
+      "aa_sort_elided_positions": 0,
+      "ordered_birth_reversal_segments": 0,
+      "ordered_birth_reversal_positions": 0,
+      "snapshot_deferred_stores": 0,
+      "endpoint_domain_fallback": true
+    }
+  ],
+  "invalid_global_dynamic_rejections": 1,
+  "binary_sha256": "dcd230559be789c94183bd1e954cd753ad3f682f15100749f6a6a68f4c0a5662",
+  "oracle": "Python naive full recount; complete merge trace and final tokens"
+}

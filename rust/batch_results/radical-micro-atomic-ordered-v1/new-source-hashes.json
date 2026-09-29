@@ -1,0 +1,22 @@
+{
+  "rust/experiments/radical/owned_atomic_old/Cargo.lock": "6cea60e9b7cdd5ac181ccd7392bd0a7513154da774202324c3ab92f4aab79f42",
+  "rust/experiments/radical/owned_atomic_old/Cargo.toml": "c0980a5de60254b59dac196a4c6406b130a4419fc3e292669a36872e0e60b5c0",
+  "rust/experiments/radical/owned_atomic_old/DESIGN.md": "172394dc64c1adaa800d93040df6d5b2d92db87c4a2185b6d5bda013e3b39bd7",
+  "rust/experiments/radical/owned_atomic_old/src/lib.rs": "30c09d22e54852c56c5daa0642068d8a49eaca0ff7ebc09b4c6b737e3777b715",
+  "rust/experiments/radical/owned_atomic_old/src/main.rs": "0e5bbcf7b3c41b491e436999136782b32d8326e8d830e616e1896b494308b013",
+  "rust/experiments/radical/owned_atomic_old/src/small_posting.rs": "d3fb96b80ba8816fe30df4aff1822e1ca4bad6bbd5bad09297e9416f8b07032d",
+  "rust/experiments/radical/owned_ordered_posting/Cargo.lock": "f58307dd9d8124b5d21fc3086abd464526d8fbbf80a4023436e6ae4cb9ecfd17",
+  "rust/experiments/radical/owned_ordered_posting/Cargo.toml": "102ed4d90f0cad14d35f99bc4849cb29882a5e066e831dcf9c116036a5857004",
+  "rust/experiments/radical/owned_ordered_posting/DESIGN.md": "02c00e1ccbdfea66ab249de93f148dad64b42b01150cf93521253bf2fca7cc18",
+  "rust/experiments/radical/owned_ordered_posting/src/lib.rs": "1ba579b8a1fd16f464598dd387ea11dba6fe904608fcbb3288abd7fb90020f02",
+  "rust/experiments/radical/owned_ordered_posting/src/main.rs": "8dc5d41ea717822d62f7d0aa9fd32e9e8cb1668044dd88b3d177e1b726512049",
+  "rust/experiments/radical/owned_ordered_posting/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+  "rust/experiments/radical/owned_ordered_posting/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb",
+  "rust/experiments/radical/owned_region_tasks/Cargo.lock": "f676d1c56534ff516a59aa5a9e656bf514a71b82ee711d6a96f89995ce34bb21",
+  "rust/experiments/radical/owned_region_tasks/Cargo.toml": "420b9434e64144276baadc07c57b244688084a8af709088bc7f845a64adac775",
+  "rust/experiments/radical/owned_region_tasks/DESIGN.md": "95249c07997c65d08dcf257d5cfb024e9c9a88e83ceebd2de933358ac66eb976",
+  "rust/experiments/radical/owned_region_tasks/src/lib.rs": "eeb50cb215cf00a4aee7c3f2d9d076967b90f464ce22ca8968db56a60ce4183e",
+  "rust/experiments/radical/owned_region_tasks/src/main.rs": "c02cb0b66e747f76e4093d1b72df1ff3fb1618d77facad67cf4cb8162e3737a9",
+  "rust/experiments/radical/owned_region_tasks/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+  "rust/experiments/radical/owned_region_tasks/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb"
+}

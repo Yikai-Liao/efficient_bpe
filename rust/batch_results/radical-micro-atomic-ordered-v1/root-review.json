@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "new_source_files": 20,
+  "shared_files": 26,
+  "capsule_matches_frozen_sources": true,
+  "shared_matches_base": true,
+  "measured_calls": 56,
+  "all_full_trace_flags_true": true,
+  "per_case_fingerprints_equal": true,
+  "cpu_affinity_checked": true,
+  "binary_hashes_checked": true,
+  "scope": "Read-only provenance and result consistency review; no rerun or extra measured calls."
+}
