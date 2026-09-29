@@ -2,3 +2,6 @@
 /fixtures/
 /results/reruns/
 __pycache__/
+
+/ablation_results/reruns/
+*.progress.log

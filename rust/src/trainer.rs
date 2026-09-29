@@ -108,7 +108,7 @@ fn pair_key(left: u32, right: u32) -> u64 {
 }
 
 #[cfg_attr(feature = "profiling", hotpath::measure)]
-fn validate(prepared: &Prepared, options: TrainOptions) -> Result<(), TrainError> {
+pub(crate) fn validate(prepared: &Prepared, options: TrainOptions) -> Result<(), TrainError> {
     let corpus = &prepared.corpus;
     let lengths = &prepared.initial_lengths;
     let pivots = &prepared.pivots;

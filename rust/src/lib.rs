@@ -1,5 +1,6 @@
 //! Exact weighted BPE core with a movable u32 endpoint corpus.
 
+pub mod ablation;
 mod backend;
 mod trainer;
 
