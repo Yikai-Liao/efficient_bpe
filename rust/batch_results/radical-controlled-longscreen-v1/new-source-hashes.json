@@ -1,0 +1,14 @@
+{
+  "rust/experiments/radical/owned_narrow_exact/Cargo.lock": "4fa301d34404181727df260e655bf2f002a4106a288eaf21d0bb653c608efb70",
+  "rust/experiments/radical/owned_narrow_exact/Cargo.toml": "43c4ff788db1df1bf5993b5ac1612deaf599e0ce9ddcc20e42a0eb971c97ad4d",
+  "rust/experiments/radical/owned_narrow_exact/DESIGN.md": "0cc5a6b0d317f3af5340e662262a32b800b54b677f92fbd8e3c55e3aaf0a838e",
+  "rust/experiments/radical/owned_narrow_exact/src/lib.rs": "ec8c8360bf6bc78a7bb30fc5cc4010e5e9be55e6c4471fa77d4f0daacc638544",
+  "rust/experiments/radical/owned_narrow_exact/src/main.rs": "1d20f7109afbad059c78fdb63a736175e7e5e60d5737bfc05ff56e5e444dd9a4",
+  "rust/experiments/radical/owned_narrow_exact/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+  "rust/experiments/radical/owned_route_cache_reset/Cargo.lock": "3c58c7257537ef4bd5393a792cf097c9ed5886f54d99b3c1ad51bccc3a07d9d6",
+  "rust/experiments/radical/owned_route_cache_reset/Cargo.toml": "cd4a048f7f13f7407cd9b4994995e1e71e4eddfcfe6f9656073a18057b3c5712",
+  "rust/experiments/radical/owned_route_cache_reset/DESIGN.md": "50bda032a5632851bad8d7f3a71e9f8ef624e40ea7a7c3f801367b4d8624cca7",
+  "rust/experiments/radical/owned_route_cache_reset/src/lib.rs": "2806ad1e61704700cf17fd26f18ed645147c2db9be56a0d4ce4a0d547f96b5fb",
+  "rust/experiments/radical/owned_route_cache_reset/src/main.rs": "b359a463795acb48bea980139c6fec9a086391033b28cbd66a44293e01502c89",
+  "rust/experiments/radical/owned_route_cache_reset/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede"
+}

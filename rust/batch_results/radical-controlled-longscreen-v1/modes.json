@@ -1,0 +1,22 @@
+{
+  "oracle": {
+    "narrow_u32": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "u32"]},
+    "narrow_u32_exact": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "u32-exact"]},
+    "narrow_u16": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "u16"]},
+    "narrow_auto": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "auto"]},
+    "cache_off_batch": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "0", "--cache-lifetime", "batch"]},
+    "cache_off_reuse": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "0", "--cache-lifetime", "reuse"]},
+    "cache_4096_batch": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "batch"]},
+    "cache_4096_reuse": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "reuse"]}
+  },
+  "screen_4m": {
+    "narrow_u32": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "u32"]},
+    "narrow_u32_exact": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "u32-exact"]},
+    "narrow_u16": {"binary": "owned_narrow_exact", "args": ["--corpus-width", "u16"]},
+    "cache_off_batch": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "0", "--cache-lifetime", "batch"]},
+    "cache_4096_batch": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "batch"]},
+    "cache_4096_reuse": {"binary": "owned_route_cache_reset", "args": ["--route-cache-slots", "4096", "--cache-lifetime", "reuse"]},
+    "context_hash": {"binary": "../radical-planning-candidates-v1/owned_context", "args": ["--planner", "hash"]},
+    "context_context": {"binary": "../radical-planning-candidates-v1/owned_context", "args": ["--planner", "context"]}
+  }
+}

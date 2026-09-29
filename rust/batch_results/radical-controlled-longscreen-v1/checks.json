@@ -1,0 +1,77 @@
+{
+  "status": "passed",
+  "debug_lib_tests": {
+    "owned_narrow_exact": "11/11",
+    "owned_route_cache_reset": "12/12"
+  },
+  "strict_clippy_all_targets": "both new crates passed -D warnings",
+  "release_builds": "both new crates passed",
+  "complete_python_oracle": {
+    "matching_full_traces": 318,
+    "expected_u16_domain_rejections": 2,
+    "cases": 20,
+    "modes": 8,
+    "workers": [
+      1,
+      4
+    ]
+  },
+  "long_screen": {
+    "rows": 32,
+    "cases": 2,
+    "modes": 8,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "fingerprints_match_prior_reference": true,
+    "deterministic_work_mismatches": 0,
+    "worker1_affinity": [
+      5
+    ],
+    "worker4_affinity": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "memory_metric": "train_vm_hwm_mib",
+    "process_cpu_metric": "call_cpu_seconds"
+  },
+  "limitations": [
+    "One repeat per cell is diagnostic and does not establish a stable speed ordering.",
+    "u16 and u32-exact both exact-allocate the endpoint Vec; u32 inherits spare input capacity.",
+    "Cache victim phase is reset in both lifetimes, but four-worker dynamic task ownership still changes cache hit counts.",
+    "CPU/wall is average occupied cores, not useful-compute utilization; C4/C1 is accounting, not a causal overhead estimate.",
+    "train_vm_hwm_mib is a process high-water mark that includes parsing and transient allocation, not just endpoint payload."
+  ],
+  "new_source_snapshot_sha256": "3359358228e16190a212a2d25cae2187edcbe7c8df3dcf362b6f1ebd52e752ec",
+  "new_source_hashes": "new-source-hashes.json",
+  "shared_source_provenance": "shared-source-provenance.json",
+  "binary_sha256": {
+    "narrow_u32": "28c94e4c708dd84b93330189418c5c8ef8869d534ef0b3b367afd37c9511edc4",
+    "narrow_u32_exact": "28c94e4c708dd84b93330189418c5c8ef8869d534ef0b3b367afd37c9511edc4",
+    "narrow_u16": "28c94e4c708dd84b93330189418c5c8ef8869d534ef0b3b367afd37c9511edc4",
+    "cache_off_batch": "06910bf8683568aaa2e7b9acf7ac4b3f469a65a64366eebfafa2f5e1b854359d",
+    "cache_4096_batch": "06910bf8683568aaa2e7b9acf7ac4b3f469a65a64366eebfafa2f5e1b854359d",
+    "cache_4096_reuse": "06910bf8683568aaa2e7b9acf7ac4b3f469a65a64366eebfafa2f5e1b854359d",
+    "context_hash": "85eb7fe23e5d699f076b690bfd43a44866ff7ea232618ce489396915c0b6df55",
+    "context_context": "85eb7fe23e5d699f076b690bfd43a44866ff7ea232618ce489396915c0b6df55"
+  },
+  "binary_paths": {
+    "narrow_u32": "rust/target/reruns/radical-controlled-longscreen-v1/owned_narrow_exact",
+    "narrow_u32_exact": "rust/target/reruns/radical-controlled-longscreen-v1/owned_narrow_exact",
+    "narrow_u16": "rust/target/reruns/radical-controlled-longscreen-v1/owned_narrow_exact",
+    "cache_off_batch": "rust/target/reruns/radical-controlled-longscreen-v1/owned_route_cache_reset",
+    "cache_4096_batch": "rust/target/reruns/radical-controlled-longscreen-v1/owned_route_cache_reset",
+    "cache_4096_reuse": "rust/target/reruns/radical-controlled-longscreen-v1/owned_route_cache_reset",
+    "context_hash": "rust/target/reruns/radical-controlled-longscreen-v1/../radical-planning-candidates-v1/owned_context",
+    "context_context": "rust/target/reruns/radical-controlled-longscreen-v1/../radical-planning-candidates-v1/owned_context"
+  },
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  }
+}
