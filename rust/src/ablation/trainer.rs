@@ -6,7 +6,7 @@ use super::index::{Arena, Combined, Index, Key, Separate};
 use super::queue::Queue;
 use super::{Options, Result as AblationResult, validate};
 use crate::{Bounds, Prepared, Rule, TrainError, TrainResult};
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::time::Instant;
 
 pub fn variant_names() -> &'static [&'static str] {
@@ -34,6 +34,7 @@ pub fn variant_names() -> &'static [&'static str] {
         "bucket_normalized",
         "combined",
         "combined_filtered",
+        "certified_prefix_probe",
         "combined_filtered_h3",
         "combined_filtered_halfword",
         "parallel_broadcast",
@@ -135,6 +136,23 @@ pub fn train_variant(
         "arena_counted" => endpoint!(2, u64, Arena<u64>, Init::Counted, 0),
         "combined" => endpoint!(2, u64, Combined<u64>, Init::OnePass, 0),
         "combined_filtered" => endpoint!(2, u64, Combined<u64>, Init::Counted, 0),
+        "certified_prefix_probe" => {
+            if options.bounds == Bounds::Unchecked {
+                run_certified::<Endpoint<2, true>, u64, Combined<u64>>(
+                    input,
+                    options,
+                    Init::Counted,
+                    0,
+                )
+            } else {
+                run_certified::<Endpoint<2, false>, u64, Combined<u64>>(
+                    input,
+                    options,
+                    Init::Counted,
+                    0,
+                )
+            }
+        }
         "bucket" => endpoint!(1, (u32, u32), Separate<(u32, u32)>, Init::OnePass, 1),
         "bucket_normalized" => endpoint!(1, (u32, u32), Separate<(u32, u32)>, Init::OnePass, 2),
         "linked12" => layout!(
@@ -183,8 +201,97 @@ fn gcd(mut a: u64, mut b: u64) -> u64 {
     a
 }
 
-#[cfg_attr(feature = "profiling", hotpath::measure)]
+#[derive(Default)]
+struct CertificateStats {
+    epochs: usize,
+    rules: usize,
+    max_width: usize,
+    singleton_epochs: usize,
+    hit_cap: usize,
+    stop_self: usize,
+    stop_conflict: usize,
+}
+
+// Purely a diagnostic prefetch. The ordinary serial merge loop below remains
+// authoritative; this helper does not write corpus or frequency state.
+fn certified_prefix<K: Key, I: Index<K>>(
+    queue: &mut Queue<K>,
+    index: &mut I,
+    minimum: u64,
+    keep_frequency: bool,
+    remaining_rules: usize,
+    stats: &mut CertificateStats,
+) -> VecDeque<(K, u64)> {
+    let cap = remaining_rules.min(256);
+    let mut pending = VecDeque::with_capacity(cap);
+    let mut heads = HashSet::<u32>::new();
+    let mut tails = HashSet::<u32>::new();
+    let mut reserved_keys = HashSet::<K>::new();
+    while pending.len() < cap {
+        let Some((key, frequency)) = queue.pop(|key| {
+            let f = index.frequency(key);
+            if f < minimum {
+                index.discard(key, keep_frequency);
+            }
+            f
+        }) else {
+            break;
+        };
+        // A lazy heap may contain two equal current entries for one key.
+        // A reserved key cannot be a second rule in the same static prefix.
+        if reserved_keys.contains(&key) {
+            continue;
+        }
+        let (a, b) = key.tokens();
+        if a == b {
+            stats.stop_self += 1;
+            if pending.is_empty() {
+                pending.push_back((key, frequency));
+            } else {
+                queue.add(key, frequency);
+            }
+            break;
+        }
+        if tails.contains(&a) || heads.contains(&b) {
+            stats.stop_conflict += 1;
+            queue.add(key, frequency);
+            break;
+        }
+        heads.insert(a);
+        tails.insert(b);
+        reserved_keys.insert(key);
+        pending.push_back((key, frequency));
+    }
+    if !pending.is_empty() {
+        stats.epochs += 1;
+        stats.rules += pending.len();
+        stats.max_width = stats.max_width.max(pending.len());
+        stats.singleton_epochs += usize::from(pending.len() == 1);
+        stats.hit_cap += usize::from(pending.len() == cap);
+    }
+    pending
+}
+
 fn run<B: Corpus, K: Key, I: Index<K>>(
+    input: Prepared,
+    options: Options,
+    initialization: Init,
+    queue_mode: u8,
+) -> Result<AblationResult, TrainError> {
+    run_impl::<B, K, I, false>(input, options, initialization, queue_mode)
+}
+
+fn run_certified<B: Corpus, K: Key, I: Index<K>>(
+    input: Prepared,
+    options: Options,
+    initialization: Init,
+    queue_mode: u8,
+) -> Result<AblationResult, TrainError> {
+    run_impl::<B, K, I, true>(input, options, initialization, queue_mode)
+}
+
+#[cfg_attr(feature = "profiling", hotpath::measure)]
+fn run_impl<B: Corpus, K: Key, I: Index<K>, const CERTIFIED: bool>(
     input: Prepared,
     options: Options,
     initialization: Init,
@@ -287,16 +394,36 @@ fn run<B: Corpus, K: Key, I: Index<K>>(
     let mut position_visits = 0;
     let mut stale_visits = 0;
     let keep_frequency = matches!(initialization, Init::OnePass);
+    let mut pending = VecDeque::<(K, u64)>::new();
+    let mut certificate = CertificateStats::default();
     for _ in 0..options.max_merges {
-        let Some((key, frequency)) = queue.pop(|key| {
-            let f = index.frequency(key);
-            if f < options.min_frequency {
-                index.discard(key, keep_frequency);
+        let choice = if CERTIFIED {
+            if pending.is_empty() {
+                pending = certified_prefix(
+                    &mut queue,
+                    &mut index,
+                    options.min_frequency,
+                    keep_frequency,
+                    options.max_merges - merges.len(),
+                    &mut certificate,
+                );
             }
-            f
-        }) else {
+            pending.pop_front()
+        } else {
+            queue.pop(|key| {
+                let f = index.frequency(key);
+                if f < options.min_frequency {
+                    index.discard(key, keep_frequency);
+                }
+                f
+            })
+        };
+        let Some((key, frequency)) = choice else {
             break;
         };
+        if CERTIFIED {
+            debug_assert_eq!(index.frequency(key), frequency);
+        }
         let (a, b) = key.tokens();
         let new_id = u32::try_from(lengths.len())
             .map_err(|_| TrainError::Overflow("new token ID exceeds u32"))?;
@@ -375,6 +502,21 @@ fn run<B: Corpus, K: Key, I: Index<K>>(
         index.occurrence_bytes() as f64,
     );
     metrics.insert("key_size_bytes".into(), std::mem::size_of::<K>() as f64);
+    if CERTIFIED {
+        metrics.insert("certificate_epochs".into(), certificate.epochs as f64);
+        metrics.insert("certificate_rules".into(), certificate.rules as f64);
+        metrics.insert("certificate_max_width".into(), certificate.max_width as f64);
+        metrics.insert(
+            "certificate_singleton_epochs".into(),
+            certificate.singleton_epochs as f64,
+        );
+        metrics.insert("certificate_hit_cap".into(), certificate.hit_cap as f64);
+        metrics.insert("certificate_stop_self".into(), certificate.stop_self as f64);
+        metrics.insert(
+            "certificate_stop_conflict".into(),
+            certificate.stop_conflict as f64,
+        );
+    }
     Ok(AblationResult {
         core: TrainResult {
             rules: merges.len(),
@@ -454,6 +596,87 @@ mod tests {
                         output.final_tokens, expected.final_tokens,
                         "case={case} variant={variant}"
                     );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn certified_prefix_full_traces_cover_adjacent_and_new_pair_priority() {
+        let cases: &[(Vec<u32>, usize, usize)] = &[
+            // AB has four occurrences, CD three, and the only BC bridge is
+            // inside ABCD. AB and CD are adjacent there but can be certified.
+            (
+                vec![
+                    0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, 4, 0, 3, 4, 0, 1, 2, 3, 4, 0,
+                ],
+                4,
+                2,
+            ),
+            // ABCABCABCDEDE: AB=BC=3, DE=2. After AB->X, XC=3
+            // outranks DE; the BC ancestor must stop prefetch.
+            (vec![0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 4, 5, 4, 5, 0], 5, 1),
+            // A self-pair is always a singleton epoch.
+            (vec![0, 1, 1, 1, 1, 1, 1, 1, 1, 0], 1, 1),
+        ];
+        for (case_index, (corpus, alphabet, expected_first_width)) in cases.iter().enumerate() {
+            let mut pivots = Vec::new();
+            let mut weights = Vec::new();
+            for pos in 1..corpus.len() - 1 {
+                if corpus[pos - 1] == 0 {
+                    pivots.push(pos as u32);
+                    weights.push(1);
+                }
+            }
+            let input = Prepared {
+                corpus: corpus.clone(),
+                initial_lengths: vec![1; alphabet + 1],
+                pivots,
+                weights,
+            };
+            for bounds in [Bounds::Checked, Bounds::Unchecked] {
+                let options = Options {
+                    max_merges: 12,
+                    min_frequency: 1,
+                    bounds,
+                    ..Options::default()
+                };
+                let expected = train_variant(input.clone(), options, "combined_filtered")
+                    .unwrap()
+                    .core;
+                let probed =
+                    train_variant(input.clone(), options, "certified_prefix_probe").unwrap();
+                assert_eq!(probed.core.merges, expected.merges, "case={case_index}");
+                assert_eq!(
+                    probed.core.final_tokens, expected.final_tokens,
+                    "case={case_index}"
+                );
+                assert_eq!(
+                    probed.core.actual_merges, expected.actual_merges,
+                    "case={case_index}"
+                );
+                assert_eq!(
+                    probed.metrics["certificate_rules"] as usize,
+                    probed.core.rules
+                );
+                if case_index == 0 {
+                    assert!(
+                        probed.metrics["certificate_max_width"] >= *expected_first_width as f64
+                    );
+                }
+                if case_index == 1 {
+                    assert_eq!(
+                        (probed.core.merges[0].left, probed.core.merges[0].right),
+                        (1, 2)
+                    );
+                    assert_eq!(
+                        (probed.core.merges[1].left, probed.core.merges[1].right),
+                        (6, 3)
+                    );
+                    assert!(probed.metrics["certificate_stop_conflict"] >= 1.0);
+                }
+                if case_index == 2 {
+                    assert!(probed.metrics["certificate_stop_self"] >= 1.0);
                 }
             }
         }
