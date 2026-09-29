@@ -1,0 +1,93 @@
+{
+  "status": "passed",
+  "debug_lib_tests": {
+    "owned_context_local": "12/12",
+    "owned_integer_hash": "9/9"
+  },
+  "strict_clippy_all_targets": "both crates passed -D warnings",
+  "release_builds": "both crates passed; integer-hash built offline after Cargo.lock generation",
+  "oracle": {
+    "cases": 20,
+    "modes": 6,
+    "workers": [
+      1,
+      4
+    ],
+    "full_trace_matches": 240
+  },
+  "quick": {
+    "rows": 20,
+    "cases": 2,
+    "modes": 5,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_matches": 20,
+    "deterministic_work_mismatches": 0
+  },
+  "integer_long": {
+    "rows": 20,
+    "cases": 2,
+    "integer_modes": [
+      "std",
+      "ahash"
+    ],
+    "direct_scalar_reference": [
+      "combined_filtered_halfword",
+      "combined_filtered"
+    ],
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 2,
+    "fingerprint_matches": 20,
+    "deterministic_work_mismatches": 0
+  },
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "limitations": [
+    "The 256 KiB quick screen has one run per cell.",
+    "The 4 MiB follow-up has only two runs per cell; ranges are descriptive, not confidence intervals.",
+    "The direct scalar reference uses a different algorithm path; only std versus ahash isolates the hasher within one binary.",
+    "Local scratch results do not establish hardware false sharing or its absence.",
+    "CPU/wall is average occupied cores, not useful-compute utilization."
+  ],
+  "new_source_snapshot_sha256": "1673804b6457e1452a351a5bf91b213f308317090d9941871046dc760957e341",
+  "new_source_hashes": "new-source-hashes.json",
+  "shared_source_provenance": "shared-source-provenance.json",
+  "ahash_build_context": "ahash-build-context.json",
+  "binary_sha256": {
+    "context_hash_borrowed": "077c3eae7e2e6446c1024688451a2e19b76f667a22f426170eaaa9203b7f1fc7",
+    "context_borrowed": "077c3eae7e2e6446c1024688451a2e19b76f667a22f426170eaaa9203b7f1fc7",
+    "context_local": "077c3eae7e2e6446c1024688451a2e19b76f667a22f426170eaaa9203b7f1fc7",
+    "integer_std": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+    "integer_ahash": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba"
+  },
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "binary_paths": {
+    "context_hash_borrowed": "rust/target/reruns/radical-local-hash-v1/owned_context_local",
+    "context_borrowed": "rust/target/reruns/radical-local-hash-v1/owned_context_local",
+    "context_local": "rust/target/reruns/radical-local-hash-v1/owned_context_local",
+    "integer_std": "rust/target/reruns/radical-local-hash-v1/owned_integer_hash",
+    "integer_ahash": "rust/target/reruns/radical-local-hash-v1/owned_integer_hash"
+  },
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "context_hash_borrowed",
+    "context_borrowed",
+    "context_local",
+    "context_local_fallback",
+    "integer_std",
+    "integer_ahash"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 240,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_integer_hash": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+    "owned_context_local": "077c3eae7e2e6446c1024688451a2e19b76f667a22f426170eaaa9203b7f1fc7"
+  },
+  "modes_sha256": "99d2b5d77497a8c62e5dc9aa2c62169025c9f36d916ed153d5949e2965b14b28",
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

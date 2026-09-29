@@ -1,0 +1,17 @@
+{
+  "oracle": {
+    "context_hash_borrowed": {"binary": "owned_context_local", "args": ["--planner", "hash", "--scratch-placement", "borrowed"]},
+    "context_borrowed": {"binary": "owned_context_local", "args": ["--planner", "context", "--scratch-placement", "borrowed"]},
+    "context_local": {"binary": "owned_context_local", "args": ["--planner", "context", "--scratch-placement", "local"]},
+    "context_local_fallback": {"binary": "owned_context_local", "args": ["--planner", "context", "--scratch-placement", "local", "--context-index-bytes", "0"]},
+    "integer_std": {"binary": "owned_integer_hash", "args": ["--integer-hash", "std"]},
+    "integer_ahash": {"binary": "owned_integer_hash", "args": ["--integer-hash", "ahash"]}
+  },
+  "quick": {
+    "context_hash_borrowed": {"binary": "owned_context_local", "args": ["--planner", "hash", "--scratch-placement", "borrowed"]},
+    "context_borrowed": {"binary": "owned_context_local", "args": ["--planner", "context", "--scratch-placement", "borrowed"]},
+    "context_local": {"binary": "owned_context_local", "args": ["--planner", "context", "--scratch-placement", "local"]},
+    "integer_std": {"binary": "owned_integer_hash", "args": ["--integer-hash", "std"]},
+    "integer_ahash": {"binary": "owned_integer_hash", "args": ["--integer-hash", "ahash"]}
+  }
+}

@@ -4,7 +4,9 @@
 
 本轮入口是 [Rust 全消融报告](ABLATION_REPORT.md)、[版本覆盖表](ABLATION_COVERAGE.md) 和 [演进设计](EVOLUTION_DESIGN.md)。连续文本并行的匹配顺序、共享写入与屏障不变量见 [PARALLEL_DESIGN.md](PARALLEL_DESIGN.md)。原始数据、环境哈希和复现矩阵见 [ablation_results](ablation_results/README.md)。
 
-最新算法演进见 [频率分片与稀疏调度报告](OWNER_PARALLEL_REPORT.md)：pair 频率/堆分片、Plan4、流水线、空间证书，以及位置与频率共用 owner 的原型。当前候选是 [grouped + inline](experiments/radical/owned_grouped_inline/DESIGN.md)：按 key 分组传递出生位置，并在 16 字节容器中内联前两个位置。[有限 4 MiB 两次重复对照](batch_results/radical-layout-combo-v1/README.md)中，其四核耗时约为英文 0.680 秒、中文 0.404 秒，比同轮旧 owner 各下降约 20%；训练进程高水位为 94.32/100.20 MiB。相对直接串行参考为 2.47×/2.57×，自身 1→4 为 2.71×/2.10×，扩展性目标仍未达成。中文单独 inline 更省约 2 MiB，保留为内存候选。
+当前状态与下一步见 [研究状态索引](CURRENT_RESEARCH_STATE.md)。最新速度候选是 [grouped + inline + aHash](experiments/radical/owned_integer_hash/DESIGN.md)：有限 n=2 复核中，单核和四核相对同二进制标准哈希都改善约 1.43–1.46×；自身四核扩展比仍约英文 2.46×、中文 1.93×，并行目标尚未达成。直接串行的同哈希控制仍待完成。
+
+最新算法演进见 [频率分片与稀疏调度报告](OWNER_PARALLEL_REPORT.md)：pair 频率/堆分片、Plan4、流水线、空间证书，以及位置与频率共用 owner 的原型。此前确定的结构基线是 [grouped + inline](experiments/radical/owned_grouped_inline/DESIGN.md)：按 key 分组传递出生位置，并在 16 字节容器中内联前两个位置。[有限 4 MiB 两次重复对照](batch_results/radical-layout-combo-v1/README.md)中，其四核耗时约为英文 0.680 秒、中文 0.404 秒，比同轮旧 owner 各下降约 20%；训练进程高水位为 94.32/100.20 MiB。相对直接串行参考为 2.47×/2.57×，自身 1→4 为 2.71×/2.10×，扩展性目标仍未达成。中文单独 inline 更省约 2 MiB，保留为内存候选。
 
 此前 worker 局部位置索引与精确批次基础见 [连续语料批量并行报告](BATCH_PARALLEL_REPORT.md)，唯一 owner 的推导见 [POSTING_OWNER_DESIGN.md](POSTING_OWNER_DESIGN.md)。日常使用 256 KiB 轻量筛选，仅对有判别价值的候选做有限 4 MiB 测量，完整矩阵留到变体收敛后运行。原始结果见 [batch_results](batch_results/README.md)。probe 与更多逻辑分片暂不合入；counts 的物理计数和预分配由分组路线继承，单独版本的结果仍保留供对照。
 
@@ -34,6 +36,8 @@ python rust/tools/run_batch_matrix.py \
 更新路径的[三项独立 Rust 实验](batch_results/radical-fused-scatter-v1/README.md)已完成：owner 本地归约后立即填充、直接扣减旧 pair 值得组合验证；大列表拆分及写入重叠尚未显示稳定净收益。七种模式通过 280 次完整 oracle，新测进程 CPU 时间帮助区分占用核数与加速比。有限长输入每格仅一次，尚不替代上述 n=2 候选结论。
 
 后续[规划原型与组合复核](batch_results/radical-planning-integrated-v1/README.md)新增 400 次完整 oracle。有界路由缓存、小规则查询表尚未显示一致短测收益；连续 owner 提交＋直接扣减的 n=2 四核中位数为 0.673/0.415 秒，自身 2.94×/2.23×。英文控制范围与候选重叠，中文四核与原组合近乎不变且单核退化，不能据比例宣布并行突破；原 grouped+inline 继续作为主要参考。
+
+[窄端点、缓存复用与上下文累计的小测](batch_results/radical-planning-candidates-v1/README.md)及[分离分配/淘汰相位混杂后的长输入筛选](batch_results/radical-controlled-longscreen-v1/README.md)也已保留。u16 的端点数组载荷确实为相同容量 u32 的一半，ID 超域时自动回退；总进程峰值和速度并不保证改善。上下文累计减少哈希更新、缓存复用减少重复初始化，但目前四核收益均不跨输入一致，暂不叠加为默认实现。
 
 ## 早期基线的实现范围
 

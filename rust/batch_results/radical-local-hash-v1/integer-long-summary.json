@@ -1,0 +1,234 @@
+{
+  "rows": 20,
+  "cases": [
+    "en-4m-continuous",
+    "zh-4m-continuous"
+  ],
+  "repeats": 2,
+  "schedule": "seeded shuffle then exact reverse",
+  "fingerprints_match_prior_reference": true,
+  "deterministic_work_fields": [
+    "actual_merges",
+    "batch_rounds",
+    "batch_rules",
+    "generated_birth_records",
+    "stored_born_postings",
+    "posting_visits",
+    "stale_visits",
+    "final_live_edges"
+  ],
+  "deterministic_work_mismatches": [],
+  "median_policy": "Median wall and median process CPU calculated separately; CPU identity uses those same medians.",
+  "cells": [
+    {
+      "case_id": "en-4m-continuous",
+      "version": "integer_std",
+      "workers": 1,
+      "wall_median_seconds": 1.8947952335,
+      "wall_min_seconds": 1.8722189660000002,
+      "wall_max_seconds": 1.9173715009999999,
+      "cpu_median_seconds": 1.8847916200000001,
+      "mean_occupied_cores_from_medians": 0.994720477799851,
+      "train_vm_hwm_median_mib": 81.423828125,
+      "train_vm_hwm_min_mib": 78.59375,
+      "train_vm_hwm_max_mib": 84.25390625,
+      "plan_median_seconds": 1.0627441279999998
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "version": "integer_std",
+      "workers": 4,
+      "wall_median_seconds": 0.7685085725,
+      "wall_min_seconds": 0.731092478,
+      "wall_max_seconds": 0.805924667,
+      "cpu_median_seconds": 2.331257248,
+      "mean_occupied_cores_from_medians": 3.033482424817063,
+      "train_vm_hwm_median_mib": 95.703125,
+      "train_vm_hwm_min_mib": 94.59765625,
+      "train_vm_hwm_max_mib": 96.80859375,
+      "plan_median_seconds": 0.352976457
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "version": "integer_ahash",
+      "workers": 1,
+      "wall_median_seconds": 1.3104500245000001,
+      "wall_min_seconds": 1.254490174,
+      "wall_max_seconds": 1.366409875,
+      "cpu_median_seconds": 1.3072838615000002,
+      "mean_occupied_cores_from_medians": 0.9975839116785793,
+      "train_vm_hwm_median_mib": 84.380859375,
+      "train_vm_hwm_min_mib": 84.36328125,
+      "train_vm_hwm_max_mib": 84.3984375,
+      "plan_median_seconds": 0.7170252275000006
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "version": "integer_ahash",
+      "workers": 4,
+      "wall_median_seconds": 0.5326951675,
+      "wall_min_seconds": 0.517061487,
+      "wall_max_seconds": 0.548328848,
+      "cpu_median_seconds": 1.5801808615000001,
+      "mean_occupied_cores_from_medians": 2.9663885800127896,
+      "train_vm_hwm_median_mib": 96.513671875,
+      "train_vm_hwm_min_mib": 94.53515625,
+      "train_vm_hwm_max_mib": 98.4921875,
+      "plan_median_seconds": 0.23772699249999996
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "version": "best_direct_scalar",
+      "workers": 1,
+      "wall_median_seconds": 1.6319686755,
+      "wall_min_seconds": 1.609377091,
+      "wall_max_seconds": 1.65456026,
+      "cpu_median_seconds": 1.6290671010000002,
+      "mean_occupied_cores_from_medians": 0.9982220403224891,
+      "train_vm_hwm_median_mib": 86.4140625,
+      "train_vm_hwm_min_mib": 86.4140625,
+      "train_vm_hwm_max_mib": 86.4140625,
+      "plan_median_seconds": null
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "integer_std",
+      "workers": 1,
+      "wall_median_seconds": 0.837770441,
+      "wall_min_seconds": 0.783089388,
+      "wall_max_seconds": 0.892451494,
+      "cpu_median_seconds": 0.83576998,
+      "mean_occupied_cores_from_medians": 0.9976121609189122,
+      "train_vm_hwm_median_mib": 81.919921875,
+      "train_vm_hwm_min_mib": 81.57421875,
+      "train_vm_hwm_max_mib": 82.265625,
+      "plan_median_seconds": 0.24523019849999994
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "integer_std",
+      "workers": 4,
+      "wall_median_seconds": 0.441683115,
+      "wall_min_seconds": 0.40277168,
+      "wall_max_seconds": 0.48059455,
+      "cpu_median_seconds": 1.2355181375000002,
+      "mean_occupied_cores_from_medians": 2.797295381101449,
+      "train_vm_hwm_median_mib": 100.373046875,
+      "train_vm_hwm_min_mib": 98.45703125,
+      "train_vm_hwm_max_mib": 102.2890625,
+      "plan_median_seconds": 0.10939658749999999
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "integer_ahash",
+      "workers": 1,
+      "wall_median_seconds": 0.585020992,
+      "wall_min_seconds": 0.561497679,
+      "wall_max_seconds": 0.608544305,
+      "cpu_median_seconds": 0.5842904895000001,
+      "mean_occupied_cores_from_medians": 0.9987513225850194,
+      "train_vm_hwm_median_mib": 82.142578125,
+      "train_vm_hwm_min_mib": 82.09375,
+      "train_vm_hwm_max_mib": 82.19140625,
+      "plan_median_seconds": 0.16261791399999992
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "integer_ahash",
+      "workers": 4,
+      "wall_median_seconds": 0.303030416,
+      "wall_min_seconds": 0.285025132,
+      "wall_max_seconds": 0.3210357,
+      "cpu_median_seconds": 0.8348445125000001,
+      "mean_occupied_cores_from_medians": 2.75498586419127,
+      "train_vm_hwm_median_mib": 94.091796875,
+      "train_vm_hwm_min_mib": 93.390625,
+      "train_vm_hwm_max_mib": 94.79296875,
+      "plan_median_seconds": 0.074563725
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "best_direct_scalar",
+      "workers": 1,
+      "wall_median_seconds": 0.9835340800000001,
+      "wall_min_seconds": 0.970096362,
+      "wall_max_seconds": 0.996971798,
+      "cpu_median_seconds": 0.9805201075000001,
+      "mean_occupied_cores_from_medians": 0.9969355688213671,
+      "train_vm_hwm_median_mib": 100.416015625,
+      "train_vm_hwm_min_mib": 100.0859375,
+      "train_vm_hwm_max_mib": 100.74609375,
+      "plan_median_seconds": null
+    }
+  ],
+  "comparisons": [
+    {
+      "case_id": "en-4m-continuous",
+      "workers": 1,
+      "std_over_ahash_wall_ratio": 1.4459118608685255,
+      "ahash_over_std_wall_ratio": 0.6916050881547672,
+      "ahash_vs_direct_scalar_speed_ratio": 1.2453497996786826
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "workers": 4,
+      "std_over_ahash_wall_ratio": 1.4426798277647226,
+      "ahash_over_std_wall_ratio": 0.6931544898284137,
+      "ahash_vs_direct_scalar_speed_ratio": 3.063607059097265
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "version": "integer_std",
+      "workers": "1_to_4",
+      "self_speedup_s": 2.465548598028163,
+      "cpu_ratio_i_c4_over_c1": 1.2368779780546775,
+      "u1_occupied_cores": 0.994720477799851,
+      "u4_occupied_cores": 3.033482424817063,
+      "identity": "S=U4/(I*U1)"
+    },
+    {
+      "case_id": "en-4m-continuous",
+      "version": "integer_ahash",
+      "workers": "1_to_4",
+      "self_speedup_s": 2.4600373805718823,
+      "cpu_ratio_i_c4_over_c1": 1.2087511427601296,
+      "u1_occupied_cores": 0.9975839116785793,
+      "u4_occupied_cores": 2.9663885800127896,
+      "identity": "S=U4/(I*U1)"
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "workers": 1,
+      "std_over_ahash_wall_ratio": 1.4320348371362372,
+      "ahash_over_std_wall_ratio": 0.6983070342058059,
+      "ahash_vs_direct_scalar_speed_ratio": 1.6811945100253771
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "workers": 4,
+      "std_over_ahash_wall_ratio": 1.4575537361239672,
+      "ahash_over_std_wall_ratio": 0.6860810515701965,
+      "ahash_vs_direct_scalar_speed_ratio": 3.2456612540174845
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "integer_std",
+      "workers": "1_to_4",
+      "self_speedup_s": 1.8967680958326876,
+      "cpu_ratio_i_c4_over_c1": 1.4782992534620591,
+      "u1_occupied_cores": 0.9976121609189122,
+      "u4_occupied_cores": 2.797295381101449,
+      "identity": "S=U4/(I*U1)"
+    },
+    {
+      "case_id": "zh-4m-continuous",
+      "version": "integer_ahash",
+      "workers": "1_to_4",
+      "self_speedup_s": 1.930568553884043,
+      "cpu_ratio_i_c4_over_c1": 1.428817561645422,
+      "u1_occupied_cores": 0.9987513225850194,
+      "u4_occupied_cores": 2.75498586419127,
+      "identity": "S=U4/(I*U1)"
+    }
+  ]
+}

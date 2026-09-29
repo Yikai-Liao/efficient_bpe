@@ -1,0 +1,18 @@
+{
+  "crate": "ahash 0.8.12",
+  "fingerprint_source": "rust/target/release/.fingerprint/ahash-1d3d91d6a6dac28c/lib-ahash.json",
+  "fingerprint_sha256": "1cdd95ca41f19643f7fd87fb993b4604a71398fc0eef8e9b025fec59afea24c2",
+  "features": [
+    "default",
+    "getrandom",
+    "runtime-rng",
+    "std"
+  ],
+  "rustflags": [],
+  "RUSTFLAGS_set": false,
+  "CARGO_ENCODED_RUSTFLAGS_set": false,
+  "rustc_target_cfg": "rustc-target-cfg.txt",
+  "target_feature_aes_enabled": false,
+  "implementation_source": "/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ahash-0.8.12/src/lib.rs:106-117",
+  "implementation_inference": "The x86_64 aes_hash branch requires cfg(target_feature=\"aes\"); this build has no such target feature, so ahash selects fallback_hash (software)."
+}
