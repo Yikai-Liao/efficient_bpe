@@ -1,0 +1,8 @@
+{
+  "rust/experiments/radical/serial_integer_hash/Cargo.lock": "3e0b20da5353db0d4f64c62f4e5318c6566287aea5ab03b29ac231050ee0cee9",
+  "rust/experiments/radical/serial_integer_hash/Cargo.toml": "880ef5f51c4d33ea36895b67e17e9920aaba16b489765288380c4ac14374f13f",
+  "rust/experiments/radical/serial_integer_hash/DESIGN.md": "53d1b313ddae7bdf0ce64b81944f448aac55388cd688117ce9830651430d41cc",
+  "rust/experiments/radical/serial_integer_hash/src/index.rs": "612427d777f5843462c54000cd93f3430c64a1f8eecc83e243c744fbd7a96c1a",
+  "rust/experiments/radical/serial_integer_hash/src/lib.rs": "8e9796f68be6ecb30f3dba1a64c3a6e19e600b425467d56f163c4a6ab70ea52d",
+  "rust/experiments/radical/serial_integer_hash/src/main.rs": "61f4c102008fcaff9438ac20255cc61e24a2776a2fb1647bd380d79a247b7263"
+}

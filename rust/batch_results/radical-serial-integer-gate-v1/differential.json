@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "modes": [
+    "cf32_std_checked",
+    "cf32_std_unchecked",
+    "cf32_ahash_checked",
+    "cf32_ahash_unchecked",
+    "cf16_std_checked",
+    "cf16_std_unchecked",
+    "cf16_ahash_checked",
+    "cf16_ahash_unchecked"
+  ],
+  "workers": [
+    1
+  ],
+  "compared_runs": 156,
+  "expected_rejections": [
+    {
+      "case_id": "initial-alphabet-65536",
+      "version": "cf16_std_checked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "version": "cf16_std_unchecked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "version": "cf16_ahash_checked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")"
+    },
+    {
+      "case_id": "initial-alphabet-65536",
+      "version": "cf16_ahash_unchecked",
+      "reason": "Error: InvalidInput(\"halfword initial alphabet must fit u16\")"
+    }
+  ],
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+  "modes_sha256": "99eec65e7756f0ff55909405650d5375dd7a2331674d36372520e382990b7d8a",
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

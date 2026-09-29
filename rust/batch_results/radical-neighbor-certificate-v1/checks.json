@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "debug_lib_tests": "14/14",
+  "strict_clippy_all_targets": "passed -D warnings after CLI recursion-limit fix",
+  "release_build": "passed",
+  "oracle": {
+    "cases": 20,
+    "modes": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "full_trace_matches": 80
+  },
+  "quick": {
+    "rows": 8,
+    "cases": 2,
+    "modes": 2,
+    "workers": [
+      1,
+      4
+    ],
+    "repeats": 1,
+    "full_trace_matches": 8
+  },
+  "limitations": [
+    "This is a one-repeat 256 KiB mechanism screen; no 4 MiB performance claim is made.",
+    "Different exact batch widths can legitimately change intermediate birth and posting counts; complete rule traces and final tokens are the semantic criterion.",
+    "Extra sketch visits and the 32-to-40-byte Entry tuple are real costs; process HWM also includes unrelated and transient allocations."
+  ],
+  "new_source_snapshot_sha256": "f7a1803cc9329b7573cdbd170e9bbaeba4f7413db78f11a71e6854c4841bea57",
+  "new_source_hashes": "new-source-hashes.json",
+  "shared_source_provenance": "shared-source-provenance.json",
+  "binary_sha256": "adb7ae2036f50b35ea68c9f36f2ea2e7a6dd494dad3eedd06b0719c1cce0df2f",
+  "binary_path": "rust/target/reruns/radical-neighbor-certificate-v1/owned_neighbor_sketch",
+  "native_reference_binary_sha256": "9f075815e570f714073ae9a21e3e8c02bee0527e697d137c20a40e6dc0a2f250",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  }
+}

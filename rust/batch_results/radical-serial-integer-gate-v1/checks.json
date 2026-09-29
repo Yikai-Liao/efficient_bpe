@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "debug_lib_tests": "6/6 after final Clippy-only source edit",
+  "strict_clippy_all_targets": "passed -D warnings",
+  "release_build": "passed after offline Cargo.lock generation",
+  "oracle": {
+    "cases": 20,
+    "modes": 8,
+    "workers": [
+      1
+    ],
+    "full_trace_matches": 156,
+    "expected_halfword_domain_rejections": 4
+  },
+  "limitations": [
+    "This archive tests correctness only; no performance timing is claimed.",
+    "Halfword rejects the initial alphabet of 65,536 IDs; CF32 succeeds for that case.",
+    "The serial kernel requires workers=1."
+  ],
+  "new_source_snapshot_sha256": "61567a55918e547191bc47a54a519962a2b82722a7a20357e02c38302735895b",
+  "new_source_hashes": "new-source-hashes.json",
+  "shared_source_provenance": "shared-source-provenance.json",
+  "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+  "binary_path": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+  "release_profile": {
+    "debug": 1,
+    "lto": "thin",
+    "codegen_units": 1
+  }
+}

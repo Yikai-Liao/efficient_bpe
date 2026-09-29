@@ -1,0 +1,12 @@
+{
+  "oracle": {
+    "cf32_std_checked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered", "--integer-hash", "std", "--bounds", "checked"]},
+    "cf32_std_unchecked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered", "--integer-hash", "std", "--bounds", "unchecked"]},
+    "cf32_ahash_checked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered", "--integer-hash", "ahash", "--bounds", "checked"]},
+    "cf32_ahash_unchecked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered", "--integer-hash", "ahash", "--bounds", "unchecked"]},
+    "cf16_std_checked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered_halfword", "--integer-hash", "std", "--bounds", "checked"]},
+    "cf16_std_unchecked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered_halfword", "--integer-hash", "std", "--bounds", "unchecked"]},
+    "cf16_ahash_checked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered_halfword", "--integer-hash", "ahash", "--bounds", "checked"]},
+    "cf16_ahash_unchecked": {"binary": "serial_integer_hash", "args": ["--backend", "combined_filtered_halfword", "--integer-hash", "ahash", "--bounds", "unchecked"]}
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "random_cases": 8,
+  "versions": [
+    "type",
+    "birth_neighbor64"
+  ],
+  "workers": [
+    1,
+    4
+  ],
+  "compared_runs": 80,
+  "full_rule_trace_and_final_tokens_match": true,
+  "binary_sha256": {
+    "owned_neighbor_sketch": "adb7ae2036f50b35ea68c9f36f2ea2e7a6dd494dad3eedd06b0719c1cce0df2f"
+  },
+  "modes_sha256": "e772add6c9f972345e05ec43a837056e9f31d7af7f490571080bb33170a8a2a6",
+  "oracle": "Python naive full recount",
+  "seed": 20260930
+}

@@ -1,0 +1,7 @@
+# Serial integer-hash correctness gate
+
+The independent `serial_integer_hash` crate adds a same-kernel `std|ahash` map-builder choice to direct serial `combined_filtered` (CF32) and `combined_filtered_halfword` (CF16). This archive verifies exactness across backend, hasher, and checked/unchecked bounds combinations. **No performance screen was run**; it cannot establish whether aHash improves the serial trainer.
+
+The final source passed 6/6 debug library tests, strict all-target Clippy, and release build. An independent Python full-recount oracle matched **156 complete merge-rule traces and final token sequences** across 20 cases and eight modes. Four additional CF16 combinations—both hashers × both bounds modes—correctly rejected `initial-alphabet-65536`; all four CF32 combinations accepted that case and matched the oracle. The serial kernel accepts only one worker.
+
+The source is preserved in `new-source-snapshot.tar.gz` with per-file hashes in `new-source-hashes.json`; its offline-generated Cargo lockfile is included. `shared-source-provenance.json` records the byte-identical shared Rust sources and Git base commit. The frozen binary is stored in ignored `rust/target/reruns/radical-serial-integer-gate-v1/`; `checks.json` records its hash and validation. The exact oracle result and four expected rejection messages are in `differential.json`. Run `finalize.py` to recheck the current source, binary, and oracle counts without timing training.

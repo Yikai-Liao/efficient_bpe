@@ -1,0 +1,18 @@
+[package]
+name = "radical-serial-integer-hash"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+efficient-bpe-rust = { path = "../../.." }
+ahash = "=0.8.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+libc = "0.2"
+
+[profile.release]
+debug = 1
+lto = "thin"
+codegen-units = 1

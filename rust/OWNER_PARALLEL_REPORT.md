@@ -312,3 +312,21 @@ shards 让固定 W=4 个生产任务向 S=4/8/16 个逻辑 owner 路由。英文
 同轮原有直接串行参考英文 CF16 为 1.632 秒、中文 CF 为 0.984 秒，aHash owner 四核分别比它们快 3.06×、3.25×。这里的“原有”必须保留：直接串行仍用标准哈希，此比值混合了哈希常数和训练架构差异，不应称为纯算法优势或公平的同哈希扩展比。下一项必要控制是给 CF/CF16 同样的 aHash 选项，再比较绝对时间。
 
 本次 aHash 0.8.12 release 指纹的 rustflags 为空，x86_64 默认 target features 不含 aes，其源码选择的是 software fallback，并非硬件 AES 路径；构建上下文随归档保留。新方案没有复制语料或完整索引，但 builder 状态/哈希表分配可以改变 RSS，英文四核峰值略增，中文下降，不声称它无总内存代价。
+
+
+## 出生邻接摘要：扩大精确批次成立，当前速度取舍仍分化
+
+新的 [owned_neighbor_sketch](experiments/radical/owned_neighbor_sketch/DESIGN.md) 通过 14 项 Rust 测试、严格 Clippy、80/80 完整 oracle，并完成唯一一次双语 W1/W4 共 8 调用 quick；[原始结果与复现](batch_results/radical-neighbor-certificate-v1/README.md)保留全部轨迹校验。它为每个新 key 的位置在出生后最终语料中建立邻接 bit 集，以较新 key 的摘要判断较旧候选是否可能与之共享 token。缺 bit 才接纳，bit 命中仍在当前高排名候选处停批，AA 保持单例。类型控制实例化 Entry<0>，摘要版 Entry<1>；控制并未被强加额外 8 字节字段。出生 helper 在私有 unsafe 契约下读取两个邻居，调用点依赖已验证的稳定规划和完成的 apply join；debug 保留对应边界/端点核对。
+
+| 256 KiB、512 规则、n=1 | type → 摘要的批次数 | W1 完整调用 | W4 完整调用 | W4 训练峰值 MiB |
+|---|---:|---:|---:|---:|
+| 英文 | 69 → 60 | 0.0819 → 0.0941 s | 0.0476 → 0.0538 s | 8.61 → 9.06 |
+| 中文 | 87 → 82 | 0.0380 → 0.0407 s | 0.0305 → 0.0266 s | 7.91 → 8.84 |
+
+摘要成功额外接纳英文 15、中文 9 条类型冲突规则，保持完整 greedy 结果。每个 `(key,Entry)` 从 32 增为 40 字节；英文额外检查 260,980 个初始位置及 269,745 个出生位置，中文为 108,314 及 40,874 个。英文四核 birth fill 从约 0.00356 增至 0.00635 秒，显示维护不是免费工作。所选 512 个 key 的平均 popcount 为英文 31.7/64、中文 21.3/64；阳性停批混合了真实重叠和碰撞，不能由密度直接推断误判数。`8×HashMap::capacity` 仅为容量缩放代理，不是实际 bucket 分配量或瞬时 rehash 峰值。
+
+这是真正改变批次证书的算法实验，已有精确性和减少同步轮数的证据；当前 n=1 速度方向分化，不合入新的 aHash 速度候选，也不安排更大矩阵。接下来优先研究按需构建、按 key 复用当前邻域摘要：尽量避免给全部 retained Entry 增大字段，以及无条件读取所有初始/出生位置。其[独立设计审查](LAZY_NEIGHBOR_NEXT.md)未发现违反时间方向的反例：摘要只回答比自身更旧/同批 key，未选缓存不任意逐出，首次查询键数至多 R+B≤2R，全程每 key 最多扫一次 posting。该方向尚未实现或计时。
+
+## 直接串行同哈希控制已完成正确性门控
+
+[serial_integer_hash](experiments/radical/serial_integer_hash/DESIGN.md)从原 `Init::Counted`、Combined<u64>、普通 lazy heap 串行路径提取最小内核，只对 counts/index/fresh-set 的 hasher 作全调用泛型分派，原 endpoint/halfword 后端和 heap 通过只读路径复用。它支持 CF/CF16、checked/unchecked、std/aHash 八种组合，并拒绝 workers≠1。通过 6 项 Rust 测试、严格 Clippy、156/156 合法完整 oracle；另 4 例 CF16 初始 alphabet 超域按原合同拒绝。CF16 是单个 Vec<u16> 加 BitLinks，合并 token 在其前两个物理位置放完整 u32 ID 的两半，并非限制 fresh ID≤65535。此控制本轮尚未计时，不能用前轮 aHash owner 的时间猜测它的速度。

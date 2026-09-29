@@ -1,0 +1,10 @@
+{
+  "oracle": {
+    "type": {"binary": "owned_neighbor_sketch", "args": ["--batch-certificate", "type"]},
+    "birth_neighbor64": {"binary": "owned_neighbor_sketch", "args": ["--batch-certificate", "birth-neighbor64"]}
+  },
+  "quick": {
+    "type": {"binary": "owned_neighbor_sketch", "args": ["--batch-certificate", "type"]},
+    "birth_neighbor64": {"binary": "owned_neighbor_sketch", "args": ["--batch-certificate", "birth-neighbor64"]}
+  }
+}
