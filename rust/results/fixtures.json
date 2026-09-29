@@ -1,0 +1,123 @@
+[
+  {
+    "dataset": "en-1m",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/en-1m-regex.json",
+    "fixture_sha256": "ffef9a15d3329cd3b4503d5a71451faccbdcfc9e13815d85dc4b7c6994360442",
+    "input_sha256": "830150d2e68195b12a2ef93dd07abae1626453668eb9c09eeb6ca946228426d6",
+    "input_bytes": 1048035,
+    "corpus_positions": 234388,
+    "initial_alphabet": 484
+  },
+  {
+    "dataset": "zh-1m",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/zh-1m-regex.json",
+    "fixture_sha256": "ec02bdf1c9532dff672e31baa2ef5654aa2f5f67f9f3d80e6e5903b3d488d215",
+    "input_sha256": "06f507d1c4a4f5183d6eb03ff289588091553f1170aab92bcaee8a7860079c5b",
+    "input_bytes": 1048535,
+    "corpus_positions": 328875,
+    "initial_alphabet": 5414
+  },
+  {
+    "dataset": "de-1m",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/de-1m-regex.json",
+    "fixture_sha256": "fa942a37790a8ab4abe404d9e59097e1de07139de35030e07c6eef108a4246ea",
+    "input_sha256": "bae531e4140a53098b97389964100fe7215a72356200d4102de80e86243db5c3",
+    "input_bytes": 1047960,
+    "corpus_positions": 348447,
+    "initial_alphabet": 353
+  },
+  {
+    "dataset": "ja-1m",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/ja-1m-regex.json",
+    "fixture_sha256": "85b3560108be070951487dd914421a1d7ea77905e1f3e0800551b143812dfa28",
+    "input_sha256": "9ddc4a422bbd1ae98bdb468cb529ed5fb284103529a89874b0392c3c8b4b4aa3",
+    "input_bytes": 1048272,
+    "corpus_positions": 354093,
+    "initial_alphabet": 3183
+  },
+  {
+    "dataset": "en-1m",
+    "split": "paragraph",
+    "rules": 3000,
+    "file": "fixtures/en-1m-paragraph.json",
+    "fixture_sha256": "e26daf10e8f9556a71e7144bc3465f5129bcdedb4f1d79bb0247cceb7983d0cd",
+    "input_sha256": "830150d2e68195b12a2ef93dd07abae1626453668eb9c09eeb6ca946228426d6",
+    "input_bytes": 1048035,
+    "corpus_positions": 1042597,
+    "initial_alphabet": 485
+  },
+  {
+    "dataset": "en-4m",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/en-4m-regex.json",
+    "fixture_sha256": "7d8ba3f9bcb585c56a162850b474c02be035d3b207c43b0d736ea3dd8ae90c2f",
+    "input_sha256": "dc4c81cebdc0b7ef3ebd1326d214a22823b7f55829370cf27afe02c453d4fbbc",
+    "input_bytes": 4194232,
+    "corpus_positions": 577590,
+    "initial_alphabet": 998
+  },
+  {
+    "dataset": "zh-4m",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/zh-4m-regex.json",
+    "fixture_sha256": "eb29e04738812357a22c44a3c9ff5675597399b8187fdac000c313ad7001ffc6",
+    "input_sha256": "8e73ef2774b7ff8810c57e05348fd809daff3c8db0711d45b19aa5420369c497",
+    "input_bytes": 4188394,
+    "corpus_positions": 1218853,
+    "initial_alphabet": 7306
+  },
+  {
+    "dataset": "random-131072",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/random-131072-regex.json",
+    "fixture_sha256": "bcbac04d2fd910733fd10075fbb38b3cef08c616d77e22d9f812aa2794584e89",
+    "input_sha256": "2cdcb055589159e7f8fbd9ec8309872b25c352b33d96928460b4bda44daea7b4",
+    "input_bytes": 131072,
+    "corpus_positions": 132097,
+    "initial_alphabet": 12
+  },
+  {
+    "dataset": "runs-131072",
+    "split": "regex",
+    "rules": 3000,
+    "file": "fixtures/runs-131072-regex.json",
+    "fixture_sha256": "3e17cd126eec92a7143003f6b42a6f4db1d71eadb79b001f0bff5d745e2c7eba",
+    "input_sha256": "b6147efe0f7a70ee447707e2a09dd48740d84afd8aacf55ad3539a5b30cb2d72",
+    "input_bytes": 130936,
+    "corpus_positions": 130430,
+    "initial_alphabet": 255
+  },
+  {
+    "dataset": "chain-8000",
+    "split": "regex",
+    "rules": 8000,
+    "file": "fixtures/chain-8000-regex.json",
+    "fixture_sha256": "0f3fccfc0ee3dff391f23b3a7bfb78b2b9d389d33241ed3acacc84c0bac7764f",
+    "input_sha256": "4f92e57863a1727bca91906998888e7ef75b9c8b1ee41fea573b313a3496f72d",
+    "input_bytes": 48000,
+    "corpus_positions": 8002,
+    "initial_alphabet": 8000
+  },
+  {
+    "dataset": "chain-16000",
+    "split": "regex",
+    "rules": 16000,
+    "file": "fixtures/chain-16000-regex.json",
+    "fixture_sha256": "f640efe76f1e8bdf25960165a6ea28126710c8fd60fa8207f7115d7fc03aace7",
+    "input_sha256": "db2b84105d0239b57e541394c89ff47fb8fa221952404516dc732c587a323f80",
+    "input_bytes": 96000,
+    "corpus_positions": 16002,
+    "initial_alphabet": 16000
+  }
+]

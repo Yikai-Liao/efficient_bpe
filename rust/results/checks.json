@@ -1,0 +1,25 @@
+{
+  "cargo_test": {
+    "command": "cargo test --manifest-path rust/Cargo.toml --locked",
+    "passed": true,
+    "library_tests": 4
+  },
+  "clippy": {
+    "command": "cargo clippy --manifest-path rust/Cargo.toml --all-targets --locked -- -D warnings",
+    "passed": true
+  },
+  "builds": {
+    "release": true,
+    "release_profiling": true,
+    "profiling_separate_target_dir": "rust/target/profile"
+  },
+  "checked_unchecked_oracle": "results/differential.json",
+  "unsafe_review": "Read-only independent review of private endpoint accesses and public validation; no violation identified. Not a formal proof.",
+  "miri_or_sanitizer_run": false,
+  "source_sha256": {
+    "rust/src/backend.rs": "cabdf2dd0504a30d86605200a7aeb17f3f6eaa8b717c42c7ce9f40e7ea2ef8c2",
+    "rust/src/lib.rs": "d119de7604751dd513afccc3ceff447e29c8754008a5325dfdc3590de3b0a52d",
+    "rust/src/main.rs": "224259a1f649ddc21758fb0e352f5653e1b211c6a8f2e2febf20417f7dbb8f85",
+    "rust/src/trainer.rs": "a0e7d9df25f4589c9df2497824e2d809c001a8d390138e04aa532429092f4063"
+  }
+}

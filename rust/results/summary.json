@@ -1,0 +1,1157 @@
+[
+  {
+    "dataset": "en-1m",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 1.164370554004563,
+          "minimum": 1.1370353910024278,
+          "maximum": 1.235571990997414
+        },
+        "init_seconds": {
+          "median": 0.30583959999785293,
+          "minimum": 0.3007641779986443,
+          "maximum": 0.3326054450008087
+        },
+        "merge_seconds": {
+          "median": 0.8636063760059187,
+          "minimum": 0.833893849994638,
+          "maximum": 0.9029665459966054
+        },
+        "call_seconds": {
+          "median": 1.264557248010533,
+          "minimum": 1.244608098990284,
+          "maximum": 1.3447098010074114
+        },
+        "call_cpu_seconds": {
+          "median": 1.262893062,
+          "minimum": 1.242587777,
+          "maximum": 1.3432450459999998
+        },
+        "vm_hwm_mib": {
+          "median": 33.12890625,
+          "minimum": 33.0546875,
+          "maximum": 33.1484375
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.058373847,
+          "minimum": 0.053943549,
+          "maximum": 0.069341736
+        },
+        "init_seconds": {
+          "median": 0.010598245,
+          "minimum": 0.010012089,
+          "maximum": 0.013285482
+        },
+        "merge_seconds": {
+          "median": 0.048073846,
+          "minimum": 0.043931103,
+          "maximum": 0.056055584
+        },
+        "call_seconds": {
+          "median": 0.063566417,
+          "minimum": 0.059120847,
+          "maximum": 0.074618251
+        },
+        "call_cpu_seconds": {
+          "median": 0.06355954600000001,
+          "minimum": 0.05904540500000001,
+          "maximum": 0.074392181
+        },
+        "vm_hwm_mib": {
+          "median": 8.328125,
+          "minimum": 8.30859375,
+          "maximum": 8.515625
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.060087236,
+          "minimum": 0.05532858,
+          "maximum": 0.064793624
+        },
+        "init_seconds": {
+          "median": 0.010753014,
+          "minimum": 0.00981561,
+          "maximum": 0.013216768
+        },
+        "merge_seconds": {
+          "median": 0.049714005,
+          "minimum": 0.044266637,
+          "maximum": 0.051576384
+        },
+        "call_seconds": {
+          "median": 0.065554074,
+          "minimum": 0.060158791,
+          "maximum": 0.069934042
+        },
+        "call_cpu_seconds": {
+          "median": 0.06539650799999999,
+          "minimum": 0.059880284000000006,
+          "maximum": 0.069916272
+        },
+        "vm_hwm_mib": {
+          "median": 8.40625,
+          "minimum": 8.30859375,
+          "maximum": 8.5234375
+        }
+      }
+    },
+    "fingerprint": "d662dda118457bb7092a0e145edc4023ef0da7c45c0580e79e9f3173ebf9a160",
+    "python_over_checked": 19.94678462778996,
+    "checked_over_unchecked": 0.9714849756111265
+  },
+  {
+    "dataset": "zh-1m",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 1.4134303350001574,
+          "minimum": 1.3795908860047348,
+          "maximum": 1.4271262749971356
+        },
+        "init_seconds": {
+          "median": 0.6962108050065581,
+          "minimum": 0.6738435300067067,
+          "maximum": 0.7070098529948154
+        },
+        "merge_seconds": {
+          "median": 0.7107149539951934,
+          "minimum": 0.7057473559980281,
+          "maximum": 0.7201164220023202
+        },
+        "call_seconds": {
+          "median": 1.6541431229998125,
+          "minimum": 1.607913023995934,
+          "maximum": 1.6664523719955469
+        },
+        "call_cpu_seconds": {
+          "median": 1.651289885,
+          "minimum": 1.6065062060000002,
+          "maximum": 1.664972215
+        },
+        "vm_hwm_mib": {
+          "median": 58.0,
+          "minimum": 57.90234375,
+          "maximum": 58.01953125
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.111921279,
+          "minimum": 0.106165189,
+          "maximum": 0.150953606
+        },
+        "init_seconds": {
+          "median": 0.049418457,
+          "minimum": 0.048592908,
+          "maximum": 0.069875281
+        },
+        "merge_seconds": {
+          "median": 0.063327876,
+          "minimum": 0.057170701,
+          "maximum": 0.081076417
+        },
+        "call_seconds": {
+          "median": 0.128380236,
+          "minimum": 0.123543165,
+          "maximum": 0.176079867
+        },
+        "call_cpu_seconds": {
+          "median": 0.12835908499999998,
+          "minimum": 0.12347936100000001,
+          "maximum": 0.176033838
+        },
+        "vm_hwm_mib": {
+          "median": 18.69140625,
+          "minimum": 18.67578125,
+          "maximum": 18.71875
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.108771727,
+          "minimum": 0.104750751,
+          "maximum": 0.120554768
+        },
+        "init_seconds": {
+          "median": 0.052906256,
+          "minimum": 0.048735513,
+          "maximum": 0.061565108
+        },
+        "merge_seconds": {
+          "median": 0.056913355,
+          "minimum": 0.055864894,
+          "maximum": 0.062591051
+        },
+        "call_seconds": {
+          "median": 0.126745346,
+          "minimum": 0.120052408,
+          "maximum": 0.135875408
+        },
+        "call_cpu_seconds": {
+          "median": 0.126686767,
+          "minimum": 0.119864783,
+          "maximum": 0.1356541
+        },
+        "vm_hwm_mib": {
+          "median": 18.65625,
+          "minimum": 18.56640625,
+          "maximum": 18.6953125
+        }
+      }
+    },
+    "fingerprint": "09e70ac1c54baa9c2f31cfcfa30c48b5b4a45452a4ec803250e48ea21d03f884",
+    "python_over_checked": 12.628790053410285,
+    "checked_over_unchecked": 1.0289556127025545
+  },
+  {
+    "dataset": "de-1m",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 1.8348387830046704,
+          "minimum": 1.7785694949998287,
+          "maximum": 1.9123896390083246
+        },
+        "init_seconds": {
+          "median": 0.468168934006826,
+          "minimum": 0.4423755460011307,
+          "maximum": 0.4756192339991685
+        },
+        "merge_seconds": {
+          "median": 1.3661162870121188,
+          "minimum": 1.336193948998698,
+          "maximum": 1.436770405009156
+        },
+        "call_seconds": {
+          "median": 1.9551056280033663,
+          "minimum": 1.8978857189940754,
+          "maximum": 2.0361709849967156
+        },
+        "call_cpu_seconds": {
+          "median": 1.9518435760000001,
+          "minimum": 1.896492335,
+          "maximum": 2.034471706
+        },
+        "vm_hwm_mib": {
+          "median": 39.5625,
+          "minimum": 39.453125,
+          "maximum": 39.609375
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.091949245,
+          "minimum": 0.089473065,
+          "maximum": 0.095597669
+        },
+        "init_seconds": {
+          "median": 0.015429399,
+          "minimum": 0.015235327,
+          "maximum": 0.016336291
+        },
+        "merge_seconds": {
+          "median": 0.075819199,
+          "minimum": 0.074064209,
+          "maximum": 0.079260661
+        },
+        "call_seconds": {
+          "median": 0.098520398,
+          "minimum": 0.095854558,
+          "maximum": 0.102418725
+        },
+        "call_cpu_seconds": {
+          "median": 0.09851322900000001,
+          "minimum": 0.09581000600000002,
+          "maximum": 0.102300988
+        },
+        "vm_hwm_mib": {
+          "median": 12.65234375,
+          "minimum": 12.6328125,
+          "maximum": 12.81640625
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.092214909,
+          "minimum": 0.088662161,
+          "maximum": 0.102201231
+        },
+        "init_seconds": {
+          "median": 0.0148886,
+          "minimum": 0.01464689,
+          "maximum": 0.017716091
+        },
+        "merge_seconds": {
+          "median": 0.077549661,
+          "minimum": 0.073773116,
+          "maximum": 0.084484674
+        },
+        "call_seconds": {
+          "median": 0.098821545,
+          "minimum": 0.095307604,
+          "maximum": 0.11075507
+        },
+        "call_cpu_seconds": {
+          "median": 0.09881567000000001,
+          "minimum": 0.09461011600000001,
+          "maximum": 0.110653054
+        },
+        "vm_hwm_mib": {
+          "median": 12.74609375,
+          "minimum": 12.6015625,
+          "maximum": 12.80859375
+        }
+      }
+    },
+    "fingerprint": "2d2a4bd6a5deed3e438a0acd0629b56b63be0ed18df95cd50c523875d5e0fa73",
+    "python_over_checked": 19.954908634700267,
+    "checked_over_unchecked": 0.9971190775669475
+  },
+  {
+    "dataset": "ja-1m",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 1.7338989169948036,
+          "minimum": 1.7187321569945198,
+          "maximum": 1.7559130750014447
+        },
+        "init_seconds": {
+          "median": 0.6900737599935383,
+          "minimum": 0.6563503629877232,
+          "maximum": 0.7048557539965259
+        },
+        "merge_seconds": {
+          "median": 1.0510573210049188,
+          "minimum": 1.030292196010123,
+          "maximum": 1.0623817940067966
+        },
+        "call_seconds": {
+          "median": 1.960982012009481,
+          "minimum": 1.9502678999997443,
+          "maximum": 1.9831912990048295
+        },
+        "call_cpu_seconds": {
+          "median": 1.9521759680000002,
+          "minimum": 1.9468686709999998,
+          "maximum": 1.9819964449999998
+        },
+        "vm_hwm_mib": {
+          "median": 57.51171875,
+          "minimum": 57.41015625,
+          "maximum": 57.59765625
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.12638495,
+          "minimum": 0.1093773,
+          "maximum": 0.133190361
+        },
+        "init_seconds": {
+          "median": 0.042076799,
+          "minimum": 0.035593475,
+          "maximum": 0.043702265
+        },
+        "merge_seconds": {
+          "median": 0.08430769,
+          "minimum": 0.073783292,
+          "maximum": 0.09017732
+        },
+        "call_seconds": {
+          "median": 0.141033381,
+          "minimum": 0.121316821,
+          "maximum": 0.148894903
+        },
+        "call_cpu_seconds": {
+          "median": 0.14074918500000003,
+          "minimum": 0.121287563,
+          "maximum": 0.14882488700000002
+        },
+        "vm_hwm_mib": {
+          "median": 18.6015625,
+          "minimum": 18.5078125,
+          "maximum": 18.73046875
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.124925087,
+          "minimum": 0.111867778,
+          "maximum": 0.173397337
+        },
+        "init_seconds": {
+          "median": 0.040421454,
+          "minimum": 0.038239969,
+          "maximum": 0.059958019
+        },
+        "merge_seconds": {
+          "median": 0.084503199,
+          "minimum": 0.073627424,
+          "maximum": 0.113438864
+        },
+        "call_seconds": {
+          "median": 0.137346637,
+          "minimum": 0.123884378,
+          "maximum": 0.186620953
+        },
+        "call_cpu_seconds": {
+          "median": 0.137264535,
+          "minimum": 0.12349652800000001,
+          "maximum": 0.186247137
+        },
+        "vm_hwm_mib": {
+          "median": 18.61328125,
+          "minimum": 18.546875,
+          "maximum": 18.65625
+        }
+      }
+    },
+    "fingerprint": "a28f41efdf1daa13fadab5aff28304448e0aa90a3f6e848bf37de0521c33d787",
+    "python_over_checked": 13.719188218176322,
+    "checked_over_unchecked": 1.011685907411055
+  },
+  {
+    "dataset": "en-1m",
+    "split": "paragraph",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 6.710486460986431,
+          "minimum": 6.631509256010759,
+          "maximum": 7.093572497004061
+        },
+        "init_seconds": {
+          "median": 1.5648565009905724,
+          "minimum": 1.4319067040050868,
+          "maximum": 1.5856472169980407
+        },
+        "merge_seconds": {
+          "median": 5.199602552005672,
+          "minimum": 5.097605585004203,
+          "maximum": 5.514789852008107
+        },
+        "call_seconds": {
+          "median": 7.021626362999086,
+          "minimum": 6.945368264001445,
+          "maximum": 7.3620205970073584
+        },
+        "call_cpu_seconds": {
+          "median": 7.013963134000001,
+          "minimum": 6.938919039,
+          "maximum": 7.351722239
+        },
+        "vm_hwm_mib": {
+          "median": 84.984375,
+          "minimum": 84.90625,
+          "maximum": 85.109375
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.377835591,
+          "minimum": 0.369299592,
+          "maximum": 0.397054734
+        },
+        "init_seconds": {
+          "median": 0.05406234,
+          "minimum": 0.052122913,
+          "maximum": 0.058204916
+        },
+        "merge_seconds": {
+          "median": 0.323865934,
+          "minimum": 0.315236722,
+          "maximum": 0.341894428
+        },
+        "call_seconds": {
+          "median": 0.397575143,
+          "minimum": 0.386887914,
+          "maximum": 0.417365452
+        },
+        "call_cpu_seconds": {
+          "median": 0.397417317,
+          "minimum": 0.386459743,
+          "maximum": 0.417018961
+        },
+        "vm_hwm_mib": {
+          "median": 29.79296875,
+          "minimum": 29.7578125,
+          "maximum": 29.9609375
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.379705153,
+          "minimum": 0.356127471,
+          "maximum": 0.382379368
+        },
+        "init_seconds": {
+          "median": 0.055982912,
+          "minimum": 0.051536762,
+          "maximum": 0.061428452
+        },
+        "merge_seconds": {
+          "median": 0.319729761,
+          "minimum": 0.304590232,
+          "maximum": 0.326274285
+        },
+        "call_seconds": {
+          "median": 0.39692002,
+          "minimum": 0.373218423,
+          "maximum": 0.400265017
+        },
+        "call_cpu_seconds": {
+          "median": 0.396801192,
+          "minimum": 0.372884302,
+          "maximum": 0.399777767
+        },
+        "vm_hwm_mib": {
+          "median": 29.8203125,
+          "minimum": 29.75,
+          "maximum": 29.92578125
+        }
+      }
+    },
+    "fingerprint": "ce24e4bc434f7d55ac1f540ecf31815c6b3b87b7afbe27fd62319a31ab0603d9",
+    "python_over_checked": 17.760334443947155,
+    "checked_over_unchecked": 0.9950762796205719
+  },
+  {
+    "dataset": "en-4m",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 2.819383039997774,
+          "minimum": 2.613890344990068,
+          "maximum": 3.0720605850074207
+        },
+        "init_seconds": {
+          "median": 0.8203877090127207,
+          "minimum": 0.7527946299960604,
+          "maximum": 0.8811501810123445
+        },
+        "merge_seconds": {
+          "median": 2.004514936998021,
+          "minimum": 1.8610957149940077,
+          "maximum": 2.190910403995076
+        },
+        "call_seconds": {
+          "median": 3.109193315001903,
+          "minimum": 2.8757807520014467,
+          "maximum": 3.3525266450014897
+        },
+        "call_cpu_seconds": {
+          "median": 3.10157894,
+          "minimum": 2.872361621,
+          "maximum": 3.34807524
+        },
+        "vm_hwm_mib": {
+          "median": 51.42578125,
+          "minimum": 51.359375,
+          "maximum": 51.50390625
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.140859861,
+          "minimum": 0.128698874,
+          "maximum": 0.146806766
+        },
+        "init_seconds": {
+          "median": 0.025535725,
+          "minimum": 0.02425435,
+          "maximum": 0.02776961
+        },
+        "merge_seconds": {
+          "median": 0.1146337,
+          "minimum": 0.104443991,
+          "maximum": 0.119036304
+        },
+        "call_seconds": {
+          "median": 0.152402183,
+          "minimum": 0.139565341,
+          "maximum": 0.158984412
+        },
+        "call_cpu_seconds": {
+          "median": 0.152315582,
+          "minimum": 0.13945364200000002,
+          "maximum": 0.158830348
+        },
+        "vm_hwm_mib": {
+          "median": 15.68359375,
+          "minimum": 15.6171875,
+          "maximum": 15.7890625
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.146170288,
+          "minimum": 0.1269904,
+          "maximum": 0.148558191
+        },
+        "init_seconds": {
+          "median": 0.02704452,
+          "minimum": 0.024252499,
+          "maximum": 0.031874547
+        },
+        "merge_seconds": {
+          "median": 0.117080516,
+          "minimum": 0.102737341,
+          "maximum": 0.122499895
+        },
+        "call_seconds": {
+          "median": 0.158628387,
+          "minimum": 0.137124684,
+          "maximum": 0.161523814
+        },
+        "call_cpu_seconds": {
+          "median": 0.158556559,
+          "minimum": 0.137076363,
+          "maximum": 0.161354418
+        },
+        "vm_hwm_mib": {
+          "median": 15.6875,
+          "minimum": 15.58984375,
+          "maximum": 15.80859375
+        }
+      }
+    },
+    "fingerprint": "0c5005e8930b6e281385060cf226fcaa3385d1e5817ff7065b8e0dd14610bef1",
+    "python_over_checked": 20.01551769242321,
+    "checked_over_unchecked": 0.9636695865304719
+  },
+  {
+    "dataset": "zh-4m",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 4.933207180001773,
+          "minimum": 4.68960858900391,
+          "maximum": 5.093244993011467
+        },
+        "init_seconds": {
+          "median": 2.5900430269975914,
+          "minimum": 2.5043191489967285,
+          "maximum": 2.682710291002877
+        },
+        "merge_seconds": {
+          "median": 2.3480104180052876,
+          "minimum": 2.185289440007182,
+          "maximum": 2.41053470200859
+        },
+        "call_seconds": {
+          "median": 5.803163122996921,
+          "minimum": 5.509394487991813,
+          "maximum": 5.953248995007016
+        },
+        "call_cpu_seconds": {
+          "median": 5.794974562,
+          "minimum": 5.502025077,
+          "maximum": 5.943247122
+        },
+        "vm_hwm_mib": {
+          "median": 170.1796875,
+          "minimum": 170.1015625,
+          "maximum": 170.21875
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.403371744,
+          "minimum": 0.392766862,
+          "maximum": 0.471253939
+        },
+        "init_seconds": {
+          "median": 0.221012346,
+          "minimum": 0.208589061,
+          "maximum": 0.267098609
+        },
+        "merge_seconds": {
+          "median": 0.191257206,
+          "minimum": 0.178019027,
+          "maximum": 0.213116995
+        },
+        "call_seconds": {
+          "median": 0.489127964,
+          "minimum": 0.479577752,
+          "maximum": 0.559471368
+        },
+        "call_cpu_seconds": {
+          "median": 0.488498956,
+          "minimum": 0.47836904,
+          "maximum": 0.5592155510000001
+        },
+        "vm_hwm_mib": {
+          "median": 53.2109375,
+          "minimum": 52.4296875,
+          "maximum": 54.03515625
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.394513152,
+          "minimum": 0.365564685,
+          "maximum": 0.429796359
+        },
+        "init_seconds": {
+          "median": 0.209012694,
+          "minimum": 0.207341808,
+          "maximum": 0.235315308
+        },
+        "merge_seconds": {
+          "median": 0.183333176,
+          "minimum": 0.158222395,
+          "maximum": 0.194480506
+        },
+        "call_seconds": {
+          "median": 0.493449898,
+          "minimum": 0.461901883,
+          "maximum": 0.513076093
+        },
+        "call_cpu_seconds": {
+          "median": 0.49320695900000006,
+          "minimum": 0.4616292780000001,
+          "maximum": 0.51105723
+        },
+        "vm_hwm_mib": {
+          "median": 53.73828125,
+          "minimum": 53.3046875,
+          "maximum": 55.1796875
+        }
+      }
+    },
+    "fingerprint": "a88452b266d229042cf29d93729352ba33e97690fcd570b114576f904ad92a5e",
+    "python_over_checked": 12.229927488430556,
+    "checked_over_unchecked": 1.022454490946857
+  },
+  {
+    "dataset": "random-131072",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 0.9361110969912261,
+          "minimum": 0.8396969019959215,
+          "maximum": 1.0262260080053238
+        },
+        "init_seconds": {
+          "median": 0.19529334199614823,
+          "minimum": 0.15010150900343433,
+          "maximum": 0.21211512200534344
+        },
+        "merge_seconds": {
+          "median": 0.7408177549950778,
+          "minimum": 0.6895953929924872,
+          "maximum": 0.8141108859999804
+        },
+        "call_seconds": {
+          "median": 0.9850198539934354,
+          "minimum": 0.8871932000038214,
+          "maximum": 1.0752493399922969
+        },
+        "call_cpu_seconds": {
+          "median": 0.984023162,
+          "minimum": 0.886648691,
+          "maximum": 1.074674442
+        },
+        "vm_hwm_mib": {
+          "median": 28.59765625,
+          "minimum": 28.4921875,
+          "maximum": 28.609375
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.048896235,
+          "minimum": 0.047457878,
+          "maximum": 0.067609648
+        },
+        "init_seconds": {
+          "median": 0.006189357,
+          "minimum": 0.005590522,
+          "maximum": 0.007031896
+        },
+        "merge_seconds": {
+          "median": 0.042915353,
+          "minimum": 0.041866784,
+          "maximum": 0.060577192
+        },
+        "call_seconds": {
+          "median": 0.050859891,
+          "minimum": 0.049724777,
+          "maximum": 0.069887784
+        },
+        "call_cpu_seconds": {
+          "median": 0.050828609,
+          "minimum": 0.049573242000000003,
+          "maximum": 0.069872539
+        },
+        "vm_hwm_mib": {
+          "median": 7.19921875,
+          "minimum": 7.078125,
+          "maximum": 7.265625
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.05260651,
+          "minimum": 0.050643726,
+          "maximum": 0.061552545
+        },
+        "init_seconds": {
+          "median": 0.006150377,
+          "minimum": 0.00580578,
+          "maximum": 0.008558274
+        },
+        "merge_seconds": {
+          "median": 0.046469586,
+          "minimum": 0.044837033,
+          "maximum": 0.052993591
+        },
+        "call_seconds": {
+          "median": 0.054923439,
+          "minimum": 0.053202335,
+          "maximum": 0.063628559
+        },
+        "call_cpu_seconds": {
+          "median": 0.054853902,
+          "minimum": 0.052420101000000004,
+          "maximum": 0.063569927
+        },
+        "vm_hwm_mib": {
+          "median": 7.1953125,
+          "minimum": 7.09765625,
+          "maximum": 7.21875
+        }
+      }
+    },
+    "fingerprint": "e172c58703bd9a9026a234abd93db0a2fe226131c308c43e074f31b0d3ad9423",
+    "python_over_checked": 19.14485025260587,
+    "checked_over_unchecked": 0.9294711814184214
+  },
+  {
+    "dataset": "runs-131072",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 0.9787578329996904,
+          "minimum": 0.9031944279995514,
+          "maximum": 0.9858526949974475
+        },
+        "init_seconds": {
+          "median": 0.1722835949913133,
+          "minimum": 0.15950244299892802,
+          "maximum": 0.187982022005599
+        },
+        "merge_seconds": {
+          "median": 0.7907758109940914,
+          "minimum": 0.7436919850006234,
+          "maximum": 0.8129852649872191
+        },
+        "call_seconds": {
+          "median": 0.9794231390114874,
+          "minimum": 0.9039372709958116,
+          "maximum": 0.9864940569968894
+        },
+        "call_cpu_seconds": {
+          "median": 0.978405411,
+          "minimum": 0.903363098,
+          "maximum": 0.985819707
+        },
+        "vm_hwm_mib": {
+          "median": 18.4296875,
+          "minimum": 18.42578125,
+          "maximum": 18.51171875
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.030605868,
+          "minimum": 0.029198057,
+          "maximum": 0.033759645
+        },
+        "init_seconds": {
+          "median": 0.006150086,
+          "minimum": 0.005880612,
+          "maximum": 0.006675677
+        },
+        "merge_seconds": {
+          "median": 0.024455115,
+          "minimum": 0.023316913,
+          "maximum": 0.027280304
+        },
+        "call_seconds": {
+          "median": 0.031260995,
+          "minimum": 0.029992166,
+          "maximum": 0.034518598
+        },
+        "call_cpu_seconds": {
+          "median": 0.031105569,
+          "minimum": 0.029909137000000002,
+          "maximum": 0.034501187
+        },
+        "vm_hwm_mib": {
+          "median": 3.79296875,
+          "minimum": 3.765625,
+          "maximum": 3.84375
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.030845687,
+          "minimum": 0.029575607,
+          "maximum": 0.031668085
+        },
+        "init_seconds": {
+          "median": 0.006093404,
+          "minimum": 0.005845041,
+          "maximum": 0.006768369
+        },
+        "merge_seconds": {
+          "median": 0.024645404,
+          "minimum": 0.023481829,
+          "maximum": 0.025620742
+        },
+        "call_seconds": {
+          "median": 0.031578397,
+          "minimum": 0.030255981,
+          "maximum": 0.032328374
+        },
+        "call_cpu_seconds": {
+          "median": 0.031547256,
+          "minimum": 0.030250979,
+          "maximum": 0.032268029000000004
+        },
+        "vm_hwm_mib": {
+          "median": 3.83984375,
+          "minimum": 3.8046875,
+          "maximum": 3.83984375
+        }
+      }
+    },
+    "fingerprint": "318a8333e219885dc13912b3b604c6480f986658b1a793a088a08111203df219",
+    "python_over_checked": 31.97941757442365,
+    "checked_over_unchecked": 0.9922252015330377
+  },
+  {
+    "dataset": "chain-8000",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 0.11507143700146116,
+          "minimum": 0.1041089530044701,
+          "maximum": 0.11764903200673871
+        },
+        "init_seconds": {
+          "median": 0.02586751499620732,
+          "minimum": 0.025066261005122215,
+          "maximum": 0.025933160010026768
+        },
+        "merge_seconds": {
+          "median": 0.0899653579981532,
+          "minimum": 0.07822359299461823,
+          "maximum": 0.09171587199671194
+        },
+        "call_seconds": {
+          "median": 0.12471720000030473,
+          "minimum": 0.11168599899974652,
+          "maximum": 0.1267999179981416
+        },
+        "call_cpu_seconds": {
+          "median": 0.124444677,
+          "minimum": 0.11146134999999999,
+          "maximum": 0.12666922
+        },
+        "vm_hwm_mib": {
+          "median": 18.9140625,
+          "minimum": 18.90234375,
+          "maximum": 18.9921875
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.008318464,
+          "minimum": 0.007745463,
+          "maximum": 0.009421571
+        },
+        "init_seconds": {
+          "median": 0.002892137,
+          "minimum": 0.002660475,
+          "maximum": 0.003022538
+        },
+        "merge_seconds": {
+          "median": 0.005393125,
+          "minimum": 0.005084538,
+          "maximum": 0.006483529
+        },
+        "call_seconds": {
+          "median": 0.00851346,
+          "minimum": 0.007933088,
+          "maximum": 0.009656271
+        },
+        "call_cpu_seconds": {
+          "median": 0.008509899000000001,
+          "minimum": 0.007928762,
+          "maximum": 0.009616621
+        },
+        "vm_hwm_mib": {
+          "median": 3.62109375,
+          "minimum": 3.484375,
+          "maximum": 3.70703125
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.008739343,
+          "minimum": 0.00814244,
+          "maximum": 0.010681622
+        },
+        "init_seconds": {
+          "median": 0.002927792,
+          "minimum": 0.002759447,
+          "maximum": 0.003167582
+        },
+        "merge_seconds": {
+          "median": 0.005783257,
+          "minimum": 0.005214209,
+          "maximum": 0.007900121
+        },
+        "call_seconds": {
+          "median": 0.008946582,
+          "minimum": 0.008339095,
+          "maximum": 0.010905753
+        },
+        "call_cpu_seconds": {
+          "median": 0.008844514000000001,
+          "minimum": 0.008333526,
+          "maximum": 0.009466026
+        },
+        "vm_hwm_mib": {
+          "median": 3.61328125,
+          "minimum": 3.5390625,
+          "maximum": 3.6328125
+        }
+      }
+    },
+    "fingerprint": "b8d6bd7f3f7411bf24ae6ed3c07b7e4112065e2ff367cbb125ad7381d48314bb",
+    "python_over_checked": 13.83325539444075,
+    "checked_over_unchecked": 0.9518408878104452
+  },
+  {
+    "dataset": "chain-16000",
+    "split": "regex",
+    "variants": {
+      "python": {
+        "train_seconds": {
+          "median": 0.23496950000117067,
+          "minimum": 0.22663663199637085,
+          "maximum": 0.23674079299962614
+        },
+        "init_seconds": {
+          "median": 0.04939073800051119,
+          "minimum": 0.047653902001911774,
+          "maximum": 0.05375848099356517
+        },
+        "merge_seconds": {
+          "median": 0.18298231200606097,
+          "minimum": 0.17898272999445908,
+          "maximum": 0.1859841370023787
+        },
+        "call_seconds": {
+          "median": 0.2532739650050644,
+          "minimum": 0.2438663970096968,
+          "maximum": 0.25460920500336215
+        },
+        "call_cpu_seconds": {
+          "median": 0.253026408,
+          "minimum": 0.243543568,
+          "maximum": 0.254122175
+        },
+        "vm_hwm_mib": {
+          "median": 22.296875,
+          "minimum": 22.296875,
+          "maximum": 22.40625
+        }
+      },
+      "checked": {
+        "train_seconds": {
+          "median": 0.018290056,
+          "minimum": 0.01795471,
+          "maximum": 0.020723353
+        },
+        "init_seconds": {
+          "median": 0.006047799,
+          "minimum": 0.005663893,
+          "maximum": 0.006911311
+        },
+        "merge_seconds": {
+          "median": 0.012625568,
+          "minimum": 0.012048393,
+          "maximum": 0.013811618
+        },
+        "call_seconds": {
+          "median": 0.01889543,
+          "minimum": 0.018382082,
+          "maximum": 0.021217694
+        },
+        "call_cpu_seconds": {
+          "median": 0.018713866000000003,
+          "minimum": 0.018377314999999998,
+          "maximum": 0.021212911
+        },
+        "vm_hwm_mib": {
+          "median": 5.00390625,
+          "minimum": 4.94921875,
+          "maximum": 5.12109375
+        }
+      },
+      "unchecked": {
+        "train_seconds": {
+          "median": 0.019412726,
+          "minimum": 0.018505435,
+          "maximum": 0.02069314
+        },
+        "init_seconds": {
+          "median": 0.006173443,
+          "minimum": 0.006062067,
+          "maximum": 0.007383115
+        },
+        "merge_seconds": {
+          "median": 0.013309658,
+          "minimum": 0.012331211,
+          "maximum": 0.014232295
+        },
+        "call_seconds": {
+          "median": 0.019869543,
+          "minimum": 0.018960416,
+          "maximum": 0.02112621
+        },
+        "call_cpu_seconds": {
+          "median": 0.019817262999999998,
+          "minimum": 0.018955439000000004,
+          "maximum": 0.021111754000000003
+        },
+        "vm_hwm_mib": {
+          "median": 5.00390625,
+          "minimum": 4.9609375,
+          "maximum": 5.11328125
+        }
+      }
+    },
+    "fingerprint": "83da262b22bc9124c64284ce9e5493ca6cc297c2e4089453b606aa3eabe3fce7",
+    "python_over_checked": 12.846844208742208,
+    "checked_over_unchecked": 0.942168348741954
+  }
+]

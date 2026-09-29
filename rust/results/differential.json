@@ -1,0 +1,10 @@
+{
+  "cases": 205,
+  "rust_runs": 410,
+  "oracle": "full-recount Python naive",
+  "full_rule_traces_match": true,
+  "final_tokens_match": true,
+  "fingerprints_match": true,
+  "random_seed": 20260930,
+  "binary_sha256": "179cd735ad8f4d84ef1961ca0cd91e837ced578763c7bfbe897bbb550878e154"
+}

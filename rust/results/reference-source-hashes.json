@@ -1,0 +1,13 @@
+{
+  "note": "Supplement recorded after the matrix started. All these reference and preparation files are byte-identical to the already-pushed research commit ac7fd6a. Complements baseline.environment.json without changing frozen benchmark sources.",
+  "research_commit": "ac7fd6a747fb6da593d8c8b64b9b724394128de2",
+  "sources_sha256": {
+    "benchmarks/bpe_core_comparison/evolution/packed_driver.py": "d3957c43da53602f34b8665fcad785e743bc807247204faa53ba4a38d386a0d4",
+    "benchmarks/bpe_core_comparison/evolution/lean_backend.py": "014953ed16cd71863206463c9dcd7d854c1df54777c49a3fa2ef0825d39bdd1b",
+    "benchmarks/bpe_core_comparison/evolution/support.py": "df55db3795c12a8f181cc39b7744a32c72e5b7124fe61cd16e53277fab185c71",
+    "benchmarks/bpe_core_comparison/python_rewrite/backends_fused.py": "5011bfe0ec5539d111429e6f6a3e372dd0dcf490e62e059206c96e7d5eff82d0",
+    "benchmarks/bpe_core_comparison/python_rewrite/backends_compact.py": "ca6a80988706da8497558a474cd34a038d27b469cbc0e4e2d8c4a4ade2057330",
+    "benchmarks/bpe_core_comparison/python_rewrite/common_fused.py": "4fe16def047074674a35d0124ea32c382c3ab24506530759dd770361d427d75b",
+    "benchmarks/bpe_core_comparison/python_rewrite/bench_fused.py": "6aad33829771468824f94abf59fb5ca97cfe5f3ea2f929c62764e21cd92891ab"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+  "command": [
+    "rust/tools/benchmark.py"
+  ],
+  "cpu_affinity": [
+    5
+  ],
+  "seed": 20261003,
+  "profiling_enabled": false,
+  "binary_sha256": "179cd735ad8f4d84ef1961ca0cd91e837ced578763c7bfbe897bbb550878e154",
+  "sources_sha256": {
+    "rust/Cargo.toml": "1705706789a06d14adfbf9de51cc076b2b0dc78803867dc21c54787a56f5e58f",
+    "rust/Cargo.lock": "f36b04b48a746ddef77cb191913920f72490f585f95c2a82b99cacb16f39cec8",
+    "rust/src/trainer.rs": "a0e7d9df25f4589c9df2497824e2d809c001a8d390138e04aa532429092f4063",
+    "rust/src/lib.rs": "d119de7604751dd513afccc3ceff447e29c8754008a5325dfdc3590de3b0a52d",
+    "rust/src/backend.rs": "cabdf2dd0504a30d86605200a7aeb17f3f6eaa8b717c42c7ce9f40e7ea2ef8c2",
+    "rust/src/main.rs": "224259a1f649ddc21758fb0e352f5653e1b211c6a8f2e2febf20417f7dbb8f85",
+    "rust/tools/fixtures.py": "a814dd0a8d63e05e2bad5bd0743a4f3ef0f6dfc49f731e82889b9c74378cc4a9",
+    "rust/tools/python_reference.py": "d434f942e22b08a9223b1436bfe17616128b7f885ed9a755f830455d940f4e8c",
+    "rust/tools/summarize.py": "84025f03845f3bb9100b95b623be0beba71ca43d1e95396d04f398096309e0d1",
+    "rust/tools/differential.py": "830b3f27d1b4adcb49d764184f4cc40643b93aeebdb3b29e6cbd9558f549a2d7",
+    "rust/tools/benchmark.py": "6cf3a67c2447d6f8c243a0302a63c1cd1d5f379a71e498b7b4a1176f614d2cb7",
+    "benchmarks/bpe_core_comparison/evolution/packed_driver.py": "d3957c43da53602f34b8665fcad785e743bc807247204faa53ba4a38d386a0d4",
+    "benchmarks/bpe_core_comparison/evolution/lean_backend.py": "014953ed16cd71863206463c9dcd7d854c1df54777c49a3fa2ef0825d39bdd1b",
+    "benchmarks/bpe_core_comparison/python_rewrite/common_fused.py": "4fe16def047074674a35d0124ea32c382c3ab24506530759dd770361d427d75b"
+  }
+}
