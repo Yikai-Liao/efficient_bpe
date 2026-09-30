@@ -1,0 +1,109 @@
+{
+  "families": {
+    "adaptive": {
+      "binary": "rust/target/reruns/radical-adaptive-cuts-gate-v1/radical-owned-adaptive-cuts",
+      "binary_sha256": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+      "fixed_args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global"
+      ],
+      "modes": {
+        "control": {
+          "args": [
+            "--cut-policy",
+            "fixed"
+          ],
+          "expected_fields": {
+            "cut_policy_requested": "fixed"
+          }
+        },
+        "experiment": {
+          "args": [
+            "--cut-policy",
+            "adaptive"
+          ],
+          "expected_fields": {
+            "cut_policy_requested": "adaptive"
+          }
+        }
+      },
+      "gates": [
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/differential.json",
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/directed.json"
+      ]
+    },
+    "replay": {
+      "binary": "rust/target/reruns/radical-replay-birth-gate-v1/radical-owned-replay-birth",
+      "binary_sha256": "4cba04756256643b73f8f08189544a951947296a51a201a15bce159142699073",
+      "fixed_args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global"
+      ],
+      "modes": {
+        "control": {
+          "args": [
+            "--birth-fill",
+            "chain"
+          ],
+          "expected_fields": {
+            "birth_fill_requested": "chain",
+            "birth_fill_effective": "chain"
+          }
+        },
+        "experiment": {
+          "args": [
+            "--birth-fill",
+            "replay"
+          ],
+          "expected_fields": {
+            "birth_fill_requested": "replay",
+            "birth_fill_effective": "replay",
+            "replay_birth_nodes_actual": 0,
+            "grouped_birth_nodes": 0,
+            "region_peak_route_born_capacity": 0
+          }
+        }
+      },
+      "gates": [
+        "rust/batch_results/radical-replay-birth-gate-v1/differential.json",
+        "rust/batch_results/radical-replay-birth-gate-v1/directed.json"
+      ]
+    },
+    "serial": {
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "fixed_args": [
+        "--backend",
+        "combined_filtered",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "checked"
+      ]
+    }
+  }
+}

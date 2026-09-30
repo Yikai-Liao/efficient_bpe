@@ -1,0 +1,11 @@
+{
+  "rust/experiments/radical/owned_replay_counts/Cargo.lock": "24f105d78b430acd07055419bc399a45a9b23c03b0cc8d310031595fc8b452e3",
+  "rust/experiments/radical/owned_replay_counts/Cargo.toml": "7e8134de5a7aa5837215d3d5fd8b08ed691aa459af2004d0697a725d316cb1e3",
+  "rust/experiments/radical/owned_replay_counts/DESIGN.md": "2db2d74bdabe328061eaf12f70d6d8c2b13f8b81453ba1edf30699a7b6cbbd8a",
+  "rust/experiments/radical/owned_replay_counts/src/lib.rs": "59ded5cf358e82ba1bfdb4d99147a9da593f6e80887b47e2e488b3f13a5731ba",
+  "rust/experiments/radical/owned_replay_counts/src/main.rs": "fb6f1e0d88effd963e7b09e647750743ec491ccc15075de714a11b78b74d98ee",
+  "rust/experiments/radical/owned_replay_counts/src/region_counts.rs": "04ac4a67aefe8e7f3dc1a93b7fe03a8e2fbecc184b042d7957e9695af38d8402",
+  "rust/experiments/radical/owned_replay_counts/src/replay.rs": "ee756bf15df56cfc05d9d042c0532f8e6c2189c79a2dfda8c39ff18ca2c42b5c",
+  "rust/experiments/radical/owned_replay_counts/src/small_posting.rs": "c04c7ac8d52695ea70b66360d986fba6ce2a80a73c7b2429f818b6dede1272b6",
+  "rust/experiments/radical/owned_replay_counts/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb"
+}

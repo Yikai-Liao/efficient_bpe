@@ -1,0 +1,22 @@
+{
+  "binary": "rust/target/reruns/radical-adaptive-cuts-gate-v1/radical-owned-adaptive-cuts",
+  "binary_sha256": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+  "fixed_args": [
+    "--chunk-size", "4096", "--heap-policy", "lazy",
+    "--integer-hash", "ahash", "--endpoint-plan", "tagged-fused",
+    "--region-mode", "region", "--regions-per-worker", "1",
+    "--posting-order", "global"
+  ],
+  "modes": [
+    {
+      "name": "control",
+      "args": ["--cut-policy", "fixed"],
+      "expected_fields": {"cut_policy_requested": "fixed"}
+    },
+    {
+      "name": "experiment",
+      "args": ["--cut-policy", "adaptive"],
+      "expected_fields": {"cut_policy_requested": "adaptive"}
+    }
+  ]
+}

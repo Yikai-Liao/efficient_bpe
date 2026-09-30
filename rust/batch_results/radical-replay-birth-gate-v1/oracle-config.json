@@ -1,0 +1,47 @@
+{
+  "binary": "rust/target/reruns/radical-replay-birth-gate-v1/radical-owned-replay-birth",
+  "binary_sha256": "4cba04756256643b73f8f08189544a951947296a51a201a15bce159142699073",
+  "fixed_args": [
+    "--chunk-size",
+    "4096",
+    "--heap-policy",
+    "lazy",
+    "--integer-hash",
+    "ahash",
+    "--endpoint-plan",
+    "tagged-fused",
+    "--region-mode",
+    "region",
+    "--regions-per-worker",
+    "1",
+    "--posting-order",
+    "global"
+  ],
+  "modes": [
+    {
+      "name": "control",
+      "args": [
+        "--birth-fill",
+        "chain"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "chain",
+        "birth_fill_effective": "chain"
+      }
+    },
+    {
+      "name": "experiment",
+      "args": [
+        "--birth-fill",
+        "replay"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay",
+        "birth_fill_effective": "replay",
+        "replay_birth_nodes_actual": 0,
+        "grouped_birth_nodes": 0,
+        "region_peak_route_born_capacity": 0
+      }
+    }
+  ]
+}

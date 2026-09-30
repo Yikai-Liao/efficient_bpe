@@ -1,6 +1,8 @@
 # 用稳定语料重放出生位置，替代每位置 BirthNode
 
-状态：反例与所有权设计，**未实现、未计时**。候选基于固定 region、全局有序 posting 和 tagged 端点协议。目标是删除每个新边的 8 字节 `{pos,next}` BirthNode，而不是减少精确频率统计。每批现有规划仍遍历被选 pair 的历史 posting，算旧键减量与新键的 `(weight,occurrences)`；新键增量按**出生位置所属的目标 region**保存。此遍不存新边位置。选中匹配的端点全部写完、snapshot 延迟写已回放后，owner 合并所有 region 的频率与出现数、按完整净频率应用阈值，给保留的新键一次分配最终 posting，并按 region/key 计数分配互斥写入段。第二遍重放仍保留的被选历史 posting，将新边位置写到这些段；全部任务 join 且逐段计数吻合后才发布可读长度和开始下一批选择。
+状态：已实现安全切片控制于 `owned_replay_birth`，27 项 Rust 测试及 96 次独立轨迹门控通过；追加 `owned_replay_counts` 内联计数版，30 项测试及 96 次门控通过。两窗口共 66 次计时含其他切区候选，详见[本轮报告](ADAPTIVE_REPLAY_REPORT.md)。本版只支持 atomic region，不支持 snapshot replay；未实现未初始化 posting 接口。BirthNode 去除成立，总训练 RSS 尚无一致改善。
+
+下文保留反例与原所有权设计。候选基于固定 region、全局有序 posting 和 tagged 端点协议。目标是删除每个新边的 8 字节 `{pos,next}` BirthNode，而不是减少精确频率统计。每批现有规划仍遍历被选 pair 的历史 posting，算旧键减量与新键的 `(weight,occurrences)`；新键增量按**出生位置所属的目标 region**保存。此遍不存新边位置。选中匹配的端点全部写完后，owner 合并所有 region 的频率与出现数、按完整净频率应用阈值，给保留的新键一次分配最终 posting，并按 region/key 计数分配互斥写入段。第二遍重放仍保留的被选历史 posting，将新边位置写到这些段；全部任务 join 且逐段计数吻合后才发布可读长度和开始下一批选择。
 
 ## 为什么重放能认出本批实际匹配
 

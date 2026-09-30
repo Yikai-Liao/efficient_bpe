@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "measured_calls": 40,
+  "n2_jobs": 20,
+  "seed": 20260930,
+  "second_pass_reverses_first_pass_relative_order": true,
+  "manifest_sha256": {
+    "rust/batch_results/quick-fixtures-262144-512.json": "67d02ed75ea85870c62493064c82a92ac6356f37d340a63ae05d5a738ffdfd0c",
+    "rust/ablation_results/fixtures.json": "61da2a65e246a037f3ca31859c04e44806252cafe158e0662659a7a93c4e208b"
+  },
+  "binary_sha256": {
+    "adaptive": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+    "replay": "4cba04756256643b73f8f08189544a951947296a51a201a15bce159142699073",
+    "serial": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1"
+  },
+  "source_sha256": {
+    "rust/experiments/radical/owned_adaptive_cuts/Cargo.lock": "a0f9b433430604d24ae17300fac68be826cf37c855ea67eff34f1a04f284f9f4",
+    "rust/experiments/radical/owned_adaptive_cuts/Cargo.toml": "b907c6f78c16c6ed76a9e49707d45d02c6e59cd0db0072ff210ffe1749423f41",
+    "rust/experiments/radical/owned_adaptive_cuts/DESIGN.md": "ecd1080c48564bb278404004ead337df60e4b05f549d648fc98cbc28565882af",
+    "rust/experiments/radical/owned_adaptive_cuts/src/lib.rs": "0af4b7b2f3ef8e7c88b6029e3560cc97c3848487dc7b9b7217ad268ebe0c3cfc",
+    "rust/experiments/radical/owned_adaptive_cuts/src/main.rs": "faca9aad046decd4277a23eaff0c563bfacae6701090f4e46a77f399bb9154e2",
+    "rust/experiments/radical/owned_adaptive_cuts/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/radical/owned_adaptive_cuts/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb",
+    "rust/experiments/radical/owned_replay_birth/Cargo.lock": "d14139206195ce72423d7233b6d8fea1ae86d4d1d72885a5be6ed16a0cd37975",
+    "rust/experiments/radical/owned_replay_birth/Cargo.toml": "c284f2b4c8f3870e6ecf9d245bd89249b3697c482c3d475335f1a9cd53aaa45d",
+    "rust/experiments/radical/owned_replay_birth/DESIGN.md": "f0568aa50fb4ccf4e596535a1dafbb4ab90b038eaaa5c3549486f48fdf06e61f",
+    "rust/experiments/radical/owned_replay_birth/src/lib.rs": "6681faeb7fd6f2848cc8e48f1274136d841a181ac23b5371d9c70c6045ef0356",
+    "rust/experiments/radical/owned_replay_birth/src/main.rs": "c7919cc689a65e2f9d8ddf63c26346ad4d772b035bee03d305504e500ba921b7",
+    "rust/experiments/radical/owned_replay_birth/src/replay.rs": "3839406e27761f7c33cebcee47ec2fe4dbb57e4af9822f55f5a419d93b9659c0",
+    "rust/experiments/radical/owned_replay_birth/src/small_posting.rs": "c04c7ac8d52695ea70b66360d986fba6ce2a80a73c7b2429f818b6dede1272b6",
+    "rust/experiments/radical/owned_replay_birth/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb"
+  },
+  "source_snapshot_sha256": "012fb9b34f54fc4d373c76839de67f295283681451bfcbdf0e47ba5434936b8f",
+  "shared_source_provenance_sha256": "3a32bc82b6ff3d3949b60500f828934338de655ba1199c08cc2e08ba370937e3",
+  "config_sha256": "1acd12e54e6cabe3a8d57894fcffb8ece79d72f6e4c77d54ed6cddbe6accf0e6",
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  "training_memory_metric": "train_vm_hwm_mib",
+  "process_cpu_metric": "call_cpu_seconds",
+  "semantic_check": "complete merge and final-token trace plus SHA-256 fingerprint"
+}

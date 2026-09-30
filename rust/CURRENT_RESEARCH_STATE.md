@@ -9,6 +9,8 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 
 [最新有限复核](batch_results/radical-local-hash-v1/README.md)中，4 MiB/3000 规则 n=2 的 aHash 单核/四核中位数为英文 1.310/0.533 秒、中文 0.585/0.303 秒；相对 std 四格均改善约 1.43–1.46×。自身 1→4 仍仅 2.46×/1.93×，所以 Goal 继续，不能以对旧直接串行的 3.06×/3.25× 宣布多核目标完成。后两个比例还混合了哈希工程差异。[同 aHash 直接串行小测](batch_results/radical-serial-integer-quick-v1/README.md)已补齐：256 KiB n=1 中 CF32 checked 的英文/中文为 0.0386/0.0198 秒，同窗 owner 四核为 0.0314/0.0180 秒，差距明显缩小；尚不能外推 4 MiB 或作稳定排序。机器只提供六个可见 CPU，尚无几十核/双路证据。
 
+最新一轮已收敛三个 Rust 原型：[自适应切区、出生位置重放及计数内联报告](ADAPTIVE_REPLAY_REPORT.md)。28/27/30 项 lib 测试、286 次独立完整轨迹门控和 66 次轻量计时通过。adaptive 改善扫描均衡但没有通用净收益；原 replay 删掉 8 B BirthNode，却在自然语料增加总耗时。追加 replay-inline 后，第二窗口 W4 EN/ZH 为 50.78/21.28 ms，自身 W1→W4 仅 1.20×/1.51×，公平直接串行/W4 为 0.74×/1.12×。计数 heap 字节减少、总 HWM 未一致下降；没有达成 3×，不切换通用速度默认。后续实现与计时由主 agent 完成，不再使用 subagent。
+
 ## 下一步只推进这些问题
 
 - **公平的直接串行常数基线**：[串行控制](experiments/radical/serial_integer_hash/DESIGN.md)已完成 22 调用同窗口小测，全部完整轨迹匹配。相同 backend/bounds 的八组 std→aHash 中七组更快，但 n=1 不作稳定排名；不能把旧串行保留 std 的差距算成并行算法创新。
@@ -24,8 +26,10 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 - **减少固定分区倾斜**：[微区](REGION_TASK_GRANULARITY_NEXT.md)已实现并通过 24 项 Rust 测试、92 次独立 oracle 和 8 组 k1 新旧对照。W4 k1→k4 改善了非 AA 访问均衡，却增加区间查询、局部聚合与调度成本；256 KiB n=2 英文 region .04315→.05442 秒、中文 .02156→.02537 秒，snapshot 也更慢。不继续盲扫任务数，见[三原型报告](MICRO_ATOMIC_ORDERED_REPORT.md)。
 - **提前提交旧频率**：[producer 原子减频](PRODUCER_OLD_REDUCTION_REVIEW.md)已通过 17 项 Rust 测试和 85 次完整 oracle。它复用旧 route 记录作唯一退休标记，不增宽 Entry，owner 字典在共享减频阶段禁止结构变动。同窗 n=2 W4 owner→atomic 英文 .03322→.04130 秒、中文 .02394→.02248 秒，方向分化，不默认整合。
 - **从出生来源维持全局有序**：[有序 posting](ORDERED_POSTING_REVIEW.md)已通过 25 项 Rust 测试、90 次完整 oracle 和非法模式检查。每个新 key 的出生由唯一规则方向产生，局部链片段反转后按 region 连接即可保持全局升序，无 N 大小副本。AA 初始排序确实被取消；自然语料 n=1 的微小净改善和 AB n=2 的交叠范围不足以确认速度优势。保留不变量作为后续切区和压缩基础，当前仍不切换默认。
-- **后续设计**：[按本批工作量选 cut](ADAPTIVE_ORDERED_CUTS_NEXT.md)利用有序 posting，以 O(BW) 元数据尝试约 W 个均衡区；[u16 gap 压缩](ORDERED_POSTING_STORAGE_NEXT.md)保留完整 u32 位置域，但必须核算 checkpoint、对象头和转换峰值。[不可变 pair row](IMMUTABLE_PAIR_ROWS_REVIEW.md)暂因目录与集中更新成本保留在审查阶段；[磁盘 posting 分级存储](IMMUTABLE_POSTING_STORAGE_NEXT.md)仍未解决构建峰值及频率/heap 常驻。这些后续方案尚未实现或测得提速。
-- **删除出生链的架构尝试**：[稳定语料重放出生位置](REPLAY_BIRTH_FILL_NEXT.md)拟在首遍只计数、apply 后重读仍保留的 selected 历史表，直接填最终位置表。raw `HEAD|fresh_id` 可识别本批真实匹配，累计额外历史扫描 O(N)；代价是更晚释放 selected posting、O(D) 互斥写段描述符和再次同步。它还只是设计，不能将每节点 8 B 的去除直接等同于训练峰值下降。
+- **工作量驱动的切点**：[按本批工作量选 cut](ADAPTIVE_ORDERED_CUTS_NEXT.md)已在 `owned_adaptive_cuts` 实现，28 项测试和 94 次独立完整轨迹门控通过。同 binary 小测 W4，非 AA 最大区域访问累计和 EN/ZH 降 2.25%/27.86%，完整调用与 HWM 没有一致收益。候选元数据有 8 MiB 选择守卫，但不是整次训练预算；不默认整合，详见[本轮报告](ADAPTIVE_REPLAY_REPORT.md)。
+- **尚未实现的存储方向**：[u16 gap 压缩](ORDERED_POSTING_STORAGE_NEXT.md)保留完整 u32 位置域，但必须核算 checkpoint、对象头和转换峰值。[不可变 pair row](IMMUTABLE_PAIR_ROWS_REVIEW.md)暂因目录与集中更新成本保留在审查阶段；[磁盘 posting 分级存储](IMMUTABLE_POSTING_STORAGE_NEXT.md)仍未解决构建峰值及频率/heap 常驻。不能将这些设计当作已测得的提速。
+- **删除出生链并分散填最终 posting**：[稳定语料重放出生位置](REPLAY_BIRTH_FILL_NEXT.md)已于 `owned_replay_birth` 实现，27 项 Rust 测试和 96 次 oracle 通过；raw `HEAD|fresh_id` 识别真实匹配，独占切片并行填充，物理 BirthNode 为零，额外累计历史扫描 O(N)。原 replay 的自然语料 W4 较慢、AB 较快，不能将节点去除等同于总峰值下降。
+- **重放计数内联**：主 agent 依据上述成本追加 [`owned_replay_counts`](experiments/radical/owned_replay_counts/DESIGN.md)，30 项 Rust 测试及 96 次独立完整轨迹通过，同 binary chain/Vec replay/inline 的 26 调用小测。W4 计数 heap 峰值 EN/ZH 降约 65%/82%；inline EN 与 chain 相近、ZH 和 AB 较快，自身扩展仍仅 1.20×/1.51×。保留为 replay 的优先候选，不作为通用默认，见[归档](batch_results/radical-replay-counts-v1/README.md)。
 
 ## 已筛过，避免无证据重做
 

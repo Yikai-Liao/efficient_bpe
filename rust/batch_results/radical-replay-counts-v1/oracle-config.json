@@ -1,0 +1,50 @@
+{
+  "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+  "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+  "fixed_args": [
+    "--chunk-size",
+    "4096",
+    "--heap-policy",
+    "lazy",
+    "--integer-hash",
+    "ahash",
+    "--endpoint-plan",
+    "tagged-fused",
+    "--region-mode",
+    "region",
+    "--regions-per-worker",
+    "1",
+    "--posting-order",
+    "global"
+  ],
+  "modes": [
+    {
+      "name": "control",
+      "args": [
+        "--birth-fill",
+        "replay"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay",
+        "birth_fill_effective": "replay",
+        "replay_birth_nodes_actual": 0,
+        "grouped_birth_nodes": 0,
+        "region_peak_route_born_capacity": 0
+      }
+    },
+    {
+      "name": "experiment",
+      "args": [
+        "--birth-fill",
+        "replay-inline"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay-inline",
+        "birth_fill_effective": "replay-inline",
+        "replay_birth_nodes_actual": 0,
+        "grouped_birth_nodes": 0,
+        "region_peak_route_born_capacity": 0
+      }
+    }
+  ]
+}

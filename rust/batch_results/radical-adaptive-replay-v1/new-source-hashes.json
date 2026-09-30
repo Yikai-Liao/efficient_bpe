@@ -1,0 +1,17 @@
+{
+  "rust/experiments/radical/owned_adaptive_cuts/Cargo.lock": "a0f9b433430604d24ae17300fac68be826cf37c855ea67eff34f1a04f284f9f4",
+  "rust/experiments/radical/owned_adaptive_cuts/Cargo.toml": "b907c6f78c16c6ed76a9e49707d45d02c6e59cd0db0072ff210ffe1749423f41",
+  "rust/experiments/radical/owned_adaptive_cuts/DESIGN.md": "ecd1080c48564bb278404004ead337df60e4b05f549d648fc98cbc28565882af",
+  "rust/experiments/radical/owned_adaptive_cuts/src/lib.rs": "0af4b7b2f3ef8e7c88b6029e3560cc97c3848487dc7b9b7217ad268ebe0c3cfc",
+  "rust/experiments/radical/owned_adaptive_cuts/src/main.rs": "faca9aad046decd4277a23eaff0c563bfacae6701090f4e46a77f399bb9154e2",
+  "rust/experiments/radical/owned_adaptive_cuts/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+  "rust/experiments/radical/owned_adaptive_cuts/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb",
+  "rust/experiments/radical/owned_replay_birth/Cargo.lock": "d14139206195ce72423d7233b6d8fea1ae86d4d1d72885a5be6ed16a0cd37975",
+  "rust/experiments/radical/owned_replay_birth/Cargo.toml": "c284f2b4c8f3870e6ecf9d245bd89249b3697c482c3d475335f1a9cd53aaa45d",
+  "rust/experiments/radical/owned_replay_birth/DESIGN.md": "f0568aa50fb4ccf4e596535a1dafbb4ab90b038eaaa5c3549486f48fdf06e61f",
+  "rust/experiments/radical/owned_replay_birth/src/lib.rs": "6681faeb7fd6f2848cc8e48f1274136d841a181ac23b5371d9c70c6045ef0356",
+  "rust/experiments/radical/owned_replay_birth/src/main.rs": "c7919cc689a65e2f9d8ddf63c26346ad4d772b035bee03d305504e500ba921b7",
+  "rust/experiments/radical/owned_replay_birth/src/replay.rs": "3839406e27761f7c33cebcee47ec2fe4dbb57e4af9822f55f5a419d93b9659c0",
+  "rust/experiments/radical/owned_replay_birth/src/small_posting.rs": "c04c7ac8d52695ea70b66360d986fba6ce2a80a73c7b2429f818b6dede1272b6",
+  "rust/experiments/radical/owned_replay_birth/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb"
+}

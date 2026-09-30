@@ -1,0 +1,7 @@
+{
+  "rust/experiments/radical/owned_replay_birth/src/lib.rs": "6681faeb7fd6f2848cc8e48f1274136d841a181ac23b5371d9c70c6045ef0356",
+  "rust/experiments/radical/owned_replay_birth/src/main.rs": "c7919cc689a65e2f9d8ddf63c26346ad4d772b035bee03d305504e500ba921b7",
+  "rust/experiments/radical/owned_replay_birth/src/replay.rs": "3839406e27761f7c33cebcee47ec2fe4dbb57e4af9822f55f5a419d93b9659c0",
+  "rust/experiments/radical/owned_replay_birth/src/small_posting.rs": "c04c7ac8d52695ea70b66360d986fba6ce2a80a73c7b2429f818b6dede1272b6",
+  "rust/experiments/radical/owned_replay_birth/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb"
+}
