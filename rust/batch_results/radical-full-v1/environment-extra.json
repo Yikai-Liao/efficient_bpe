@@ -1,0 +1,20 @@
+{
+  "captured_utc": "2026-09-30T03:38:01Z",
+  "captured_after_matrix_started": true,
+  "cgroup": {
+    "system.slice/paseo.service": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 3135027942\nuser_usec 2604755045\nsystem_usec 530272897\nnice_usec 299971\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpu.weight": "100",
+      "cpuset.cpus.effective": "0-5",
+      "memory.max": "max"
+    },
+    "system.slice": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 93262584375\nuser_usec 66144506362\nsystem_usec 27118078013\nnice_usec 951846\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpu.weight": "100",
+      "cpuset.cpus.effective": "0-5",
+      "memory.max": "max"
+    }
+  }
+}

@@ -9,7 +9,9 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 
 [最新有限复核](batch_results/radical-local-hash-v1/README.md)中，4 MiB/3000 规则 n=2 的 aHash 单核/四核中位数为英文 1.310/0.533 秒、中文 0.585/0.303 秒；相对 std 四格均改善约 1.43–1.46×。自身 1→4 仍仅 2.46×/1.93×，所以 Goal 继续，不能以对旧直接串行的 3.06×/3.25× 宣布多核目标完成。后两个比例还混合了哈希工程差异。[同 aHash 直接串行小测](batch_results/radical-serial-integer-quick-v1/README.md)已补齐：256 KiB n=1 中 CF32 checked 的英文/中文为 0.0386/0.0198 秒，同窗 owner 四核为 0.0314/0.0180 秒，差距明显缩小；尚不能外推 4 MiB 或作稳定排序。机器只提供六个可见 CPU，尚无几十核/双路证据。
 
-最新一轮已收敛三个 Rust 原型：[自适应切区、出生位置重放及计数内联报告](ADAPTIVE_REPLAY_REPORT.md)。28/27/30 项 lib 测试、286 次独立完整轨迹门控和 66 次轻量计时通过。adaptive 改善扫描均衡但没有通用净收益；原 replay 删掉 8 B BirthNode，却在自然语料增加总耗时。追加 replay-inline 后，第二窗口 W4 EN/ZH 为 50.78/21.28 ms，自身 W1→W4 仅 1.20×/1.51×，公平直接串行/W4 为 0.74×/1.12×。计数 heap 字节减少、总 HWM 未一致下降；没有达成 3×，不切换通用速度默认。后续实现与计时由主 agent 完成，不再使用 subagent。
+上一轮小输入筛选收敛了三个 Rust 原型：[自适应切区、出生位置重放及计数内联报告](ADAPTIVE_REPLAY_REPORT.md)。28/27/30 项 lib 测试、286 次独立完整轨迹门控和 66 次轻量计时通过。adaptive 改善扫描均衡但没有通用净收益；原 replay 删掉 8 B BirthNode，却在自然语料增加总耗时。追加 replay-inline 后，第二窗口 W4 EN/ZH 为 50.78/21.28 ms，自身 W1→W4 仅 1.20×/1.51×，公平直接串行/W4 为 0.74×/1.12×。计数 heap 字节减少、总 HWM 未一致下降；没有达成 3×，不切换通用速度默认。后续实现与计时由主 agent 完成，不再使用 subagent。
+
+已追加[16 MiB、32,000 实际合并的核心方案复核](batch_results/radical-full-v1/README.md)。原 1,000 调用矩阵在 135 条正式结果后停止，收敛后新增 28 次调用，用时 108.7 秒。主表使用同一补测窗口 n=2：英文旧 owner/自适应/出生链/inline 为 2.591/2.915/2.908/3.627 秒；中文为 1.641/1.577/1.594/1.987 秒。inline 与同二进制 chain 对照两者均慢约 25%，不是通用最优。英文旧 owner 本窗最快，中文 adaptive 与 chain 的范围交叠；相对同窗最快直接串行仅 1.94×/1.69×。内存高水位也未一致改善，不切换默认。全部 163 次独立正式调用完整指纹匹配，原窗口另有 135 次完整 trace 校验；原矩阵的零散结果仅保留为探索性数据。
 
 ## 下一步只推进这些问题
 
@@ -43,4 +45,4 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 | 按规则上下文累计 | 大幅减少实际路由哈希更新，却没有一致 W4 收益；局部 scratch 头的后续小测也未获得一致收益。|
 | 空间逐位置证书 | 旧 native 已有并行 extra-only，owner 有串行预算 probe；两者不是未探索的新点，不重复包装为新算法。|
 
-先用 256 KiB 小筛选淘汰候选，只为具体疑问做有限 4 MiB 测量，最终收敛后再完整矩阵。所有已发布数据保留 source/binary/fixture 哈希、完整轨迹校验、进程 CPU 与训练 VmHWM 口径。另一个 tokenizer benchmark 工作区始终只读。外存训练尚未实现。
+先用小输入淘汰候选，正式复核只覆盖回答当前疑问所需的完整规模输入、核心模式和重复次数，提前计算总调用量，避免展开无必要的笛卡尔积矩阵。所有已发布数据保留 source/binary/fixture 哈希、完整轨迹校验、进程 CPU 与训练 VmHWM 口径。另一个 tokenizer benchmark 工作区始终只读。外存训练尚未实现。

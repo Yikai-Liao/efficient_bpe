@@ -1,0 +1,439 @@
+{
+  "git_head_during_measurement": "39c4a265d17af815621c352af3d605f3a8fc6eb4",
+  "started_utc": "2026-09-30T03:15:48Z",
+  "config_sha256": "e5811541e5f3eb4b609e73899e5e3cfebaab2363de8e6dd03f908b91c3f8eb70",
+  "fixture_manifest_sha256": "e375c7436c423d20993c9f46ff12c172c719ed2c6003197cd47bd29d65818e13",
+  "runner_sha256": {
+    "rust/batch_results/radical-full-v1/prepare.py": "3903e3724f01d4bb8c772ceef264b760d7e9c5c009909251b1bab99a49006229",
+    "rust/batch_results/radical-full-v1/run.py": "d93a000ad5cf7f869d91ec95ac9189461e93f0ee11b46cb583b2a1e3c16aff25",
+    "rust/batch_results/radical-full-v1/config.json": "e5811541e5f3eb4b609e73899e5e3cfebaab2363de8e6dd03f908b91c3f8eb70",
+    "rust/batch_results/radical-full-v1/fixtures.json": "e375c7436c423d20993c9f46ff12c172c719ed2c6003197cd47bd29d65818e13"
+  },
+  "workspace_source_sha256": {
+    "rust/Cargo.lock": "f36b04b48a746ddef77cb191913920f72490f585f95c2a82b99cacb16f39cec8",
+    "rust/Cargo.toml": "1705706789a06d14adfbf9de51cc076b2b0dc78803867dc21c54787a56f5e58f",
+    "rust/experiments/aa_parity.rs": "f8eaaab11cae2550bebc583181a6bad1b7ca53c3a3d943761a9430ce039e8f99",
+    "rust/experiments/radical/owned_adaptive_cuts/.gitignore": "b53ee26e6ff1da219b0563333a76d2c9ec19eec713d6ee54e11a1edacb0e9f3d",
+    "rust/experiments/radical/owned_adaptive_cuts/Cargo.lock": "a0f9b433430604d24ae17300fac68be826cf37c855ea67eff34f1a04f284f9f4",
+    "rust/experiments/radical/owned_adaptive_cuts/Cargo.toml": "b907c6f78c16c6ed76a9e49707d45d02c6e59cd0db0072ff210ffe1749423f41",
+    "rust/experiments/radical/owned_adaptive_cuts/DESIGN.md": "ecd1080c48564bb278404004ead337df60e4b05f549d648fc98cbc28565882af",
+    "rust/experiments/radical/owned_adaptive_cuts/src/lib.rs": "0af4b7b2f3ef8e7c88b6029e3560cc97c3848487dc7b9b7217ad268ebe0c3cfc",
+    "rust/experiments/radical/owned_adaptive_cuts/src/main.rs": "faca9aad046decd4277a23eaff0c563bfacae6701090f4e46a77f399bb9154e2",
+    "rust/experiments/radical/owned_adaptive_cuts/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/radical/owned_adaptive_cuts/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb",
+    "rust/experiments/radical/owned_integer_hash/.gitignore": "306fd52e74fca6746e12acc750f232de15e71da917756a1270d74c91f5eb7368",
+    "rust/experiments/radical/owned_integer_hash/Cargo.lock": "3ba3562941d5b59ecd2b20f674a2bf96af37a1e7af65cd611e354d3c8330ab36",
+    "rust/experiments/radical/owned_integer_hash/Cargo.toml": "7c82e7946d8be0d8b2fcf73e5261b272197ad2532b22e9d09b7e34f9e8e4efa5",
+    "rust/experiments/radical/owned_integer_hash/DESIGN.md": "93992bb24ecb51a5baa442d74c33bd3df668a8ed1d8165486092c435b884649d",
+    "rust/experiments/radical/owned_integer_hash/src/lib.rs": "6f71259cad558f6efe148a2cb78cdba3b6d929834bafef449dd30909db959e13",
+    "rust/experiments/radical/owned_integer_hash/src/main.rs": "c460ecfde382b16b81c0632584f23f0d268b7582a8a378031c9881fcaac0ed81",
+    "rust/experiments/radical/owned_integer_hash/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/radical/owned_replay_counts/.gitignore": "b53ee26e6ff1da219b0563333a76d2c9ec19eec713d6ee54e11a1edacb0e9f3d",
+    "rust/experiments/radical/owned_replay_counts/Cargo.lock": "24f105d78b430acd07055419bc399a45a9b23c03b0cc8d310031595fc8b452e3",
+    "rust/experiments/radical/owned_replay_counts/Cargo.toml": "7e8134de5a7aa5837215d3d5fd8b08ed691aa459af2004d0697a725d316cb1e3",
+    "rust/experiments/radical/owned_replay_counts/DESIGN.md": "2db2d74bdabe328061eaf12f70d6d8c2b13f8b81453ba1edf30699a7b6cbbd8a",
+    "rust/experiments/radical/owned_replay_counts/src/lib.rs": "59ded5cf358e82ba1bfdb4d99147a9da593f6e80887b47e2e488b3f13a5731ba",
+    "rust/experiments/radical/owned_replay_counts/src/main.rs": "fb6f1e0d88effd963e7b09e647750743ec491ccc15075de714a11b78b74d98ee",
+    "rust/experiments/radical/owned_replay_counts/src/region_counts.rs": "04ac4a67aefe8e7f3dc1a93b7fe03a8e2fbecc184b042d7957e9695af38d8402",
+    "rust/experiments/radical/owned_replay_counts/src/replay.rs": "ee756bf15df56cfc05d9d042c0532f8e6c2189c79a2dfda8c39ff18ca2c42b5c",
+    "rust/experiments/radical/owned_replay_counts/src/small_posting.rs": "c04c7ac8d52695ea70b66360d986fba6ce2a80a73c7b2429f818b6dede1272b6",
+    "rust/experiments/radical/owned_replay_counts/src/snapshot.rs": "3e44508b2f4de23f997e3e1f588c3844250daf3bc98defcc2aa03337c89b4efb",
+    "rust/experiments/radical/serial_integer_hash/Cargo.lock": "3e0b20da5353db0d4f64c62f4e5318c6566287aea5ab03b29ac231050ee0cee9",
+    "rust/experiments/radical/serial_integer_hash/Cargo.toml": "880ef5f51c4d33ea36895b67e17e9920aaba16b489765288380c4ac14374f13f",
+    "rust/experiments/radical/serial_integer_hash/DESIGN.md": "53d1b313ddae7bdf0ce64b81944f448aac55388cd688117ce9830651430d41cc",
+    "rust/experiments/radical/serial_integer_hash/src/index.rs": "612427d777f5843462c54000cd93f3430c64a1f8eecc83e243c744fbd7a96c1a",
+    "rust/experiments/radical/serial_integer_hash/src/lib.rs": "8e9796f68be6ecb30f3dba1a64c3a6e19e600b425467d56f163c4a6ab70ea52d",
+    "rust/experiments/radical/serial_integer_hash/src/main.rs": "61f4c102008fcaff9438ac20255cc61e24a2776a2fb1647bd380d79a247b7263",
+    "rust/src/ablation/backends.rs": "abaa40844e6b649a1fb655b6c53580967550274c98ab93263d4b2a1280c39826",
+    "rust/src/ablation/index.rs": "3f37f7963b4ff36f7ef98235930537b8f2f8becbf33e20ff28c0be957a108418",
+    "rust/src/ablation/micro.rs": "7cc588925985695434b59fa32399fd5b06e03743a8fa3853f62e3c2e0da3b957",
+    "rust/src/ablation/mod.rs": "296c7174193897482bb4497f30a93fd8dbc597c9ecb30e865f63c01052e2672b",
+    "rust/src/ablation/parallel.rs": "0a0379777ad5ee3abb2e883313f9ec92ec1cf92282a916a9ca4e49b42dc15ccb",
+    "rust/src/ablation/parallel_certified.rs": "ec69eb045ed7374e0839a9aa41bf7a0b567e813a4de0a7b6e7833d0358aa7012",
+    "rust/src/ablation/parallel_occurrence.rs": "9c1d534b4618d1f083ebf7d6ece09a26cb173df08fabb5bb0cfffb395688ad26",
+    "rust/src/ablation/parallel_occurrence_snapshot.rs": "ef9366efc7722e01f49a791d8ed9f7daf630b4b39cde94320fa84c53a4880df4",
+    "rust/src/ablation/parallel_piece.rs": "8225968265762dd9b15f88c4d41e97d253e767d3e0a9be639b604be2f6075a54",
+    "rust/src/ablation/parallel_sharded.rs": "8072142e0fdbf0476670c7c7b827a63a475032511e8a278c4f6fc7d5cbd3f857",
+    "rust/src/ablation/parallel_sparse_owner.rs": "a739af50f39ec06e273edf01990b244e50f66d6b2e52b72413e875b247c5e86b",
+    "rust/src/ablation/parallel_spatial.rs": "038ae81cec27a87d0cca5aca3b12140068ae159606ca5e4c2bacdf77e67c528d",
+    "rust/src/ablation/queue.rs": "413aceb20b5b7d59d0d615806ea366fa5dd1325c78c1be329a5eafbc9a8bf7be",
+    "rust/src/ablation/spans.rs": "99c5334c6b2d052b46c693426a8bb2e16dc20719692646214629997040c2bf31",
+    "rust/src/ablation/sparse_frontier.rs": "0d53f697c9319ac8a70782e45fcff784797651cf28131dadca0d334f501e6bfd",
+    "rust/src/ablation/trainer.rs": "00fa263f87f843b75a4d1534ae88be7f5e1652726413949ef3916312044e148b",
+    "rust/src/ablation/worker_groups.rs": "60a1c48868ef1a70ff45dd7c720786e69138f6090aacf0e04e7afd9b25dc8e07",
+    "rust/src/backend.rs": "cabdf2dd0504a30d86605200a7aeb17f3f6eaa8b717c42c7ce9f40e7ea2ef8c2",
+    "rust/src/bin/ablation.rs": "d9bd155470af202cd03b2762f9b00d2ab0b557fe5e5163b1e5c183800268a26d",
+    "rust/src/bin/boundary_micro.rs": "c63105dcad74c6b22300a396926e8524667758c2734c969403d4e1ddc662d094",
+    "rust/src/lib.rs": "cdab01c50d898f265324204d59ee373f0a1e741540620f505474c39b42a4cd61",
+    "rust/src/main.rs": "224259a1f649ddc21758fb0e352f5653e1b211c6a8f2e2febf20417f7dbb8f85",
+    "rust/src/trainer.rs": "3d7e8c5d87bd3df9eeab26d0795a07337be000415e60029cc4a61a4ecaebae40"
+  },
+  "compiled_binary_provenance": {
+    "serial_cf32_checked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "checked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ],
+      "source_archive_sha256": "61567a55918e547191bc47a54a519962a2b82722a7a20357e02c38302735895b",
+      "shared_provenance_sha256": "ca907074bf1b1b08f8260bcf01c0d3dd47d2d30150f71092fe847f6352d0eab1"
+    },
+    "serial_cf32_unchecked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "unchecked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ],
+      "source_archive_sha256": "61567a55918e547191bc47a54a519962a2b82722a7a20357e02c38302735895b",
+      "shared_provenance_sha256": "ca907074bf1b1b08f8260bcf01c0d3dd47d2d30150f71092fe847f6352d0eab1"
+    },
+    "serial_cf16_checked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered_halfword",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "checked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ],
+      "source_archive_sha256": "61567a55918e547191bc47a54a519962a2b82722a7a20357e02c38302735895b",
+      "shared_provenance_sha256": "ca907074bf1b1b08f8260bcf01c0d3dd47d2d30150f71092fe847f6352d0eab1"
+    },
+    "serial_cf16_unchecked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered_halfword",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "unchecked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ],
+      "source_archive_sha256": "61567a55918e547191bc47a54a519962a2b82722a7a20357e02c38302735895b",
+      "shared_provenance_sha256": "ca907074bf1b1b08f8260bcf01c0d3dd47d2d30150f71092fe847f6352d0eab1"
+    },
+    "owner_ahash": {
+      "family": "owner",
+      "binary": "rust/target/reruns/radical-local-hash-v1/owned_integer_hash",
+      "binary_sha256": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-local-hash-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-local-hash-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-local-hash-v1/checks.json"
+      ],
+      "expected_fields": {
+        "integer_hash": "ahash"
+      },
+      "source_archive_sha256": "1673804b6457e1452a351a5bf91b213f308317090d9941871046dc760957e341",
+      "shared_provenance_sha256": "da1c13816430ae3eb360b05ce121e96bccd32b6a02b9dc52ee031a14047309fe"
+    },
+    "cuts_fixed": {
+      "family": "cuts",
+      "binary": "rust/target/reruns/radical-adaptive-cuts-gate-v1/radical-owned-adaptive-cuts",
+      "binary_sha256": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--cut-policy",
+        "fixed"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-adaptive-replay-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-adaptive-replay-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/differential.json",
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/directed.json"
+      ],
+      "expected_fields": {
+        "cut_policy_requested": "fixed",
+        "cut_policy_effective": "fixed"
+      },
+      "source_archive_sha256": "012fb9b34f54fc4d373c76839de67f295283681451bfcbdf0e47ba5434936b8f",
+      "shared_provenance_sha256": "3a32bc82b6ff3d3949b60500f828934338de655ba1199c08cc2e08ba370937e3"
+    },
+    "cuts_adaptive": {
+      "family": "cuts",
+      "binary": "rust/target/reruns/radical-adaptive-cuts-gate-v1/radical-owned-adaptive-cuts",
+      "binary_sha256": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--cut-policy",
+        "adaptive"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-adaptive-replay-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-adaptive-replay-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/differential.json",
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/directed.json"
+      ],
+      "expected_fields": {
+        "cut_policy_requested": "adaptive",
+        "cut_policy_effective": "adaptive"
+      },
+      "source_archive_sha256": "012fb9b34f54fc4d373c76839de67f295283681451bfcbdf0e47ba5434936b8f",
+      "shared_provenance_sha256": "3a32bc82b6ff3d3949b60500f828934338de655ba1199c08cc2e08ba370937e3"
+    },
+    "birth_chain": {
+      "family": "birth",
+      "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+      "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--birth-fill",
+        "chain"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-replay-counts-v1/measured-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-replay-counts-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-replay-counts-v1/differential.json",
+        "rust/batch_results/radical-replay-counts-v1/directed.json"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "chain",
+        "birth_fill_effective": "chain"
+      },
+      "source_archive_sha256": "4ec0acb66db07b8af0de527fd535248150dbb22cc14046e850bb44b5d18ae155",
+      "shared_provenance_sha256": "3a32bc82b6ff3d3949b60500f828934338de655ba1199c08cc2e08ba370937e3"
+    },
+    "birth_replay_vec": {
+      "family": "birth",
+      "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+      "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--birth-fill",
+        "replay"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-replay-counts-v1/measured-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-replay-counts-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-replay-counts-v1/differential.json",
+        "rust/batch_results/radical-replay-counts-v1/directed.json"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay",
+        "birth_fill_effective": "replay"
+      },
+      "source_archive_sha256": "4ec0acb66db07b8af0de527fd535248150dbb22cc14046e850bb44b5d18ae155",
+      "shared_provenance_sha256": "3a32bc82b6ff3d3949b60500f828934338de655ba1199c08cc2e08ba370937e3"
+    },
+    "birth_replay_inline": {
+      "family": "birth",
+      "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+      "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--birth-fill",
+        "replay-inline"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-replay-counts-v1/measured-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-replay-counts-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-replay-counts-v1/differential.json",
+        "rust/batch_results/radical-replay-counts-v1/directed.json"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay-inline",
+        "birth_fill_effective": "replay-inline"
+      },
+      "source_archive_sha256": "4ec0acb66db07b8af0de527fd535248150dbb22cc14046e850bb44b5d18ae155",
+      "shared_provenance_sha256": "3a32bc82b6ff3d3949b60500f828934338de655ba1199c08cc2e08ba370937e3"
+    }
+  },
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "2": [
+      0,
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "6": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "initial_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  6\nOn-line CPU(s) list:                     0-5\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz\nCPU family:                              6\nModel:                                   85\nThread(s) per core:                      1\nCore(s) per socket:                      1\nSocket(s):                               6\nStepping:                                4\nBogoMIPS:                                4589.21\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault pti ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves arat umip pku ospke md_clear flush_l1d arch_capabilities\nHypervisor vendor:                       KVM\nVirtualization type:                     full\nL1d cache:                               192 KiB (6 instances)\nL1i cache:                               192 KiB (6 instances)\nL2 cache:                                6 MiB (6 instances)\nL3 cache:                                148.5 MiB (6 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-5\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Mitigation; Aligned branch/return thunks\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Mitigation; PTE Inversion\nVulnerability Mds:                       Mitigation; Clear CPU buffers; SMT Host state unknown\nVulnerability Meltdown:                  Mitigation; PTI\nVulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT Host state unknown\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Mitigation; IBRS\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; IBRS; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI SW loop, KVM SW loop\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Mitigation; Clear CPU buffers; SMT Host state unknown\nVulnerability Vmscape:                   Not affected\n",
+  "uname": "Linux us-agent 6.12.101+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.101-1 (2026-08-05) x86_64 GNU/Linux\n",
+  "meminfo_at_start": "MemTotal:       16344940 kB\nMemFree:          316904 kB\nMemAvailable:    8743080 kB\nBuffers:          175208 kB\nCached:          8313772 kB\nSwapCached:        10976 kB\nActive:          9977900 kB\nInactive:        3391220 kB\nActive(anon):    4838460 kB\nInactive(anon):   398108 kB\nActive(file):    5139440 kB\nInactive(file):  2993112 kB\nUnevictable:           0 kB\nMlocked:               0 kB\nSwapTotal:      12366328 kB\nSwapFree:        9102396 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               408 kB\nWriteback:             0 kB\nAnonPages:       4564116 kB\nMapped:           647548 kB\nShmem:            356504 kB\nKReclaimable:     631228 kB\nSlab:             850180 kB\nSReclaimable:     631228 kB\nSUnreclaim:       218952 kB\nKernelStack:       18720 kB\nPageTables:        55036 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    20538796 kB\nCommitted_AS:   12860620 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       88232 kB\nVmallocChunk:          0 kB\nPercpu:            72192 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:   3082240 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nUnaccepted:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      247652 kB\nDirectMap2M:    10237952 kB\nDirectMap1G:     8388608 kB\n",
+  "measurement_rows": 1000,
+  "warmup_rows": 200,
+  "reference_rows": 8,
+  "timing": "call_seconds includes training, initialization, thread pool and finalization; excludes JSON input and trace/fingerprint output. outer_call_seconds includes whole child process.",
+  "memory": "Process VmHWM immediately after training, before output; includes prior input parsing high-water. VmSwap sampled every ~200ms; major faults are per process, including input.",
+  "semantic_check": "Every measurement hashes all rules/frequencies/final tokens; every cell warmup also compares its complete serialized trace with direct CF32."
+}

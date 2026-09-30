@@ -2,6 +2,8 @@
 
 状态：已实现于 `experiments/radical/owned_adaptive_cuts`，28 项 Rust 测试、94 次独立完整轨迹门控通过；同二进制 fixed/adaptive 各 W1/W4 已小测。实际样本类型为 `(u32,usize)`，本机 16 B；下文是原设计及证明，不代表原 8 B 估算已经实现。访问均衡改善不等于全调用加速，详见[本轮报告](ADAPTIVE_REPLAY_REPORT.md)。
 
+后续[16 MiB、32,000 合并复核](batch_results/radical-full-v1/README.md)中，adaptive W4 英文/中文为 2.915/1.577 秒，n=2。英文旧 owner 更快，中文 adaptive 与出生链范围交叠；本次没有补跑 fixed，不能把跨原型差距归因于 adaptive 开关。
+
 本设计只处理**批边界的物理 cut 选择和 selected posting 区间定位**。前提是全部历史 posting 已由 [有序协议](ORDERED_POSTING_REVIEW.md) 保持严格升序；上一批的规划、apply、跨区写和 owner 提交须全部完成，下一批才可选择新的 cuts。cut 可以落在 live token 内部；region 对端点的安全访问、跨区写和 snapshot anchor 仍是各自独立的协议，本设计没有解决它们。首版取目标任务数 `T=min(W, corpus.len())`，与现有 region 上限一致；合法空语料 `corpus.len()==1` 或无选中 batch 时跳过 cut 计算。这样至多约 W 个 region，避免固定 `kW` 把 route header 和 owner 输入从 `O(W²)` 扩到 `O(kW²)`。若后来证据显示 W 个任务不足以平衡有效改写工作，再单独比较 `T=2W`。
 
 设本批选中 `B≤256` 个 pair，历史 posting 长度分别为 `H_j`，总访问量 `H=ΣH_j`，最长表 `Hmax`。H 包含 stale 项；规划仍必须读取并验证它们。每个 cut 的每条 posting 范围可用已有 `partition_point` 定位，矩阵大小 `O(BT)`，查询时间约 `O(BT log Hmax)`，不复制位置索引。两个候选 cut 生成法如下。

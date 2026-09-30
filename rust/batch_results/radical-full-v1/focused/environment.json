@@ -1,0 +1,98 @@
+{
+  "git_head_during_measurement": "39c4a265d17af815621c352af3d605f3a8fc6eb4",
+  "started_utc": "2026-09-30T03:50:10Z",
+  "original_environment_sha256": "3d7310caa6bfa694ea84323922e39268e0097432438b23cefb867df55a41a9d4",
+  "config_sha256": "e5811541e5f3eb4b609e73899e5e3cfebaab2363de8e6dd03f908b91c3f8eb70",
+  "runner_sha256": "5117a47de788f80c5089d658153843f7b680880e4a09160516c650a712737fc4",
+  "cells": [
+    [
+      "en-16m-continuous",
+      "serial_cf32_checked",
+      1
+    ],
+    [
+      "en-16m-continuous",
+      "serial_cf16_unchecked",
+      1
+    ],
+    [
+      "en-16m-continuous",
+      "owner_ahash",
+      4
+    ],
+    [
+      "en-16m-continuous",
+      "cuts_adaptive",
+      4
+    ],
+    [
+      "en-16m-continuous",
+      "birth_chain",
+      4
+    ],
+    [
+      "en-16m-continuous",
+      "birth_replay_inline",
+      4
+    ],
+    [
+      "zh-16m-continuous",
+      "serial_cf32_checked",
+      1
+    ],
+    [
+      "zh-16m-continuous",
+      "serial_cf16_unchecked",
+      1
+    ],
+    [
+      "zh-16m-continuous",
+      "owner_ahash",
+      4
+    ],
+    [
+      "zh-16m-continuous",
+      "cuts_adaptive",
+      4
+    ],
+    [
+      "zh-16m-continuous",
+      "birth_chain",
+      4
+    ],
+    [
+      "zh-16m-continuous",
+      "birth_replay_inline",
+      4
+    ]
+  ],
+  "repeats_per_cell": 3,
+  "reused_rows": 8,
+  "new_calls": 28,
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "2": [
+      0,
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "6": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "verification": "Frozen prevalidated binaries; every call verifies the complete training fingerprint against the independent serial reference. Existing full trace checks are retained; no new trace serialization or per-cell warmup.",
+  "timing": "call_seconds includes training, initialization, thread pool and finalization; excludes JSON input and trace/fingerprint output. outer_call_seconds includes whole child process.",
+  "memory": "Process VmHWM immediately after training, before output; includes prior input parsing high-water. VmSwap sampled every ~200ms; major faults are per process, including input."
+}

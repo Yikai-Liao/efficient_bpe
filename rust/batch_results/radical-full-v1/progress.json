@@ -1,0 +1,6 @@
+{
+  "status": "stopped_by_user_scope_correction",
+  "completed_measurements": 135,
+  "original_planned_measurements": 1000,
+  "reason": "Matrix was unnecessarily expanded; retain partial observations and replace with a small set of core algorithm comparisons."
+}

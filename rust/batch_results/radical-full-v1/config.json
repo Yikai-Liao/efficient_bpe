@@ -1,0 +1,355 @@
+{
+  "modes": {
+    "serial_cf32_checked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "checked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ]
+    },
+    "serial_cf32_unchecked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "unchecked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ]
+    },
+    "serial_cf16_checked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered_halfword",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "checked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ]
+    },
+    "serial_cf16_unchecked": {
+      "family": "serial",
+      "binary": "rust/target/reruns/radical-serial-integer-gate-v1/serial_integer_hash",
+      "binary_sha256": "f28d9b84d6e4002593dcb4023ca861ec32f5ce51540d3c6e787c9dccf72aedc1",
+      "args": [
+        "--backend",
+        "combined_filtered_halfword",
+        "--integer-hash",
+        "ahash",
+        "--bounds",
+        "unchecked"
+      ],
+      "workers": [
+        1
+      ],
+      "source_archive": "rust/batch_results/radical-serial-integer-gate-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-serial-integer-gate-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-serial-integer-gate-v1/checks.json"
+      ]
+    },
+    "owner_ahash": {
+      "family": "owner",
+      "binary": "rust/target/reruns/radical-local-hash-v1/owned_integer_hash",
+      "binary_sha256": "7189a90e8182ec06a2968b425e6a18d66bcc8c5ff725c61715979502b7b8ceba",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-local-hash-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-local-hash-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-local-hash-v1/checks.json"
+      ],
+      "expected_fields": {
+        "integer_hash": "ahash"
+      }
+    },
+    "cuts_fixed": {
+      "family": "cuts",
+      "binary": "rust/target/reruns/radical-adaptive-cuts-gate-v1/radical-owned-adaptive-cuts",
+      "binary_sha256": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--cut-policy",
+        "fixed"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-adaptive-replay-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-adaptive-replay-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/differential.json",
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/directed.json"
+      ],
+      "expected_fields": {
+        "cut_policy_requested": "fixed",
+        "cut_policy_effective": "fixed"
+      }
+    },
+    "cuts_adaptive": {
+      "family": "cuts",
+      "binary": "rust/target/reruns/radical-adaptive-cuts-gate-v1/radical-owned-adaptive-cuts",
+      "binary_sha256": "d7ff2e3aecddb20cf295c544111dad2990fb86aa7feb9bd4dd8e7950fba2232d",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--cut-policy",
+        "adaptive"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-adaptive-replay-v1/new-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-adaptive-replay-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/differential.json",
+        "rust/batch_results/radical-adaptive-cuts-gate-v1/directed.json"
+      ],
+      "expected_fields": {
+        "cut_policy_requested": "adaptive",
+        "cut_policy_effective": "adaptive"
+      }
+    },
+    "birth_chain": {
+      "family": "birth",
+      "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+      "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--birth-fill",
+        "chain"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-replay-counts-v1/measured-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-replay-counts-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-replay-counts-v1/differential.json",
+        "rust/batch_results/radical-replay-counts-v1/directed.json"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "chain",
+        "birth_fill_effective": "chain"
+      }
+    },
+    "birth_replay_vec": {
+      "family": "birth",
+      "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+      "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--birth-fill",
+        "replay"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-replay-counts-v1/measured-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-replay-counts-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-replay-counts-v1/differential.json",
+        "rust/batch_results/radical-replay-counts-v1/directed.json"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay",
+        "birth_fill_effective": "replay"
+      }
+    },
+    "birth_replay_inline": {
+      "family": "birth",
+      "binary": "rust/target/reruns/radical-replay-counts-v1/radical-owned-replay-counts",
+      "binary_sha256": "a4c391afb260d1163f0f9535d1631b2848bc88d173c1535aa58b9cabb20e9129",
+      "args": [
+        "--chunk-size",
+        "4096",
+        "--heap-policy",
+        "lazy",
+        "--integer-hash",
+        "ahash",
+        "--endpoint-plan",
+        "tagged-fused",
+        "--region-mode",
+        "region",
+        "--regions-per-worker",
+        "1",
+        "--posting-order",
+        "global",
+        "--birth-fill",
+        "replay-inline"
+      ],
+      "workers": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "source_archive": "rust/batch_results/radical-replay-counts-v1/measured-source-snapshot.tar.gz",
+      "shared_provenance": "rust/batch_results/radical-replay-counts-v1/shared-source-provenance.json",
+      "gates": [
+        "rust/batch_results/radical-replay-counts-v1/differential.json",
+        "rust/batch_results/radical-replay-counts-v1/directed.json"
+      ],
+      "expected_fields": {
+        "birth_fill_requested": "replay-inline",
+        "birth_fill_effective": "replay-inline"
+      }
+    }
+  },
+  "repeats": 5,
+  "seed": 20260930,
+  "cpu_budget": {
+    "1": [
+      5
+    ],
+    "2": [
+      0,
+      5
+    ],
+    "4": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "6": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "natural_workers": [
+    1,
+    2,
+    4,
+    6
+  ],
+  "synthetic_workers": [
+    1,
+    4
+  ],
+  "reference_mode": "serial_cf32_checked",
+  "reference_case_already_run": "en-16m-continuous",
+  "requested_merge_rules": 32000,
+  "min_frequency": 2,
+  "warmup_per_cell": 1,
+  "schedule": "Each case/mode/worker has one unmeasured warmup before its first measurement; 5 balanced seeded blocks, adjacent pairs in reverse order. Separate serial full-trace references excluded from measured data.",
+  "measurement_rows": 1000,
+  "warmup_rows": 200,
+  "reference_rows": 8,
+  "per_call_timeout_seconds": 900
+}
