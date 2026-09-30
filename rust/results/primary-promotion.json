@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "source_parent_commit": "6f40631a15bf5afe63e14c6614eb6b6911c56113",
+  "selected_algorithm": "unique pair owner + grouped birth chains + inline posting + aHash",
+  "promotion": "Entire trainer and inherited tests are unchanged after namespace, documentation, module-path and whitespace normalization, excluding the new Config default constructor. AA parity is byte-identical. The primary CLI selects the measured defaults.",
+  "original_2024_commit": "7bfbc63",
+  "original_python_bytes_unchanged": true,
+  "sha256": {
+    "rust/experiments/radical/owned_integer_hash/src/lib.rs": "6f71259cad558f6efe148a2cb78cdba3b6d929834bafef449dd30909db959e13",
+    "rust/experiments/radical/owned_integer_hash/src/small_posting.rs": "41d6430df55aee25f1964d238318200c1947c611ae3f2850f9e59d8631f88ede",
+    "rust/experiments/aa_parity.rs": "f8eaaab11cae2550bebc583181a6bad1b7ca53c3a3d943761a9430ce039e8f99",
+    "rust/src/parallel/mod.rs": "cddf31972e31b72fe8e4e1c9f7cd6c8e3cef4c9cae3339eac75656780d7a9623",
+    "rust/src/parallel/small_posting.rs": "5707dc55c2ed8e45681adf4b5f06b7a34d1364333a5128cc9a695dfc090b9ce5",
+    "rust/src/parallel/aa_parity.rs": "f8eaaab11cae2550bebc583181a6bad1b7ca53c3a3d943761a9430ce039e8f99",
+    "rust/src/bin/ebpe.rs": "8dc05c031938f18b57169fb6138a0ffc70043c3b444e5800727a08209da68dbc",
+    "rust/Cargo.toml": "c451daf1522d68ec5cdf0b8770b3eb789fbaf707ec00c427b467bdf4739d3ba0",
+    "rust/Cargo.lock": "e86ff42c4417085b496d0f88db0e5d92f94a8830ed6a1fe2c7cf8e7a31752c26"
+  },
+  "validation": {
+    "cargo_tests_passed": 65,
+    "strict_clippy_all_targets": "passed",
+    "fmt_check": "passed",
+    "release_bins": "passed",
+    "naive_cli_full_traces": 41,
+    "large_complete_fingerprints": 2
+  },
+  "verification_report_sha256": "61c2ad1fcddb768b6c2d524d730f7bad89c50f0fcddf0fd4cd7ed247c6e50d04",
+  "benchmark_selection": "rust/batch_results/radical-full-v1/focused/summary.json",
+  "benchmark_selection_sha256": "cb71b242ae4312b5275004078c46402e54f0280d7693b5269495f36af7785fda",
+  "large_verification_timing": "correctness check only; not a new benchmark ranking",
+  "normalized_trainer_sha256": "a2e38b3fd97d6d8621fbe55e381f65d11484d4608a1288f2ed238c4c22a2f17a"
+}

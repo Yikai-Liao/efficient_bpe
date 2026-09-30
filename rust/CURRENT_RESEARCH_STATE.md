@@ -1,10 +1,10 @@
 # 当前 BPE 研究状态
 
-当前推荐作速度候选的是 `experiments/radical/owned_integer_hash` 的 `--integer-hash ahash`；同二进制保留默认 `std` 作控制，不改已冻结实测源。它在唯一 owner 的频率/位置索引、grouped birth chain、inline posting 结构上只更换哈希构造器。训练仍与串行 greedy 的完整规则、频率和最终 token 相同，输入不依赖空格边界。
+已将唯一 owner＋grouped birth chain＋inline posting＋aHash 提升为本分支主实现，代码位于 `src/parallel`，默认命令为 `ebpe`，库入口为 `train_parallel`。默认 lazy heap、4096 位置任务和至多四个 worker；参数可显式调整。选定依据及与 2024 年 v1/v2 的差异见 [算法说明](ALGORITHM.md)，使用与输入契约见 [README](README.md)。`experiments/radical/owned_integer_hash` 及其已冻结测量保留原样；原型仍默认 std 作控制，主实现默认 aHash。
 
 ```sh
-cargo build --manifest-path rust/experiments/radical/owned_integer_hash/Cargo.toml --release --locked --target-dir rust/target
-rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en-4m-continuous.json --workers 4 --chunk-size 4096 --rules 3000 --min-frequency 2 --heap-policy lazy --integer-hash ahash
+cargo build --manifest-path rust/Cargo.toml --release --bin ebpe --locked
+rust/target/release/ebpe --input rust/examples/tiny.json --workers 4 --rules 2
 ```
 
 [最新有限复核](batch_results/radical-local-hash-v1/README.md)中，4 MiB/3000 规则 n=2 的 aHash 单核/四核中位数为英文 1.310/0.533 秒、中文 0.585/0.303 秒；相对 std 四格均改善约 1.43–1.46×。自身 1→4 仍仅 2.46×/1.93×，所以 Goal 继续，不能以对旧直接串行的 3.06×/3.25× 宣布多核目标完成。后两个比例还混合了哈希工程差异。[同 aHash 直接串行小测](batch_results/radical-serial-integer-quick-v1/README.md)已补齐：256 KiB n=1 中 CF32 checked 的英文/中文为 0.0386/0.0198 秒，同窗 owner 四核为 0.0314/0.0180 秒，差距明显缩小；尚不能外推 4 MiB 或作稳定排序。机器只提供六个可见 CPU，尚无几十核/双路证据。
@@ -13,7 +13,7 @@ rust/target/release/radical-owned-integer-hash --input rust/fixtures/ablation/en
 
 已追加[16 MiB、32,000 实际合并的核心方案复核](batch_results/radical-full-v1/README.md)。原 1,000 调用矩阵在 135 条正式结果后停止，收敛后新增 28 次调用，用时 108.7 秒。主表使用同一补测窗口 n=2：英文旧 owner/自适应/出生链/inline 为 2.591/2.915/2.908/3.627 秒；中文为 1.641/1.577/1.594/1.987 秒。inline 与同二进制 chain 对照两者均慢约 25%，不是通用最优。英文旧 owner 本窗最快，中文 adaptive 与 chain 的范围交叠；相对同窗最快直接串行仅 1.94×/1.69×。内存高水位也未一致改善，不切换默认。全部 163 次独立正式调用完整指纹匹配，原窗口另有 135 次完整 trace 校验；原矩阵的零散结果仅保留为探索性数据。
 
-## 下一步只推进这些问题
+## 已筛选的方向与未实现问题
 
 - **公平的直接串行常数基线**：[串行控制](experiments/radical/serial_integer_hash/DESIGN.md)已完成 22 调用同窗口小测，全部完整轨迹匹配。相同 backend/bounds 的八组 std→aHash 中七组更快，但 n=1 不作稳定排名；不能把旧串行保留 std 的差距算成并行算法创新。
 - **扩大精确批次**：[出生时摘要](EXACT_BATCH_WIDENING_NEXT.md)之后已实现[按需摘要](experiments/radical/owned_lazy_neighbor/DESIGN.md)。它不增加每个 Entry 的字段，只为首次查询 key 扫一次 posting 并缓存；build 数≤R+B，访问数≤所有 retained 历史 posting。17 项 Rust 测试及 200/200 oracle 通过，14 次小测完整匹配。英文摘要扫描由 530,725 降至 32,801 个位置、中文由 149,188 降至 4,751；额外工作与内存降低，但 W4 调用没有一致优于 type 控制，不默认整合。详见[归档](batch_results/radical-lazy-neighbor-gate-v1/README.md)。

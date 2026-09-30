@@ -1,9 +1,15 @@
-//! Exact weighted BPE core with a movable u32 endpoint corpus.
+//! Exact weighted greedy BPE training on prepared numeric corpora.
+//!
+//! [`train_parallel`] is the branch's primary trainer: unique pair ownership,
+//! grouped birth chains, inline postings and aHash. [`train`] retains the
+//! original scalar reference API for compatibility and correctness comparisons.
 
 pub mod ablation;
 mod backend;
+pub mod parallel;
 mod trainer;
 
+pub use parallel::{Config as ParallelConfig, Output as ParallelResult, train as train_parallel};
 pub use trainer::{Bounds, Prepared, Rule, TrainError, TrainOptions, TrainResult, train};
 
 /// Check the shared input contract without constructing a training index.

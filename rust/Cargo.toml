@@ -3,13 +3,16 @@ name = "efficient-bpe-rust"
 version = "0.1.0"
 edition = "2024"
 publish = false
-description = "Reproducible native baseline for weighted greedy BPE experiments"
+default-run = "ebpe"
+description = "Exact weighted BPE training with owner-sharded parallel updates"
 
 [dependencies]
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.151"
 sha2 = "=0.10.9"
 libc = "=0.2.189"
+rayon = "=1.12.0"
+ahash = "=0.8.12"
 hotpath = { version = "=0.27.0", optional = true, default-features = false }
 
 [features]
